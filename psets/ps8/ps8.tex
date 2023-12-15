@@ -1,0 +1,1034 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\usetikzlibrary{matrix,decorations.pathreplacing, calc, positioning,fit, bending}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{.}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{axiom}{Axiom}
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+\newcommand{\xor}{\oplus}
+\newcommand{\powset}{\mathcal{P}}
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Linear Algebra
+\newcommand{\nul}{\text{Nul}}
+\newcommand{\col}{\text{Col}}
+\newcommand{\row}{\text{Row}}
+\newcommand{\adj}{\text{adj}}
+\newcommand{\spa}[1]{\text{Span}\set*{#1}}
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\poly}{\mathbb{P}}
+\newcommand{\basis}{\mathcal{B}}
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\hypersetup{
+	linkcolor=magenta
+}
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 8
+		\endgroup \vskip 0.3cm
+		Due: Wednesday, November 1, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm 
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\section{Computational Problems}
+\begin{ques}
+	Find the vector $\mb{x}$ determined by the coordinate vector $[\mb{x}]_\mathcal{B}$ below with respect to the basis $\mathcal{B}$.
+	\[
+		\basis = \set*{
+\begin{bmatrix}
+	-1 \\
+	2 \\
+	0
+\end{bmatrix},
+\begin{bmatrix}
+	3 \\
+	-5 \\
+	2
+\end{bmatrix},
+\begin{bmatrix}
+	4 \\
+	-7 \\
+	3
+\end{bmatrix}
+}, [\bm{x}]_\basis = 
+\begin{bmatrix}
+	-4 \\
+	8 \\
+	-7
+\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+\begin{align*}
+	\bm{x} &= -4\begin{bmatrix}
+	-1 \\
+	2 \\
+	0
+\end{bmatrix} + 
+8
+\begin{bmatrix}
+	3 \\
+	-5 \\
+	2
+\end{bmatrix} -
+7
+\begin{bmatrix}
+	4 \\
+	-7 \\
+	3
+\end{bmatrix} \\
+		   &=
+		   \begin{bmatrix}[c]
+		   	-4 + 24 - 28 \\
+			-8 + -40 + 49 \\
+			0 + 16- 21 
+		   \end{bmatrix} \\
+		   &= 
+		   \begin{bmatrix}
+		   	-8 \\
+			1 \\
+			-5
+		\end{bmatrix}
+\end{align*}
+\begin{ques}
+	Find the coordinate vector $[\bm{x}]_\basis$ of $\bm{x}$ below relative to the basis $\basis = \set*{\bm{b_1}, \dots, \bm{b_n}}$ below.
+	\[
+		\bm{b_1} = 
+		\begin{bmatrix}
+			1 \\
+			0 \\
+			3
+		\end{bmatrix},
+		\bm{b_2} = 
+		\begin{bmatrix}
+			2 \\
+			1 \\
+			8
+		\end{bmatrix}, \bm{b_3} = 
+		\begin{bmatrix}
+			1 \\
+			-1 \\
+			2
+		\end{bmatrix},
+		\bm{x} =
+		\begin{bmatrix}
+			3 \\
+			-5 \\
+			4
+		\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+We solve the following system, where the columns of $A$ are the basis vectors:
+\[
+	A[\bm{x}]_\basis = \bm{x} 
+\] 
+We form the augmented matrix and obtain the reduced row echelon form:
+\begin{align*}
+	\begin{bmatrix}[rrr|r]
+		1 & 2 & 1 & 3 \\
+		0 & 1 & -1 & -5 \\
+		3 & 8 & 2 & 4 
+	\end{bmatrix}
+	\intertext{$\sim R_3 - 3R_1 \to R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 2 & 1 & 3 \\
+		0 & 1 & -1 & -5 \\
+		0 & 2 & -1 & -5 
+	\end{bmatrix}
+	\intertext{$R_1 - 2R_2 \to R_1, R_3 - 2R_2 \to R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 0 & 3 & 13 \\
+		0 & 1 & -1 & -5 \\
+		0 & 0 & 1 & 5 
+	\end{bmatrix}
+	\intertext{$R_1 - 3R_3 \to R_1, R_2 + R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 0 & 0 & -2 \\
+		0 & 1 & 0 & 0 \\
+		0 & 0 & 1 & 5 
+	\end{bmatrix}
+\end{align*}
+Thus, $[\bm{x}]_\basis = 
+\begin{bmatrix}
+	-2 \\
+	0 \\
+	5
+\end{bmatrix}
+$.
+\begin{ques}
+	Let $\bm{p}_1(t) = 1 + t^2, \bm{p}_2(t) = t - 3t^2,$ and $\bm{p}_3(t) = 1 + t - 3t^2$.
+	\begin{enumerate}[a)]
+		\item Prove that these polynomials form a basis for $\mathbb{P}_2$.
+		\item Let $\basis$ denote this basis. Find the polynomial $\bm{q}(t)$ whose coordinates with respect to this basis is below.
+			\[
+				[\bm{q}]_\basis = 
+				\begin{bmatrix}
+					-1 \\
+					1 \\
+					2
+				\end{bmatrix}
+			\] 
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[a)]
+	\item 
+	\begin{proof}
+		By the definition of basis, $\basis = \set*{\bm{p}_1, \bm{p}_2, \bm{p}_3}$ is a basis for $\mathbb{P}_2$ if
+		\begin{enumerate}[(i)]
+			\item $\basis$ is a linearly independent set, and
+			\item the subspace spanned by $\basis$ coincides with $\mathbb{P}_2$, or $\mathbb{P}_2 = \spa{\mb{p}_1, \mb{p}_2, \mb{p}_3}$.
+		\end{enumerate}
+		\begin{itemize}
+			\item We will first show that $\basis$ is linearly independent. Consider the standard basis for $\mathbb{P}_2$, $\basis' = \set*{1, t, t^2}$. Then,
+				 \[
+					 [\bm{p_1}]_{\basis'} = 
+					 \begin{bmatrix}
+					 	1 \\
+						0 \\
+						1
+					 \end{bmatrix},
+					 [\bm{p}_2]_{\basis'} = 
+					 \begin{bmatrix}
+					 	0 \\
+						1 \\
+						-3
+					 \end{bmatrix},
+					 [\bm{p}_3]_{\basis'} = 
+					 \begin{bmatrix}
+					 	1 \\
+						1 \\
+						-3
+					 \end{bmatrix}
+				\] 
+			Let the columns of $A$ be the coordinate vectors of the polynomials with respect to $\basis'$. We will obtain the reduced row echelon form of the agumented matrix:
+			\begin{align*}
+				\begin{bmatrix}[rrr|r]
+					1 & 0 & 1 & 0 \\
+					0 & 1 & 1 & 0\\
+					1 & -3 & -3 & 0
+				\end{bmatrix}
+				\intertext{$\sim R_3 - R_1 \to R_3$.}
+					\begin{bmatrix}[rrr|r]
+					1 & 0 & 1 & 0 \\
+					0 & 1 & 1 & 0\\
+					0 & -3 & -4 & 0
+				\end{bmatrix}
+				\intertext{$\sim R_3 + 3R_2 \to R_3$.}
+					\begin{bmatrix}[rrr|r]
+					1 & 0 & 1 & 0 \\
+					0 & 1 & 1 & 0\\
+					0 & 0 & -1 & 0
+				\end{bmatrix}
+				\intertext{$\sim -R_3 \to R_3$.}
+					\begin{bmatrix}[rrr|r]
+					1 & 0 & 1 & 0 \\
+					0 & 1 & 1 & 0\\
+					0 & 0 & 1 & 0
+				\end{bmatrix}
+				\intertext{$R_2 - R_3 \to R_2, R_1 - R_3 \to R_1$.}
+					\begin{bmatrix}[rrr|r]
+					1 & 0 & 0 & 0 \\
+					0 & 1 & 0 & 0\\
+					0 & 0 & 1 & 0
+				\end{bmatrix}
+			\end{align*}
+			Thus, as there only exists the trivial solution to the homogeneous system, the vectors are linearly independent.
+		\item As $A$ has a pivot position in every row, the columns of $A$ span $\mathbb{P}_2$.
+		\end{itemize}
+		As $\basis$ satisfies both properties, the proof is complete.
+	\end{proof}
+\item 
+	\begin{align*}
+		[\mb{q}]_\basis &= 
+\begin{bmatrix}
+	-1 \\
+	1 \\
+	2
+\end{bmatrix} \\
+		\mb{q} &= -\mb{p_1} + \mb{p_2} + 2\mb{p_3} \\
+			   &= -(1 + t^2) + (t - 3t^2) + 2(1 + t - 3t^2) \\
+			   &= -1 - t^2 + t - 3t^2 + 2 + 2t - 6t^2 \\
+			   &= 1 + 3t - 10t^2
+		 	\end{align*}
+			Thus, $\mb{q}(t) = 1 + 3t - 10t^2$.
+\end{enumerate}
+\begin{ques}
+	For the subspace below, find a basis and state the dimension of the subspace.
+	\[
+		\set*{
+			\begin{bmatrix}[c]
+			3a + 6b - c \\
+			6a - 2b - 2c \\
+			-9a + 5b + 3c \\
+			-3a + b + c 
+		\end{bmatrix} \mid
+		a,b,c \in \reals
+		}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+Let $S =		\set*{
+			\begin{bmatrix}[c]
+			3a + 6b - c \\
+			6a - 2b - 2c \\
+			-9a + 5b + 3c \\
+			-3a + b + c 
+		\end{bmatrix} \mid
+		a,b,c \in \reals
+		}$. Then, we can express $S$ as: 
+\[
+		S = 
+		\set*{
+		a 
+		\begin{bmatrix}
+			3 \\
+			6 \\
+			-9 \\
+			3
+		\end{bmatrix} + 
+		b
+		\begin{bmatrix}
+			6 \\ 
+			-2 \\
+			5 \\
+			1
+		\end{bmatrix} +
+		c
+		\begin{bmatrix}
+			-1 \\
+			-2 \\
+			3 \\
+			1
+		\end{bmatrix} \mid
+		a,b,c \in \reals
+		}.
+\] 
+As all vectors in the subspace are linear combinations of $
+\begin{bmatrix}
+	3 \\
+	6 \\
+	-9 \\
+	3
+\end{bmatrix},
+\begin{bmatrix}
+	6 \\
+	-2 \\
+	5 \\
+	1
+\end{bmatrix},
+\begin{bmatrix}
+	-1 \\
+	-2 \\
+	3 \\
+	1
+\end{bmatrix}
+$, if they are linearly independent, then they form the basis of the subspace, as they are linearly independent and span $S$. If they are not linearly independent, then we can find a subset of the three vectors that are linearly independent, and they will form the basis of the subspace. To see if the vectors are linearly independent, we see if the homogeneous system $A\bm{x} = \bm{0}$ has only the trivial solution, where the columns of $A$ are the vectors.
+\begin{align*}
+	\begin{bmatrix}[rrr|r]
+	3 & 6 & -1 & 0 \\
+	6 & -2 & -2 & 0 \\
+	-9 & 5 & 3 & 0 \\
+	3 & 1 & 1 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_2 - 2R_1 \to R_2, R_3 + 3R_1 \to R_3, R_4 - R_1 \to R_4$.}
+	\begin{bmatrix}[rrr|r]
+	3 & 6 & -1 & 0 \\
+	0 & -14 & 0 & 0 \\
+	0 & 23 & 0 & 0 \\
+	0 & -5 & 2 & 0
+	\end{bmatrix}
+	\intertext{$\sim -1/14 R_2 \to R_2$.}
+	\begin{bmatrix}[rrr|r]
+	3 & 6 & -1 & 0 \\
+	0 & 1 & 0 & 0 \\
+	0 & 23 & 0 & 0 \\
+	0 & -5 & 2 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_1 - 6R_2 \to R_1, R_3 - 23R_2 \to R_3, R_4 + 5R_2 \to R_4$.}
+	\begin{bmatrix}[rrr|r]
+	3 & 0 & -1 & 0 \\
+	0 & 1 & 0 & 0 \\
+	0 & 0& 0 & 0 \\
+	0 & 0 & 2 & 0
+	\end{bmatrix}
+	\intertext{$\sim 1/2 R_4 \to R_4$.}
+	\begin{bmatrix}[rrr|r]
+	3 & 0 & -1 & 0 \\
+	0 & 1 & 0 & 0 \\
+	0 & 0& 0 & 0 \\
+	0 & 0 & 1 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_1 + R_4 \to R_1$.}
+	\begin{bmatrix}[rrr|r]
+	3 & 0 & 0 & 0 \\
+	0 & 1 & 0 & 0 \\
+	0 & 0& 0 & 0 \\
+	0 & 0 & 1 & 0
+	\end{bmatrix}
+	\intertext{$\sim 1/3 R_1 \to R_1$.}
+	\begin{bmatrix}[rrr|r]
+	1 & 0 & 0 & 0 \\
+	0 & 1 & 0 & 0 \\
+	0 & 0& 0 & 0 \\
+	0 & 0 & 1 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_3 \lra R_4$.}
+	\begin{bmatrix}[rrr|r]
+	1 & 0 & 0 & 0 \\
+	0 & 1 & 0 & 0 \\
+	0 & 0 & 1 & 0 \\
+	0 & 0& 0 & 0 
+	\end{bmatrix}
+\end{align*}
+By the Existence and Uniqueness Theorem, the linear system is consistent and has a unique solution as we reach an echelon form where the rightmost column of the augmented matrix is not a pivot column and there are no free variables. Thus, the homogeneous system has only the trivial solution, meaning the vectors are linearly independent and thus form the basis of the subspace $S$. 
+\\
+
+As there are 3 vectors in the basis for $S$, $\dim S = 3$.
+\begin{ques}
+	Let $\basis = \set*{1, \cos(t), \cos^2(t),\dots, \cos^6(t)}$ and let $\mathcal{C} = \set*{1, \cos(t), \cos(2t), \dots, \cos(6t)}$. Assume the trigonometric identities below:
+	\begin{align*}
+		\cos 2t &= -1 + 2 \cos^2 t \\
+		\cos 3t &= -3 \cos t + 4 \cos^3 t \\
+		\cos 4t &= 1 - 8\cos^2 t + 8\cos^4 t \\
+		\cos 5t &= 5 \cos t - 20\cos^3 t + 16 \cos^5 t \\
+		\cos 6t &= -1 + 18\cos^2 t - 48\cos^4 t + 32 \cos^6 t
+	\end{align*}
+	Let $H$ denote the span of the functions in $\basis$. It turns out that $\basis$ is a basis for $H$. 
+	\begin{enumerate}[a)]
+		\item Write the $\basis$ coordinates of the vectors in $\mathcal{C}$ and use them to show that $\mathcal{C}$ is a linearly independent set in $H$. 
+		\item Explain why $\mathcal{C}$ is a basis for $H$.
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[a)]
+	\item 
+		\begin{align*}
+			[1]_\basis &=
+\begin{bmatrix}
+	1 \\
+	0 \\
+	0 \\
+	0 \\
+	0 \\
+	0 \\
+	0 
+\end{bmatrix} &
+			[\cos t]_\basis &= 
+\begin{bmatrix}
+	0 \\
+	1 \\
+	0 \\
+	0 \\
+	0 \\
+	0 \\
+	0
+\end{bmatrix}
+							&
+			[\cos 2t]_\basis &= 
+\begin{bmatrix}
+	-1 \\
+	0 \\
+	2 \\
+	0 \\
+	0 \\
+	0 \\
+	0
+\end{bmatrix}
+			\\
+			[\cos 3t]_\basis &=
+\begin{bmatrix}
+	0 \\
+	-3 \\
+	0 \\
+	4 \\
+	0 \\
+	0 \\
+	0
+\end{bmatrix}
+							 &
+			[\cos 4t]_\basis &= 
+\begin{bmatrix}
+	1 \\
+	0 \\
+	-8 \\
+	0 \\
+	8 \\
+	0 \\
+	0
+\end{bmatrix}
+							 &
+			[\cos 5t]_\basis &= 
+\begin{bmatrix}
+	0 \\
+	5 \\
+	0 \\
+	-20 \\
+	0 \\
+	16 \\
+	0
+\end{bmatrix}
+			\\
+			[\cos 6t]_\basis &= 
+			\begin{bmatrix}
+				-1 \\
+				0 \\
+				18 \\
+				0 \\
+				-48 \\
+				0 \\
+				32
+			\end{bmatrix}
+		\end{align*}
+		To show that $\mathcal{C}$ is a linearly independent set in $H$, we will see if the homogeneous system $A\bm{x} = \bm{0}$ has only the trivial solution, where the columns of $A$ are the vectors in $\mathcal{C}$.
+		\begin{align*}
+			\begin{bmatrix}[rrrrrrr|r]
+			1 & 0 & -1 & 0 & 1 & 0 & -1 & 0 \\
+			0 & 1 & 0 & -3 & 0 & 5 & 0  & 0 \\
+			0 & 0 & 2 & 0 & -8 & 0 & 18  & 0 \\
+			0 & 0 & 0 & 4 & 0 & -20 & 0 & 0 \\
+			0 & 0 & 0 & 0 & 8 & 0 & -48 & 0 \\
+			0 & 0 & 0 & 0 & 0 & 16 & 0 & 0 \\
+			0 & 0 & 0 & 0 & 0 & 0 & 32 & 0
+			\end{bmatrix}
+		\end{align*}
+		As this is an echelon form of an augmented matrix where the righmost column is not a pivot column, by the Existence and Uniqueness Theorem, the homogeneous system is consistent and there is a unique solution as there are no free variables. Thus, the homogeneous system only has the trivial solution, and thus $\mathcal{C}$ is a linearly independent set in $H$.
+	\item $\mathcal{C}$ is a basis of $H$ as $\mathcal{C}$ is linearly independent, and, as there is a pivot position in every row, the columns of $A$ span $H$.
+\end{enumerate}
+\begin{ques}
+	Assume the matrix $A$ depicted below is row equivalent to the matrix $B$ below. List the rank of $A$ and $\dim(\nul(A))$. Then find bases for $\col(A)$, $\row(A)$, and $\nul(A)$.
+	\[A =
+	\begin{bmatrix}
+		1 & -3 & 4 & -1 & 9 \\
+		-2 & 6 & -6 & -1 & -10 \\
+		-3 & 9 & -6 & -6 & -3 \\
+		3 & -9 & 4 & 9 & 0
+	\end{bmatrix} \quad
+	B =
+	\begin{bmatrix}
+		1 & -3 & 0 & 5 & -7 \\
+		0 & 0 & 2 & -3 & 8 \\
+		0 & 0 & 0 & 0 & 5 \\
+		0 & 0 & 0 & 0 & 0
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+The rank of $A$ is the number of pivot columns in $A$, and $\dim(\nul(A))$ is the number of free variables in $A$. As $A$ is row equivalent to $B$, we can see that columns 1, 3, and 5 are pivot columns, and thus $\rank(A) = 3$. As there are 5 columns, it follows that there are 2 free variables, and thus $\dim(\nul(A)) = 2$.
+\begin{itemize}
+	\item The basis for $\col(A)$ will be the pivot columns of $A$: 
+\[
+\set*{
+\begin{bmatrix}
+	1 \\
+	-2 \\
+	-3 \\
+	3
+\end{bmatrix},
+\begin{bmatrix}
+	4 \\
+	-6 \\
+	-6 \\
+	4
+\end{bmatrix},
+\begin{bmatrix}
+	9 \\
+	-10 \\
+	-3 \\
+	0
+\end{bmatrix}}
+.
+\] 
+\item The basis for $\row(A)$ will be the nonzero rows in an echelon form of $A$. As $B$ is in echelon form and is row equivalent to $A$, the basis for $\row(A)$ is: 
+\[
+\set*{
+\begin{bmatrix}
+	1 & -3 & 0 & 5 & -7 
+\end{bmatrix},
+\begin{bmatrix}
+	0 & 0 & 2 & -3 & 8
+\end{bmatrix},
+\begin{bmatrix}
+	0 & 0 & 0 & 0 &5
+\end{bmatrix}}
+\] 
+\item We first find the reduced row echelon form of $A$:
+	\begin{align*}
+		B &=	\begin{bmatrix}
+		1 & -3 & 0 & 5 & -7 \\
+		0 & 0 & 2 & -3 & 8 \\
+		0 & 0 & 0 & 0 & 5 \\
+		0 & 0 & 0 & 0 & 0
+	\end{bmatrix} \\
+	\intertext{$\sim 1/5 R_3 \to R_3$.}
+		  &\sim	\begin{bmatrix}
+		1 & -3 & 0 & 5 & -7 \\
+		0 & 0 & 2 & -3 & 8 \\
+		0 & 0 & 0 & 0 & 1 \\
+		0 & 0 & 0 & 0 & 0
+	\end{bmatrix} 
+	\intertext{$\sim R_1 + 7R_3 \to R_1, R_2 - 8R_3 \to R_2$.}
+			B \sim C &=		\begin{bmatrix}
+		1 & -3 & 0 & 5 & 0 \\
+		0 & 0 & 2 & -3 & 0 \\
+		0 & 0 & 0 & 0 & 1 \\
+		0 & 0 & 0 & 0 & 0
+	\end{bmatrix} 
+	\end{align*}
+	The equation $A\bm{x} = \bm{0}$ is equivalent to $C\bm{x} = \bm{0}$, that is:
+	\begin{align*}
+		x_1 -3x_2 + 5x_4 &= 0 \\
+		2x_3 - 3x_4 &= 0 \\
+		x_5 &= 0 
+	\end{align*}
+	So: 
+	\begin{align*}
+		&x_1 = -5x_4 + 3x_2 \\
+		&x_2 \text{ is free.} \\
+		&x_3 = \frac{3}{2}x_4 \\
+		&x_4 \text{ is free.} \\
+		&x_5 = 0
+	\end{align*}
+	Thus:
+	\[
+	\begin{bmatrix}
+		x_1 \\
+		x_2 \\
+		x_3 \\
+		x_4
+	\end{bmatrix} =
+	x_2
+	\begin{bmatrix}
+	3 \\
+	1 \\
+	0 \\
+	0 \\
+	0
+	\end{bmatrix} +
+	x_4
+	\begin{bmatrix}
+		-5 \\
+		0 \\
+		\frac{3}{2} \\
+		1 \\
+		0
+	\end{bmatrix}
+	\] 
+	Thus, a basis for $\nul(A)$ is:
+	\[
+		\set*{
+	\begin{bmatrix}
+	3 \\
+	1 \\
+	0 \\
+	0 \\
+	0
+	\end{bmatrix},
+	\begin{bmatrix}
+		-5 \\
+		0 \\
+		\frac{3}{2} \\
+		1 \\
+		0
+	\end{bmatrix}
+		}
+	\] 
+\end{itemize}
+\begin{ques}
+	If $A$ is a $3 \times 4$ matrix, what is the largest possible dimension of $\row(A)$ and what is the smallest possible dimension of $\nul(A)$? What about for $A^T$?
+\end{ques}
+\textbf{Solution}
+\begin{itemize}
+	\item As the dimension of $\row(A)$ is the rank of $A$, and as $\rank(A)$ is the number of pivot positions in $A$ and there can only be  3 pivot positions in a $3 \times 4$ matrix, the largest $\dim(\row(A))$ is 3. As in a $4 \times 3$ matrix, there are also a maximum of 3 pivot positions, the largest $\dim(\row(A^T))$ is also 3.
+	\item As $\dim \nul A = n - \rank A$ for a $m \times n$ matrix $A$, we can find the minimum value of $\dim \nul A$ by maximizing $\rank A$. For a $3 \times 4$ matrix $A$, the maximum rank is 3 and thus $\dim \nul A = 4 - 3 = 1$. For $A^T$, the shape of the matrix is $4 \times 3$ and the maximum rank is also 3, and thus  $\dim \nul A = 3 - 3 = 0$.
+\end{itemize}
+\begin{ques}
+	Let $\basis = \set*{\bm{b_1}, \bm{b_2}}$, and let $\mathcal{C} = \set*{\bm{c_1}, \bm{c_2}}$ be the bases depicted below for $\reals^2$. Find the change of coordinate matrix from $\basis$ to $\mathcal{C}$ and the change of coordinate matrix from $\mathcal{C}$ to $\basis$.
+	\[
+		\bm{b_1} = 
+		\begin{bmatrix}
+	7 \\
+	-2
+		\end{bmatrix},
+		\bm{b_2} = 
+		\begin{bmatrix}
+			2 \\
+			-1
+		\end{bmatrix},
+		\bm{c_1} =
+		\begin{bmatrix}
+			4 \\
+			1
+		\end{bmatrix},
+		\bm{c_2} = 
+		\begin{bmatrix}
+			5 \\
+			2
+		\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+Let $
+\begin{bmatrix}
+	7 \\
+	-2 
+\end{bmatrix} = a
+\begin{bmatrix}
+	4 \\
+	1
+\end{bmatrix} +
+b
+\begin{bmatrix}
+	5 \\
+	2
+\end{bmatrix}
+$. We get the following system:
+\begin{align*}
+	7 &= 4a + 5b \\
+	-2 &= a + 2b
+\end{align*}
+We solve for $a$ and $b$:
+\begin{align*}
+	a &= -2b -2 \\
+	7 &= 4(-2b -2) + 5b \\
+	7 &= -8b - 8 + 5b \\
+	15 &= -3b \\
+	-5 &= b \\
+	-2(-5) - 2 &= a \\
+	8 &= a
+\end{align*}
+Let
+$\begin{bmatrix}
+	2 \\
+	-1
+\end{bmatrix} = 
+a
+\begin{bmatrix}
+	4 \\
+	1
+\end{bmatrix} +
+b
+\begin{bmatrix}
+	5 \\
+	2
+\end{bmatrix}
+$. We get the following system:
+\begin{align*}
+	2 &= 4a + 5b \\
+	-1 &= a + 2b
+\end{align*}
+We solve for $a$ and $b$:
+\begin{align*}
+	a &= -1 - 2b \\
+	2 &= 4(-1 - 2b) + 5b \\
+	2 &= -4 - 8b + 5b \\
+	6 &= -3b \\
+	-2 &= b \\
+	a &= -1 - 2(-2) \\
+	a &= 3
+\end{align*}
+Thus, the change of base matrix from $\basis$ to $\mathcal{C}$ is $
+\begin{bmatrix}
+	8 & 3 \\
+	-5 & -2
+\end{bmatrix}
+$. The change of base matrix from $\mathcal{C}$ to $\basis$ is the inverse matrix. The determinant is $8(-2) - 3(-5) = -16 + 15 = -1$. The inverse matrix will thus be given by:
+\[
+-1 
+\begin{bmatrix}
+	-2 & -3 \\
+	5 & 8
+\end{bmatrix}
+\] 
+Thus, the change of base matrix from $\mathcal{C}$ to $\basis$ is $
+\begin{bmatrix}
+	2 & 3 \\
+	-5 & -8
+\end{bmatrix}
+$.
+\begin{ques}
+	In $\mathbb{P}_2$, find the change-of-coordinates matrix from the basis
+
+	$\basis = 
+	\set*{1 - 2t + t^2, 3 - 5t + 4t^2, 2t + 3t^2}
+	$ to the standard basis $\mathcal{C} = \set*{1, t, t^2}$. Having done that, find the  $\basis$ coordinates of the polynomial $-1 + 2t$.
+\end{ques}
+\textbf{Solution}
+
+We first rewrite the standard basis as $\mathcal{C} = 
+\set*{
+	\begin{bmatrix}
+		1 \\
+		0 \\
+		0 
+	\end{bmatrix},
+	\begin{bmatrix}
+		0 \\
+		1 \\
+		0
+	\end{bmatrix},
+	\begin{bmatrix}
+		0 \\
+		0 \\
+		1
+	\end{bmatrix}
+}
+$ and the basis $\basis$ as $
+\set*{
+	\begin{bmatrix}
+		1 \\
+		-2 \\
+		1 
+	\end{bmatrix},
+	\begin{bmatrix}
+		3 \\
+		-5 \\
+		4
+	\end{bmatrix},
+	\begin{bmatrix}
+		0 \\
+		2 \\
+		3
+	\end{bmatrix}
+}
+$. It follows that the change-of-coordinates matrix will be $
+\begin{bmatrix}
+	1 & 3 & 0 \\
+	-2 & -5 & 2 \\
+	1 & 4 & 3
+\end{bmatrix}
+$.
+\\
+
+To find the $\basis$ coordinates of the polynomial $-1 + 2t$, we find the linear combination of the columns of the change-of-coordinates matrix from $\basis$ to $\mathcal{C}$ such that
+\[
+a 
+\begin{bmatrix}
+	1 \\
+	-2 \\
+	1
+\end{bmatrix} + 
+b
+\begin{bmatrix}
+	3 \\
+	-5 \\
+	4
+\end{bmatrix} +
+c
+\begin{bmatrix}
+	0 \\
+	2 \\
+	3
+\end{bmatrix} = 
+\begin{bmatrix}
+	-1 \\
+	2 \\
+	0
+\end{bmatrix}
+\] 
+We can form the augmented matrix and reduce it:
+\begin{align*}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & 0 & -1 \\
+		-2 & -5 & 2 & 2 \\
+		1 & 4 & 3 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_2 + 2R_1 \to R_2, R_3 - R_1 \to R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & 0 & -1 \\
+		0 & 1 & 2 & 0 \\
+		0 & 1 & 3 & 1
+	\end{bmatrix}
+	\intertext{$\sim R_3 - R_2 \to R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & 0 & -1 \\
+		0 & 1 & 2 & 0 \\
+		0 & 0 & 1 & 1
+	\end{bmatrix}
+	\intertext{$\sim R_2 - 2R_3 \to R_2$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & 0 & -1 \\
+		0 & 1 & 0 & -2 \\
+		0 & 0 & 1 & 1
+	\end{bmatrix}
+	\intertext{$\sim R_1 - 3R_2 \to R_1$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 0 & 0 & 5 \\
+		0 & 1 & 0 & -2 \\
+		0 & 0 & 1 & 1
+	\end{bmatrix}
+\end{align*}
+Thus, the $\basis$ coordinates of $-1 +2t$ is $
+\begin{bmatrix}
+	5 \\
+	-2 \\
+	1
+\end{bmatrix}
+$.
+\begin{ques}
+	Suppose that $\basis = \set*{\bm{b_1}, \dots, \bm{b_n}}$ and $\mathcal{C}$ are bases for an $n$-dimensional vector space $V$ and that there is an $n \times n$ matrix $Q$ such that for any vector $\bm{v} \in V$, their coordinates are related by the rule $[\bm{v}]_\mathcal{C} = Q[\bm{v}]_\basis$. Show that for any $k \in \set*{1, \dots, n}$, the coordinate vector $[\bm{b}_k]_\mathcal{C}$ is the $k$'th column of the matrix $Q$. (This shows that the matrix for the coordinate transformation from $\basis$ to $\mathcal{C}$ is unique.)
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	From the rule, for any $k \in \set*{1, \dots, n}$, the coordinate vector $[\bm{b}_k]_\mathcal{C} = Q[\bm{b}_k]_\basis$. $[\bm{b}_k]_\basis$ will be the vector $
+	\begin{bmatrix}[c]
+	c_1 \\
+	\vdots \\
+	c_n
+\end{bmatrix}$ such that 
+$\bm{b_k} = c_1 \bm{b_0} + c_2 \bm{b_1} + \dots + c_n \bm{b_n}$. The linear combination that forms $\bm{b_k}$ is the linear combination where $c_k = 1$ and $\forall i \in \set*{1, \dots, n} \setminus \set*{k}(c_i = 0)$. Let $q_{ij}$ represent the element in the $i$'th row and $j$'th column of  $Q$. The resulting multiplication of  $Q$ and $[\bm{b}_k]_\basis$ will thus be:
+\[
+	\begin{bmatrix}[c]
+	c_1 q_{11} + \dots + c_k q_{1k} + \dots + c_n q_{1n} \\
+	\vdots\\ 
+	c_1 q_{n1} + \dots + c_k q_{nk} + \dots + c_n q_{nn}
+\end{bmatrix}
+\] 
+As all $c_i$ except for $c_k$ is 0, and $c_k$ is 1, the result will be
+\[
+	\begin{bmatrix}[c]
+	q_{1k} \\
+	\vdots \\
+	q_{nk}
+	\end{bmatrix}
+	\]
+	As this is the $k$'th column of $Q$, the proof is complete.
+\end{proof}
+\section{Proof Problems}
+\begin{ques}
+	The set $\reals^\nats$ of all infinite sequences $(a_1, a_2, \dots)$ is a vector space. Let $F$ be the set of infinite sequences $(a_1, a_2, \dots)$ satisfying
+	\[
+		a_i + a_{i+1} = a_{i+2} \ \forall i \geq 1
+	\] 
+	Prove that $F$ is a subspace of $\reals^{\nats}$ and find a basis for $F$.
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	To prove that $F$ is a subspace of $\reals^\nats$, we must show that $F$ has the following properties:
+	\begin{enumerate}[1.]
+		\item The zero vector of $\reals^\nats$ is in $F$.
+		\item $F$ is closed under addition.
+		\item $F$ is closed under multiplication by scalars.
+	\end{enumerate}
+	\begin{itemize}
+		\item $\bm{0} = (0,0,\dots) \in F$, as $0 + 0 = a_i + a_{i+1} = 0 = a_{i+2} \forall i \geq 1$.
+		\item Let $\bm{u} = (a_1, a_2, \dots)$ and $\bm{v} = (b_1, b_2, \dots)$, $\bm{u}, \bm{v} \in F$. As $a_i + a_{i+1} = a_{i+2}$ and $b_i + b_{i+1} = b_{i+2}$ $\forall i \geq 1$, it follows that $(a_i + b_i) + (a_{i+1} + b_{i+1}) = a_{i+2} + b_{i+2}$ $\forall i \geq 1$, and thus $\forall \bm{u},\bm{v} \in F(\bm{u} + \bm{v} = (a_1 + b_1, a_2 + b_2, \dots) \in F)$.
+		\item Let $\bm{u} = (a_1, a_2, \dots)$. Then, $a_i + a_{i+1} = a_{i+2} \forall i \geq 1$. If $\bm{u}$ is multiplied by a scalar $c$, then $c\bm{u} = (ca_1, ca_2, \dots)$. As $ca_i + ca_{i+1} = c(a_i + a_{i+1}) = ca_{i+2} \forall i \geq 1$, it follows that $\forall c \forall \bm{u} \in F(c\bm{u} \in F)$.
+	\end{itemize}
+	As all three properties hold for $F$, it follows that $F$ is a subspace of $\reals^\nats$, and the proof is complete.
+\end{proof}
+We can rewrite $F$ using its implicit definition:
+\begin{align*}
+	F &= \set*{(a_1, a_2, a_1 + a_2, a_1 + 2a_2, 2a_1 + 3a_2, 3a_1 + 5a_2, \dots) \mid a_1, a_2 \in \reals} \\
+	  &= \set*{a_1(1, 0, 1, 1, 2, 3, \dots) + a_2(0, 1, 1, 2, 3, 5, \dots) \mid a_1, a_2 \in \reals}
+\end{align*}
+As all elements of $F$ are linear combinations of $(1,0,1,1,2,3,\dots)$ and  $(0,1,1,2,3,5,\dots)$ and are linearly independent, it follows that they form the basis of $F$.
+\begin{ques}
+	Let $V$ and $W$ be vector spaces and let $\set*{\bm{v_1}, \bm{v_2}, \dots, \bm{v_k}}$ be a basis of $V$. Prove that a linear transformation $T: V \to W$ is onto if and only if the vectors $T(\bm{v_1}), T(\bm{v_2}), \dots, T(\bm{v_k})$ span $W$.
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	We will prove the biconditional statement by proving both directions.
+	\\
+
+	($\implies$) Assume  $T: V \to W$ is onto. As $\set*{\bm{v_1}, \bm{v_2}, \dots, \bm{v_k}}$ is a basis of $V$, it follows that any vector $\bm{u} \in V$ can be formed by a linear combination $\bm{u} = c_1 \bm{v_1} + c_2 \bm{v_2} + \dots + c_k \bm{v_k}$. We apply the transformation $T$ on both sides: $T(\bm{u}) = T(c_1\bm{v_1} + c_2\bm{v_2}+ \dots + c_k \bm{v_k})$. By properties of linearity, $T(\bm{u}) = c_1T(\bm{v_1}) + c_2T(\bm{v_2}) + \dots + c_kT(\bm{v_k})$. As the transformation is onto, all vectors in  $W$ can be formed by some $\bm{u}$. As $T(\bm{u})$ is a linear combination of $T(\bm{v_1}), T(\bm{v_2}), \dots T(\bm{v_k})$, it follows that $T(\bm{v_1}), T(\bm{v_2}), \dots, T(\bm{v_k})$ span $W$.
+	\\
+
+	($\impliedby$) Assume $T(\bm{v_1}), T(\bm{v_2}), \dots, T(\bm{v_k})$ span $W$. Then, all vectors in $W$ can be formed by a linear combination of $T(\bm{v_1}), T(\bm{v_2}), \dots, T(\bm{v_k})$. Let $\bm{w} \in W$. $\bm{w} = c_1 T(\bm{v_1}) + c_2 T(\bm{v_2}) + \dots + c_k T(\bm{v_k})$. By properties of linearity, $\bm{w} = T(c_1 \bm{v_1}) + T(c_2 \bm{v_2}) + \dots + T(c_k \bm{v_k}) = T(c_1 \bm{v_1} + c_2 \bm{v_2} + \dots + c_k \bm{v_k})$. As $\set*{\bm{v_1}, \bm{v_2}, \dots, \bm{v_k}}$ is a basis of $V$, it follows that every vector $\bm{u} \in V$ is a linear combination $c_1 \bm{v_1} + c_2 \bm{v_2} + \dots + c_k \bm{v_k}$. Thus, $\forall \bm{w} \in W(\bm{w} = T(\bm{u}))$, meaning for all vectors $\bm{w}$ in $W$, there exists a vector $\bm{u}$ in $V$ such that the transformation $T$ will map $\bm{u}$ to $\bm{w}$, and thus $T: V \to W$ is onto.
+	\\
+
+	As we have proved both directions, the proof is complete.
+\end{proof}
+\end{document}

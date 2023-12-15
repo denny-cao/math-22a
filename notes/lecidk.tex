@@ -1,0 +1,229 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\usetikzlibrary{matrix,decorations.pathreplacing, calc, positioning,fit, bending}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{.}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{axiom}{Axiom}
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+\newcommand{\xor}{\oplus}
+\newcommand{\powset}{\mathcal{P}}
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Linear Algebra
+\newcommand{\nul}{\text{Nul}}
+\newcommand{\col}{\text{Col}}
+\newcommand{\row}{\text{Row}}
+\newcommand{\adj}{\text{adj}}
+\newcommand{\spa}[1]{\text{Span}\set*{#1}}
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\poly}{\mathbb{P}}
+\newcommand{\basis}{\mathcal{B}}
+\newcommand{\kernel}{\text{ker}}
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\hypersetup{
+	linkcolor=magenta
+}
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\subtitle{PSet 1}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\usepackage{titling}
+\renewcommand\maketitlehooka{\null\mbox{}\vfill}
+\renewcommand\maketitlehookd{\vfill\null}
+\makeatletter
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{\@title} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		\normalsize Eigenvalues and Eigenvectors --- \today
+		\endgroup \vskip 0.3cm
+		\normalsize Pset Due: November 8, 2023 \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm
+		\hrulefill
+	\end{flushleft}\egroup
+}
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\theques}{\thesection.\alph{ques}} % Change subtheo counter for alpha output
+\declaretheorem[style=basehead,name=Answer,sibling=theorem]{ans}
+\renewcommand{\theans}{\thesection.\alph{ans}}
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Administrivia}
+\begin{itemize}
+	\item Practice Midterm: 4-5:30 PM at Science Center Lecture Hall B
+	\item Review Session 7-9 PM at Jefferson 250 (Today)
+\end{itemize}
+\section{Review}
+\begin{theorem}
+	Let $\basis = \set*{b_1, \dots, b_n}$ and $\mathcal{C} = \set*{c_1, \dots, c_n}$ be bases of a vector space $V$. Then $\exists$ a unique $n \times n$ matrix $P \mid [x]_\mathcal{C} = [x]_\basis$.
+\end{theorem}
+\begin{itemize}
+	\item $P$ is the \textbf{change of coordinate matrix from $\basis$ to $\mathcal{C}$}.
+		\[
+			P = [[b_1]_\mathcal{C}, [b_n]_\mathcal{C}]
+		\] 
+		Also $P^{-1}$ is the change of coordinates matrix from $\mathcal{C}$ to $\basis$.
+	\item Let $V$ be a vector space w/basis $\basis = \set*{b_1, \dots, b_n}$ and $W$ be a vector space with basis $\mathcal{C} = \set*{c_1, \dots, c_n}$. With transformation $T: V \to W$, we want an  $m \times n$ matrix $M$ s.t. $[T(x)]_\mathcal{C} = M[x]_\basis \forall x \in V$. $M$ is the \textbf{matrix of $T$ relative to bases $\basis$ and $\mathcal{C}$}.
+		\[
+			M = [[T(b_1)]_\mathcal{C}, \dots, [T(b_n)]_\mathcal{C}]
+		\] 
+\end{itemize}
+	\begin{theorem}
+		[Diagonal Representation Theorem]
+		Suppose $A = PDP^{-1}$ where $D$ is a diagonal matrix and $T(x) = Ax$. If $\basis$ is the basis for $\reals^n$ formed by columns of $P$, then $D$ is the matrix of $T$ relative to $\basis$.
+	\end{theorem}
+	\begin{itemize}
+		\item If $A\land B$ are $n \times n$ matrices, then $A$ is \textbf{similar} to $B$ if $\exists$ an invertible matrix $P$ s.t. $A = PBP^{-1}$.
+	\end{itemize}
+	
+	\begin{definition}
+		[Eigenvalue, Eigenvector]
+		If $A$ is an $n \times n$ matrix, then $\lambda \in \reals$ is an \textbf{eigenvalue} of $A$ if $\exists$ a non-zero vector $v$, called an \textbf{eigenvector} corresponding to $\lambda$, such that
+		\[
+		Av = \lambda v
+		\] 
+	\end{definition}
+	\begin{example}
+		Let $A = 
+\begin{bmatrix}
+	1 & 3 \\
+	4 & 2
+\end{bmatrix}
+		$ and $v = 
+\begin{bmatrix}
+	1 \\
+	-1
+\end{bmatrix}
+		$. Determine if $v$ is an eigenvector of $A$ and find the corresponding eigenvalue.
+	\end{example}
+	\begin{soln}
+		$A\bm{v} = \lambda \bm{v}$. In this case, $\lambda = -2$.
+	\end{soln}
+	\begin{definition}
+		[Eigenspace]
+		If $\lambda$ is an eigenvalue of an $n \times n$ matrix $A$, then the set of all solutions $v$ to $Av = \lambda v$ is the \textbf{eigenspace} of $A$ corresponding to $\lambda$.
+	\end{definition}
+	\begin{itemize}
+		\item Eigenspace is $\kernel (A - \lambda I_n)$.
+	\end{itemize}
+	\begin{example}
+		Let $A = 
+\begin{bmatrix}
+	4 & -1 & 6 \\
+	2 & 1 & 6 \\
+	2 & -1 & 8
+\end{bmatrix}
+		$, then $\lambda = 2$ is an eignvalue. Find the corresponding eigenspace.
+	\end{example}
+	\begin{soln} \
+		\begin{itemize}
+			\item $\dim A = 1 \implies$ 1 vector
+			\item $\dim A = 2 \implies 2$ linearly independent eigenvectors
+			\item $\dim A = 3 \implies 3$ linearly independent eigenvectors
+		\end{itemize}
+		\begin{align*}
+			A\bm{v} - \lambda \bm{v} &= \bm{0} \\
+			\begin{bmatrix}
+				2 & -1 & 6 \\
+				2 & -1 & 6 \\
+				2 & -1 & 6
+			\end{bmatrix} \bm{v} &= \bm{0}
+		\end{align*}
+		Thus,  $
+\begin{bmatrix}
+	\frac{1}{2} \\
+	1 \\
+	0
+\end{bmatrix},
+\begin{bmatrix}
+	-3 \\
+	0 \\
+	1
+\end{bmatrix}
+		$.
+	\end{soln}
+	\begin{theorem}
+		The eigenvalues of a triangular matrix are the diagonal entries.
+	\end{theorem}
+	\begin{proof}
+		Eigenspace is $\kernel (A - \lambda I_n)$. Let $\lambda = a_{ii}$, which is an entry in the diagonal. Then, $(A - a_{ii}I_n) = \mb{v} = \bm{0}$. All diagonal entries will be subtracted by $a_{ii}$ and thus the entry at $i$'th column and $i$'th row will be 0. Thus, $\det (A - a_{ii}I) = 0$, as determinant of triangular matrix is product of diagonal.
+	\end{proof}
+	\begin{theorem}
+		If $v_1, \dots, v_p$ are eigenvectors corresponding to distinct eigenvalues $\lambda_1, \dots, \lambda_p$ of an $n \times n$ matrix $A$, then $v_1, \dots, v_p$ are linearly independent.
+	\end{theorem}
+	\begin{proof}
+			
+	\end{proof}
+\end{document}

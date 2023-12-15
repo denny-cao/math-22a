@@ -1,0 +1,968 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\usetikzlibrary{matrix,decorations.pathreplacing, calc, positioning,fit, bending}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{.}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{axiom}{Axiom}
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\newtheorem{sol}{Solution}[section]
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+\newcommand{\xor}{\oplus}
+\newcommand{\powset}{\mathcal{P}}
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Linear Algebra
+\newcommand{\nul}{\text{Nul}}
+\newcommand{\col}{\text{Col}}
+\newcommand{\row}{\text{Row}}
+\newcommand{\adj}{\text{adj}}
+\newcommand{\spa}[1]{\text{Span}\set*{#1}}
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\poly}{\mathbb{P}}
+\newcommand{\basis}{\mathcal{B}}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\dist}[1]{\text{dist}\paren*{#1}}
+\newcommand{\proj}[2]{\text{proj}_{#1}{#2}}
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\hypersetup{
+	linkcolor=magenta
+}
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 11
+		\endgroup \vskip 0.3cm
+		Due: Tuesday, November 21, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\section{Computational Problems}
+\begin{sol} \
+	\begin{enumerate}[(a)]
+		\item Let $u = 
+\begin{bmatrix}
+	0 \\
+	-5 \\
+	2
+\end{bmatrix}, v =
+\begin{bmatrix}
+	-4 \\
+	-1 \\
+	8
+\end{bmatrix}
+			$. Then:
+					\begin{align*}
+						||u|| &= \sqrt{u \cdot u} &\quad ||v|| &= \sqrt{v \cdot v} \\
+							  &= \sqrt{(-5)^2 + 2^2} &\quad &= \sqrt{(-4)^2 + (-1)^2 + 8^2}\\
+							  &= \sqrt{29} &\quad &= 9
+					\end{align*}
+					\begin{align*}
+						u \cdot v &= 0(-5) + (-5)(-1) + 2(8) \\
+								  &= 21
+					\end{align*}
+					\begin{align*}
+						\dist{u,v}&= ||u - v|| \\
+								  &= \sqrt{4^2 + (-4)^2 + (-6)^2} \\
+								  &= 2\sqrt{17}
+					\end{align*}
+					As $u \cdot v \neq 0$, the vectors are not orthogonal.
+		\item Let $u = 
+\begin{bmatrix}
+	12 \\
+	3 \\
+	-5
+\end{bmatrix}, v =
+\begin{bmatrix}
+	2 \\
+	-3 \\
+	3
+\end{bmatrix}
+			$. Then:
+					\begin{align*}
+						||u|| &= \sqrt{u \cdot u} &\quad ||v|| &= \sqrt{v \cdot v} \\
+							  &= \sqrt{12^2 + 3^2 + (-5)^2} &\quad &= \sqrt{2^2 + (-3)^2 + 3^2}\\
+							  &= \sqrt{178} &\quad &= \sqrt{22}
+					\end{align*}
+					\begin{align*}
+						u \cdot v &= 12(2) + 3(-3) + (-5)(3) \\
+								  &= 0
+					\end{align*}
+					\begin{align*}
+						\dist{u,v}&= ||u - v|| \\
+								  &= \sqrt{10^2 + 6^2 + (-8)^2} \\
+								  &= 10\sqrt{2}
+					\end{align*}
+					As $u \cdot v = 0$, the vectors are orthogonal.
+			\item Let $u = 
+\begin{bmatrix}
+	-3 \\
+	7 \\
+	4 \\
+	0
+\end{bmatrix}, v =
+\begin{bmatrix}
+	1 \\
+	-8 \\
+	15 \\
+	-7
+\end{bmatrix}
+			$. Then:
+					\begin{align*}
+						||u|| &= \sqrt{u \cdot u} &\quad ||v|| &= \sqrt{v \cdot v} \\
+							  &= \sqrt{(-3)^2 + 7^2 + 4^2} &\quad &= \sqrt{1^2 + (-8)^2 + 15^2 + (-7)^2} \\
+							  &= \sqrt{74} &\quad &= \sqrt{339}
+					\end{align*}
+					\begin{align*}
+						u \cdot v &= -3(1) + 7(-8) + 4(15) \\
+								  &= 1
+					\end{align*}
+					\begin{align*}
+						\dist{u,v}&= ||u - v|| \\
+								  &= \sqrt{(-4)^2 + 15^2 + (-11)^2 + 7^2} \\
+								  &= \sqrt{411}
+					\end{align*}
+					As $u \cdot v \neq 1$, the vectors are not orthogonal.
+
+	\end{enumerate}
+\end{sol}
+\begin{sol}
+	A unit vector $u$ in the same direction as the vector $v =
+\begin{bmatrix}
+	-6 \\
+	4 \\
+	-3
+\end{bmatrix}
+	$ can be found by:
+	\begin{align*}
+		u = \frac{1}{||v||}v &= \frac{1}{\sqrt{(-6)^2 + 4^2 + (-3)^2}}
+		\begin{bmatrix}
+			-6 \\
+			4 \\
+			-3
+		\end{bmatrix} \\
+							 &= \frac{\sqrt{61}}{61}
+							 \begin{bmatrix}
+							 	-6 \\
+								4 \\
+								-3
+							 \end{bmatrix}
+	\end{align*}
+\end{sol}
+\begin{sol}
+	To show that a set is an orthogonal set, we must show that all distinct pairs in the set are orthogonal.
+	\begin{align*}
+		u_1 \cdot u_2 &= 3(2) + (-3)2 = 0 \\
+		u_1 \cdot u_3 &= 3(1) = 3(1) = 0 \\
+		u_2 \cdot u_3 &= 2(1) + 2(1) (-1)(4) = 0
+	\end{align*}
+	Thus, $\set*{u_1, u_2, u_3}$ is an orthogonal set.
+	\\
+
+	We can find $x$ with respect to this basis from Theorem 5 by the following:
+\[
+	x = \frac{x\cdot u_1}{u_1 \cdot u_1}u_1 + \frac{x\cdot u_2}{u_2 \cdot u_2}u_2 +\frac{x\cdot u_3}{u_3 \cdot u_3}u_3, [x]_\basis = 
+	\begin{bmatrix}
+		\frac{x\cdot u_1}{u_1 \cdot u_1} \\
+		\frac{x\cdot u_2}{u_2 \cdot u_2} \\
+		\frac{x\cdot u_3}{u_3 \cdot u_3} \\
+	\end{bmatrix}
+\] 
+	\begin{align*}
+		x \cdot u_1 &= 5(3) -3(-3) &\quad x \cdot u_2 &= 5(2) - 3(2) + 1(-1) &\quad x \cdot u_3 &= 5(1) - 3(1) + 1(4) \\
+					&= 24 &\quad &= 3 &\quad &=6 \\
+		u_1\cdot u_1 &= 3(3) -3(-3) &\quad u_2 \cdot u_2 &= 2(2) + 2(2) -1(-1) &\quad u_3 \cdot u_3 &= 1(1) + 1(1) + 4(4) \\
+					 &= 18 &\quad &= 9 &\quad &= 18
+	\end{align*}
+	\begin{align*}
+		c_1 = \frac{24}{18} = \frac{4}{3} \quad c_2 = \frac{3}{9} = \frac{1}{3} \quad c_3 = \frac{6}{18} = \frac{1}{3}
+	\end{align*}
+	Thus, $x$ with respect to this basis is $
+	\begin{bmatrix}[c]
+	4/3 \\
+	1/3 \\
+	1/3
+\end{bmatrix}
+	$.
+\end{sol}
+\begin{sol}
+	To show that a set is an orthonormal set, we must show that all distinct pairs in the set are orthogonal and are unit vectors. Let $u_1 = 
+	\begin{bmatrix}[c]
+	1/\sqrt{18} \\
+	4/\sqrt{18} \\
+	1/\sqrt{18}
+\end{bmatrix},
+u_2 = 
+\begin{bmatrix}[c]
+	1/\sqrt{2} \\
+	0 \\
+	-1/\sqrt{2} \\
+\end{bmatrix}
+	$.
+
+	As $u_1 \cdot u_2 = 1/\sqrt{36} - 1/\sqrt{36} = 0$, $S$ is an orthogonal set. 
+\\
+
+	We will now show that each vector in the set is a unit vector.
+	\begin{align*}
+		&u_1 \cdot u_1 = 1/18 + 16/18 + 1/18 = 1 \\
+		&u_2 \cdot u_2 = 1/2 + 1/2 = 1
+	\end{align*}
+	As $u_1,u_2$ are also unit vectors, $S$ is an orthonormal set.
+	\\
+
+	From Theorem 10, $\proj{S}{x}$ can be obtained by:
+	\[
+		\proj{S}{x} = (x \cdot u_1)u_1 + (x \cdot u_2)u_2
+	\] 
+	\begin{align*}
+		&x_\cdot u_1 = 8/\sqrt{18} - 16/\sqrt{18} - 3/\sqrt{18} = -11/\sqrt{18}\\
+		&x_ \cdot u_2 = 8/\sqrt{2} + 3/\sqrt{2} = 11/\sqrt{2}
+	\end{align*}
+	Thus:
+	\begin{align*}
+		\proj{S}{x} &= -11/\sqrt{18}
+		\begin{bmatrix}[c]
+			1/\sqrt{18} \\
+			4/\sqrt{18} \\
+			1/\sqrt{18}
+		\end{bmatrix} + 11/\sqrt{2} 
+		\begin{bmatrix}[c]
+			1/\sqrt{2} \\
+			0 \\
+			-1/\sqrt{2}
+		\end{bmatrix} \\
+					&=
+					\begin{bmatrix}[c]
+						-11/18 \\
+						-44/18 \\
+						-11/18
+					\end{bmatrix} + 
+					\begin{bmatrix}[c]
+						11/2 \\
+						0 \\
+						-11/2
+					\end{bmatrix} \\
+					&= 
+					\begin{bmatrix}[r]
+						44/9 \\
+						-22/9 \\
+						-121/9
+					\end{bmatrix}
+	\end{align*}
+\end{sol}
+\begin{sol}
+	\begin{proof}
+		Let $x,y$ be vectors in $\reals^n$. Then, by Theorem 8, $x = \hat{x} + z_x$ and  $y = \hat{y} + z_y$, where  $\hat{x}, \hat{y} \in W$ and is the orthogonal projection of $x,y$ respectively onto $W$, and $z_x, z_y \in W^\perp$. Let $T$ be the orthogonal projection map from $\reals^n$ to $W$. We will show that $T$ is a linear transformation by showing that it is closed under vector addition and scalar multiplication.
+\\
+
+		Then, as $W$ and $W^\perp$ are subspaces of $\reals^n$, they are closed under vector addition and thus $\hat{x} + \hat{y} \in W$ and  $z_x + z_y \in W^\perp$. As the orthogonal decomposition of $x + y = (\hat{x} + \hat{y}) + (z_x + z_y)$:
+		\[
+			T(x+y) = \hat{(x+y)} = \hat{x} + \hat{y} = T(x) + T(y)
+		\] 
+		and thus the transformation is closed under vector addition.
+		\\
+
+		As $W$ and $W^\perp$ are subspaces of $\reals^n$, they are closed under scalar multiplication and thus $c\hat{x}, c\hat{y} \in W$ and $cz_x, cz_y \in W^\perp$. As the orthogonal decomposition of $cx = c(\hat{x}) + c(z_x)$:
+		\[
+			T(cx) = \hat{(cx)} = c\hat{x} = cT(x)
+		\] 
+		and thus the transformation is closed under scalar multiplication.
+		\\
+
+		As $T$ is closed under vector addition and scalar multiplication, $T$ is a linear transformation, and the proof is complete.
+	\end{proof}
+	From Theorem 10, the orthogonal projection map from $\reals^n$ onto $W$ is given by $T(x) = \proj{W}{x} = UU^Tx
+	$, where $U = 
+\begin{bmatrix}
+	e_1 & e_2 & \cdots & e_p
+\end{bmatrix}
+	$. By Theorem 6, $U$ has orthonormal columns if and only if $U^TU = I$, and thus the standard matrix for the orthogonal projection map from $\reals^n$ onto $W$ is $I_p$.
+\end{sol}
+\begin{sol}
+	We can find $y$ as a sum of a vector in $W$ by the following:
+	\[
+		y = \hat{y} + z
+	\] 
+	where $\hat{y} \in W$ and is the projection of $y$ onto $W$ and $z \in W^\perp$, where $z = y - \hat{y}$ which is orthogonal to $W$.
+	\[
+		\hat{y} = \frac{y \cdot u_1}{u_1 \cdot u_1} u_1 + 
+\frac{y \cdot u_2}{u_2 \cdot u_2} u_2 + \frac{y \cdot u_3}{u_3 \cdot u_3} u_3  
+	\] 
+	\begin{align*}
+		y \cdot u_1 &= 3 + 4 -6 &\quad y \cdot u_2 &= 3 + 5 + 6 &\quad y \cdot u_3 &= -4+ 5 - 6 \\
+					&= 1 &\quad &= 14 &\quad &= -5 \\
+		u_1 \cdot u_1 &= 1 + 1 + 1 &\quad u_2 \cdot u_2 &= 1 + 1 + 1 &\quad u_3 \cdot u_3 &= 1 + 1 + 1 \\
+					  &= 3 &\quad &= 3 &\quad &= 3
+	\end{align*}
+	\[
+		\hat{y} = \frac{1}{3} 
+		\begin{bmatrix}
+			1 \\
+			1 \\
+			0 \\
+			-1
+		\end{bmatrix} + 
+		\frac{14}{3} 
+		\begin{bmatrix}
+			1 \\
+			0 \\
+			1 \\
+			1
+		\end{bmatrix} -
+		\frac{5}{3}
+		\begin{bmatrix}
+			0 \\
+			-1 \\
+			1 \\
+			-1
+		\end{bmatrix} =
+		\begin{bmatrix}
+			5 \\
+			2 \\
+			3 \\
+			6
+		\end{bmatrix}
+	\] 
+	As $z = y - \hat{y}$,
+	 \[
+	z = 
+	\begin{bmatrix}
+		3 \\
+		4\\
+		5\\
+		6
+	\end{bmatrix} -
+	\begin{bmatrix}
+		5 \\
+		2 \\
+		3 \\
+		6
+	\end{bmatrix} = 
+	\begin{bmatrix}
+		-2 \\
+		2 \\
+		2 \\
+		0
+	\end{bmatrix}
+	\] 
+	Thus, $y$ as a sum of a vector in $W$ and a vector orthogonal to $W$ is:
+	\[
+	y = 
+	\begin{bmatrix}
+		5 \\
+		2 \\
+		3 \\
+		6
+	\end{bmatrix} +
+	\begin{bmatrix}
+		-2 \\
+		2 \\
+		2 \\
+		0
+	\end{bmatrix}
+	\] 
+\end{sol}
+\begin{sol}
+	The closest point to $\spa{
+\begin{bmatrix}
+	2 \\
+	0 \\
+	-1 \\
+	-3
+\end{bmatrix},
+\begin{bmatrix}
+	5 \\
+	-2 \\
+	4 \\
+	2
+\end{bmatrix}
+	}$ is:
+	\[
+		\hat{z} = \frac{z \cdot v_1}{v_1\cdot v_1}v_1 + \frac{z \cdot v_2}{v_2 \cdot v_2}v_2
+	\] 
+	\begin{align*}
+		z \cdot v_1 &= 7 &\quad z \cdot v_2 &= 0 \\
+		v_1 \cdot v_1 &= 14 &\quad v_2 \cdot v_2 &= 49
+	\end{align*}
+	Thus, the closest point to $\spa{v_1, v_2}$ to $z$ is:
+	 \[
+		 \hat{z} = \frac{1}{2}v_1 = 
+		 \begin{bmatrix}
+		 	1 \\
+			0 \\
+			-1 \\
+			-3/2
+		 \end{bmatrix}
+	\] 
+\end{sol}
+\begin{sol}
+	If $u_3 \in \spa{u_1,u_2}$, then there exists $c_1, c_2$ such that
+	\[
+	u_3 = c_1u_1 + c_2u_2
+	\]
+	We expand to
+	\[
+	\begin{bmatrix}
+		0 \\
+		1 \\
+		0
+	\end{bmatrix} = 
+	c_1
+	\begin{bmatrix}
+		1 \\
+		1 \\
+		-2
+	\end{bmatrix} +
+	c_2 
+	\begin{bmatrix}
+	5 \\
+	-1 \\
+	2
+	\end{bmatrix}
+	\] 
+	We set up the following system:
+	\begin{align*}
+		c_1 + 5c_2 &= 0 \\
+		c_1 - c_2 &= 1 \\
+		-2c_1 + 2c_2 &= 0
+	\end{align*}
+	We multiply the second equation by $-2$ to obtain $-2c_1 + 2c_2 = -2$, which contradicts the third equation that $-2c_1 + 2c_3 = 0$, and thus there does not exist weights $c_1,c_2$ such that the equation is satisfied, and thus $u_3$ is not in the span of $u_1$ and $u_2$.
+	\\
+
+	A vector $v$ orthogonal to $\spa{u_1,u_2}$ can be found by $u_3 - \hat{u_3}$, where $\hat{u_3}$ is the vector in $\spa{u_1,u_2}$ closest to $u_3$, which can be found by:
+	\[
+		\hat{u_3} = \frac{u_3 \cdot u_1}{u_1 \cdot u_1}u_1 + \frac{u_3 \cdot u_2}{u_2 \cdot u_2}u_2
+	\] 
+	\begin{align*}
+		u_3 \cdot u_1 &= 1 &\quad u_3 \cdot u_2 &= -1 \\
+		u_1 \cdot u_1 &= 6 &\quad u_2 \cdot u_2 &= 30
+	\end{align*}
+	Thus,
+	\begin{align*}
+		\hat{h_3} &= \frac{1}{6}u_1 + -\frac{1}{30}u_2 \\
+				  &= 
+				  \begin{bmatrix}
+					  1/6 \\
+					  1/6 \\
+					  -1/3
+				  \end{bmatrix} +
+				  \begin{bmatrix}
+				  	-1/6 \\
+					1/30 \\
+					-1/15
+				  \end{bmatrix} \\
+				  &= 
+				  \begin{bmatrix}
+				  	0 \\
+					1/5 \\
+					-6/15
+				  \end{bmatrix}
+	\end{align*}
+	\begin{align*}
+		v &= 
+		\begin{bmatrix}
+			0 \\
+			1 \\
+			0
+		\end{bmatrix} -
+		\begin{bmatrix}
+			0 \\
+			1/5 \\
+			-6/15
+		\end{bmatrix} \\
+		  &=
+		  \begin{bmatrix}
+		  	0 \\
+			4/5 \\
+			6/15
+		  \end{bmatrix}
+	\end{align*}
+\end{sol}
+\begin{sol}
+	Let $x_1 = 
+\begin{bmatrix}
+	3 \\
+	-4 \\
+	5
+\end{bmatrix},
+x_2 =
+\begin{bmatrix}
+	-3 \\
+	14 \\
+	-7
+\end{bmatrix}
+	$. By the Gram-Schmidt process, we define:
+	\begin{align*}
+		v_1 &= 
+		\begin{bmatrix}
+			3 \\
+			-4 \\
+			5
+		\end{bmatrix} \\
+		v_2 &= 
+		\begin{bmatrix}
+			-3 \\
+			14 \\
+			-7
+		\end{bmatrix} -
+		\frac{x_2 \cdot v_1}{v_1 \cdot v_1} v_1 \\
+			&= 
+		\begin{bmatrix}
+			-3 \\
+			14 \\
+			-7
+		\end{bmatrix} +2
+		\begin{bmatrix}
+			3 \\
+			-4 \\
+			5
+		\end{bmatrix} \\
+			&= 
+			\begin{bmatrix}
+				3 \\
+				6 \\
+				3
+			\end{bmatrix}
+	\end{align*}
+	Thus, an orthogonal basis for $W$ is
+	\[
+		\set*{
+\begin{bmatrix}
+	3 \\
+	-4 \\
+	5
+\end{bmatrix},
+\begin{bmatrix}
+	3 \\
+	6 \\
+	3
+\end{bmatrix}
+		}
+	\] 
+	To form an orthonormal basis, we normalize the vectors:
+	\begin{align*}
+		u_1 &= 
+		\frac{1}{||v_1||}v_1 &\quad u_2 &= \frac{1}{||v_2||}v_2 \\
+		u_1 &= \frac{1}{5\sqrt{2}}v_1 &\quad u_2 &= \frac{1}{3\sqrt{6}}v_2 \\
+		u_1 &=
+		\begin{bmatrix}
+			3/5\sqrt{2} \\
+			-4/5\sqrt{2} \\
+			1/\sqrt{2}
+		\end{bmatrix} &\quad u_2 &=
+		\begin{bmatrix}
+			1/\sqrt{6} \\
+			2/\sqrt{6} \\
+			1/\sqrt{6}
+		\end{bmatrix}
+	\end{align*}
+	Thus, an orthonormal basis for $W$ is:
+	\[
+		\set*{
+		\begin{bmatrix}
+			3/(5\sqrt{2}) \\
+			-4/(5\sqrt{2}) \\
+			1/\sqrt{2}
+		\end{bmatrix},
+		\begin{bmatrix}
+			1/\sqrt{6} \\
+			2/\sqrt{6} \\
+			1/\sqrt{6}
+	\end{bmatrix}}
+	\] 
+\end{sol}
+\begin{sol}
+	We first find a basis for the column space by finding the reduced row echelon form of the matrix:
+	\begin{align*}
+		\begin{bmatrix}
+			1 & 3 & 5 \\
+			-1 & -3 & 1 \\
+			0 & 2 & 3 \\
+			1 & 5 & 2 \\
+			1 & 5 & 8
+		\end{bmatrix} \stackrel{R_2 + R_1 \to R_2, R_4 - R_1 \to R_4, R_5 - R_1 \to R_5}{\sim}
+		&\begin{bmatrix}
+			1 & 3 & 5 \\
+			0& 0 & 6 \\
+			0 & 2 & 3 \\
+			0 & 2 & -3 \\
+			0 & 2 & 3
+		\end{bmatrix} \\
+		\stackrel{R_4 - R_3 \to R_4, R_5 - R_3 \to R_5}{\sim} 
+		&\begin{bmatrix}
+			1 & 3 & 5 \\
+			0& 0 & 6 \\
+			0 & 2 & 3 \\
+			0 & 0 & 6 \\
+			0 & 0 & 0 
+		\end{bmatrix}\\
+		\stackrel{R_4 - R_2 \to R_4 }{\sim}
+		&\begin{bmatrix}
+			1 & 3 & 5 \\
+			0& 0 & 6 \\
+			0 & 2 & 3 \\
+			0 & 0 & 0 \\
+			0 & 0 & 0 
+		\end{bmatrix} \\
+		\stackrel{R_2 \lra R_3 }{\sim}
+		&\begin{bmatrix}
+			1 & 3 & 5 \\
+			0 & 2 & 3 \\
+			0& 0 & 6 \\
+			0 & 0 & 0 \\
+			0 & 0 & 0 
+		\end{bmatrix}
+	\end{align*}
+	We observe that all 3 columns are pivot columns, and thus the basis that forms the column space is $\set*{
+\begin{bmatrix}
+	1 \\
+	-1 \\
+	0 \\
+	1 \\
+	1
+\end{bmatrix},
+\begin{bmatrix}
+	3 \\
+	-3 \\
+	2 \\
+	5 \\
+	5
+\end{bmatrix},
+\begin{bmatrix}
+	5 \\
+	1 \\
+	3 \\
+	2 \\
+	8
+\end{bmatrix}
+	}$. We now use the Gram-Schmidt process to create an orthonormal basis for the column space. Let $x_1 = \begin{bmatrix}
+	1 \\
+	-1 \\
+	0 \\
+	1 \\
+	1
+\end{bmatrix}, x_2 = \begin{bmatrix}
+	3 \\
+	-3 \\
+	2 \\
+	5 \\
+	5
+\end{bmatrix}, x_3 =\begin{bmatrix}
+	5 \\
+	1 \\
+	3 \\
+	2 \\
+	8
+\end{bmatrix}$. Then, we define:
+\begin{align*}
+	v_1 &= 
+	\begin{bmatrix}
+		1 \\
+		-1 \\
+		0 \\
+		1 \\
+		1
+	\end{bmatrix} \\
+	v_2 &= 
+	\begin{bmatrix}
+		3 \\
+		-3 \\
+		2 \\
+		5 \\
+		5
+	\end{bmatrix} - \frac{x_2 \cdot v_1}{v_1 \cdot v_1} v_1 \\
+		&= 	\begin{bmatrix}
+		3 \\
+		-3 \\
+		2 \\
+		5 \\
+		5
+	\end{bmatrix} - 4
+	\begin{bmatrix}
+		1 \\
+		-1 \\
+		0 \\
+		1 \\
+		1
+	\end{bmatrix} \\
+		&= 
+		\begin{bmatrix}
+			-1 \\
+			1 \\
+			2 \\
+			1 \\
+			1
+		\end{bmatrix} \\
+	v_3 &= 
+	\begin{bmatrix}
+		5 \\
+		1 \\
+		3 \\
+		2 \\
+		8
+	\end{bmatrix} - \frac{x_3 \cdot v_1}{v_1 \cdot v_1}v_1 - \frac{x_3 \cdot v_2}{v_2 \cdot v_2}v_2 \\
+		&= 	\begin{bmatrix}
+		5 \\
+		1 \\
+		3 \\
+		2 \\
+		8
+	\end{bmatrix} - \frac{7}{2}
+	\begin{bmatrix}
+		1 \\
+		-1 \\
+		0 \\
+		1 \\
+		1
+	\end{bmatrix} -
+	\frac{3}{2}
+	\begin{bmatrix}
+		-1 \\
+		1 \\
+		2 \\
+		1 \\
+		1
+	\end{bmatrix} \\
+		&= 
+		\begin{bmatrix}
+			3 \\
+			3 \\
+			0 \\
+			-3 \\
+			3
+		\end{bmatrix}
+\end{align*}
+Thus, an orthogonal base for the column space is:
+\[
+	\set*{
+\begin{bmatrix}
+	1 \\
+	-1 \\
+	0 \\
+	1 \\
+	1
+\end{bmatrix},
+\begin{bmatrix}
+	-1 \\
+	1 \\
+	2 \\
+	1 \\
+	1
+\end{bmatrix},
+\begin{bmatrix}
+	3 \\
+	3 \\
+	0 \\
+	-3 \\
+	3
+\end{bmatrix}
+	}
+\] 
+To find an orthonormal basis, we normalize the vectors:
+\begin{align*}
+	u_1 &= \frac{1}{||v_1||}v_1 &\quad u_2 &= \frac{1}{||v_2||}v_2 &\quad u_3 &= \frac{1}{||v_3||}v_3 \\ 
+		&= \frac{1}{2}v_1 &\quad \frac{1}{\sqrt{10}}v_2 &\quad &= \frac{1}{6}v_3 \\
+		&= 
+		\begin{bmatrix}
+			1/2 \\
+			-1/2 \\
+			0 \\
+				1/2 \\
+		1/2 
+	\end{bmatrix} &\quad &= 
+	\begin{bmatrix}
+		-\sqrt{10}/10 \\
+		\sqrt{10}/10 \\
+2\sqrt{10}/10 \\
+\sqrt{10}/10\\ 
+\sqrt{10}/10
+\end{bmatrix} &\quad &=
+\begin{bmatrix}
+	1/2 \\
+	1/2 \\
+	0 \\
+	-1/2 \\
+	1/2
+\end{bmatrix}
+\end{align*}
+Thus, an orthonormal basis for the column space is:
+\[
+	\set*{
+		\begin{bmatrix}
+			1/2 \\
+			-1/2 \\
+			0 \\
+				1/2 \\
+		1/2 
+	\end{bmatrix},	\begin{bmatrix}
+		-\sqrt{10}/10 \\
+		\sqrt{10}/10 \\
+2\sqrt{10}/10 \\
+\sqrt{10}/10\\ 
+\sqrt{10}/10
+\end{bmatrix},
+\begin{bmatrix}
+	1/2 \\
+	1/2 \\
+	0 \\
+	-1/2 \\
+	1/2
+\end{bmatrix}
+}
+\] 
+\end{sol}
+\section{Proof Problems}
+\begin{sol} \
+	\begin{enumerate}[a)]
+		\item \
+			\begin{claim}
+				The vector whose entries are all 1's is an eigenvector of $A^T$.	
+			\end{claim}
+			\begin{proof}
+				The entries of the row vectors of $A^T$ sum to 1. As multiplying by the vector $
+\begin{bmatrix}
+	1 \\
+	\vdots \\
+	1
+\end{bmatrix}
+				$ results in a vector where each entry is the sum of the corresponding row of $A$, it follows that $A^T
+\begin{bmatrix}
+	1 \\
+	\vdots \\
+	1
+\end{bmatrix} =
+\begin{bmatrix}
+	1 \\
+	\vdots \\
+	1
+\end{bmatrix}
+				$, and thus is an eigenvector of $A^T$, and the proof is complete.
+			\end{proof}
+		\item \
+			\begin{claim}
+				$A$ must have at least one eigenvalue equal to 1.
+			\end{claim}
+			\begin{proof}
+				From $(a)$, $A^T
+\begin{bmatrix}
+	1 \\
+	\vdots \\
+	1
+\end{bmatrix} = 
+\begin{bmatrix}
+	1 \\
+	\vdots \\
+	1
+\end{bmatrix}
+				$, and thus the eigenvalue for this eigenvector is $\lambda = 1$. From Theorem 3 in Chapter 5,  $\det(A - \lambda I) = \det((A - \lambda I)^T) = \det(A^T - \lambda I)$, and thus the characteristic polynomial for  $A$ and $A^T$ are the same. Since 1 is an eigenvalue for $A^T$, then it follows that it is also an eigenvalue for $A$, and the proof is complete.
+			\end{proof}
+		\item \
+			\begin{claim}
+				Any eigenvector for a different eigenvalue must have some entries that are positive and some that are negative (they can't all be the same sign).
+			\end{claim}
+			\begin{proof}
+				Let $O = 
+\begin{bmatrix}
+	1 & \cdots & 1
+\end{bmatrix}$. As the columns of $A$ sum to 1, it follows that 
+				\[
+				OA = O
+				\] 
+				For an eigenvector $v$:
+				\[
+				Av = \lambda v
+				\] 
+				If we left multiply $v$ by $O$, we obtain:
+				\[
+				Ov = (OA)v = O(Av) = O(\lambda v)
+				\] 
+				For an eigenvector whose corresponding eigenvalue is not 1, it follows that $Ov = 0$. This means that the entries of the eigenvector $v$ sum to $v$. Thus, there exists a positive entry if and only if there exists a negative entry, and the proof is complete.
+			\end{proof}
+	\end{enumerate}
+\end{sol}
+\end{document}

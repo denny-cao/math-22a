@@ -1,0 +1,782 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\usetikzlibrary{matrix,decorations.pathreplacing, calc, positioning,fit, bending}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{.}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{axiom}{Axiom}
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\newtheorem{sol}{Solution}[section]
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+\newcommand{\xor}{\oplus}
+\newcommand{\powset}{\mathcal{P}}
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Linear Algebra
+\newcommand{\nul}{\text{Nul}}
+\newcommand{\col}{\text{Col}}
+\newcommand{\row}{\text{Row}}
+\newcommand{\adj}{\text{adj}}
+\newcommand{\spa}[1]{\text{Span}\set*{#1}}
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\poly}{\mathbb{P}}
+\newcommand{\basis}{\mathcal{B}}
+\newcommand{\tr}{\text{tr}}
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\hypersetup{
+	linkcolor=magenta
+}
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 9
+		\endgroup \vskip 0.3cm
+		Due: Wednesday, November 8, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\section{Computational Problems}
+\begin{sol}
+	The matrix for $T$ relative to $\basis$ and the standard basis for $\reals^2$ is obtained by the vectors obtained by the following:
+	\begin{itemize}
+		\item Let $x_1 = 1, x_2 = x_3 = 0$. Then:
+			\[
+				T(\bm{b_1}) =
+				\begin{bmatrix}
+			2 \\
+			0
+				\end{bmatrix} =
+				2
+				\begin{bmatrix}
+					1 \\
+					0
+				\end{bmatrix} +
+				0
+				\begin{bmatrix}
+					0 \\
+					1
+				\end{bmatrix}
+			\]
+		\item Let $x_2 = 1, x_1 = x_3 = 0$. Then:
+			\[
+				T(\bm{b_2}) =
+				\begin{bmatrix}
+			-4 \\
+			-1
+				\end{bmatrix} =
+				-4
+				\begin{bmatrix}
+					1 \\
+					0
+				\end{bmatrix} -1
+				\begin{bmatrix}
+					0 \\
+					1
+				\end{bmatrix}
+			\]
+		\item Let $x_3 = 1, x_1 = x_2 = 0$. Then:
+			\[
+				T(\bm{b_3}) =
+				\begin{bmatrix}
+			5 \\
+			3
+				\end{bmatrix} =
+				5
+				\begin{bmatrix}
+					1 \\
+					0
+				\end{bmatrix} +3
+				\begin{bmatrix}
+					0 \\
+					1
+				\end{bmatrix}
+			\]
+	\end{itemize}
+	Thus, the matrix for $T$ relative to $\basis$ and the standard basis for $\reals^2$ is:
+	\[
+\begin{bmatrix}
+	2 & -4 & 5 \\
+	0 & -1 & 3
+\end{bmatrix}
+	\]
+\end{sol}
+\begin{sol} \
+	\begin{enumerate}[a)]
+		\item The image of $\bm{p}(t)$ is $\bm{p}(t) + t\bm{p}(t) = (2 - t + t^2) + t(2 - t + t^2) = 2 + t + t^3$.
+		\item To show that $T$ is a linear transformation, we must show that:
+			\begin{itemize}
+				\item $\forall \bm{u}(t), \bm{v}(t) \in \mathbb{P}_2( T(\bm{u}(t) + \bm{v}(t)) = T(\bm{u}(t)) + T(\bm{v}(t))$.
+					\begin{align*}
+						T(\bm{u}(t) + \bm{v}(t)) &= (\bm{u}(t) + \bm{v}(t)) + t(\bm{u}(t) + \bm{v}(t)) \\
+												 &= \bm{u}(t) + t\bm{u}(t) + \bm{v}(t) + t\bm{v}(t) \\
+												 &= T(\bm{u}(t)) + T(\bm{v}(t))
+					\end{align*}
+					and thus this property holds.
+				\item $\forall c, \forall\bm{u}(t) \in \mathbb{P}_2(T(c\bm{u}(t))) = cT(\bm{u}(t))$.
+					\begin{align*}
+						T(c\bm{u}(t)) &= c\bm{u}(t) + t(c\bm{u}(t)) \\
+									  &= c(\bm{u}(t) + t\bm{u}(t)) \\
+									  &= cT(\bm{u}(t))
+					\end{align*}
+					and thus this property holds.
+			\end{itemize}
+			As both properties hold, $T$ we have shown that $T$ is a linear transformation.
+		\item
+			\begin{itemize}
+				\item $T(1) = 1 + t$
+				\item $T(t) = t + t^2$
+				\item $T(t^2) = t^2 + t^3$
+			\end{itemize}
+			Thus, the matrix for $T$ relative to the bases $\set*{1,t,t^2}$ and $\set*{1,t,t^2,t^3, t^4}$ is:
+			 \[
+			\begin{bmatrix}
+				1 & 0 & 0 \\
+				1 & 1 & 0 \\
+				0 & 1 & 1 \\
+				0 & 0 & 1 \\
+				0 & 0 & 0
+			\end{bmatrix}
+			\]
+	\end{enumerate}
+\end{sol}
+\begin{sol}
+	 We first find the eigenvalues of the matrix by find what values of $\lambda$ make $\det(A - I\lambda) = 0$.
+	 \begin{align*}
+		 \begin{vmatrix}[cc]
+		5 - \lambda & -3 \\
+		-7 & 1 - \lambda
+	\end{vmatrix} &= 0 \\
+	(5- \lambda)(1 - \lambda) - 21 &= \\
+	\lambda^2 - 6\lambda - 16 &= \\
+	(\lambda - 8)(\lambda + 2) &=
+	 \end{align*}
+	 Thus, $\lambda = 8, -2$. We now find the eigenvectors associated with each eigenvalue.
+	 \begin{itemize}
+		 \item $\lambda = 8$.
+	 \begin{align*}
+		 (A - 8I)\bm{x} &= \bm{0} \\
+	 \end{align*}
+	 We set up the augmented matrix:
+	 \begin{align*}
+		 \begin{bmatrix}[rr|r]
+			 -3 & -3 & 0 \\
+			 -7 & -7 & 0
+		 \end{bmatrix} \stackrel{1/3 R_1 \to R_1}{\sim}
+		 &\begin{bmatrix}[rr|r]
+			 1 & 1 & 0 \\
+			 -7 & -7 & 0
+	 	\end{bmatrix} \\
+		\stackrel{7R_1 + R_2 \to R_2}{\sim}
+		 &\begin{bmatrix}[rr|r]
+			 1 & 1 & 0 \\
+			 0 & 0 & 0
+	 	\end{bmatrix}
+	 \end{align*}
+	 Thus, the eigenvector is $
+\begin{bmatrix}
+	-1\\
+	1 
+\end{bmatrix}
+	 $.
+	 \item $\lambda = -2$.
+		 \begin{align*}
+			 (A + 2I)\bm{x} = \bm{0}
+		 \end{align*}
+		We set up the augmented matrix:
+		\begin{align*}
+			\begin{bmatrix}[rr|r]
+				7 & -3 & 0 \\
+				-7 & 3 & 0
+			\end{bmatrix} &\stackrel{R_2 + R_1 \to R_2}{\sim}
+			\begin{bmatrix}[rr|r]
+				7 & -3 & 0 \\
+				0 & 0 & 0
+			\end{bmatrix}
+		\end{align*}
+		Thus, the eigenvector is $
+\begin{bmatrix}
+	\frac{3}{7} \\
+	1 
+\end{bmatrix}
+		$.
+		\\
+
+		As the eigenvectors are linearly independent, from Theorem 5 (The Diagonalization Theorem), it follows that $A$ is diagonalizable, where $A = PDP^{-1}$, where $D$ is the diagonal matrix, and $P$ is the matrix where the columns are the eigenvectors:
+		$P = \begin{bmatrix}
+			-1 & \frac{3}{7} \\
+			1 & 1
+\end{bmatrix}
+$. From Theorem 8 (Diagonal Matrix Representation), if the basis $\basis$ for $\reals^2$ formed the columns of $P$, then  $D$ is the $\basis$-matrix for the transformation. Thus, $\basis = \set*{
+\begin{bmatrix}
+	-1 \\
+	1
+\end{bmatrix},
+\begin{bmatrix}
+	\frac{3}{7} \\
+	1
+\end{bmatrix}
+}$.
+	 \end{itemize}
+\end{sol}
+\begin{sol}
+	The basis for the corresponding eigenspaces are obtained by finding $\nul(A - \lambda I)$.
+	\begin{itemize}
+		\item $\lambda = 1$. $\nul(A - I) = \nul \paren*{
+\begin{bmatrix}
+	6 & 4 \\
+	-3 & -2
+\end{bmatrix}
+			}$. 
+			\begin{align*}
+				\begin{bmatrix}[rr|r]
+					6 &4 & 0 \\
+					-3 & -2 & 0 
+				\end{bmatrix} \stackrel{R_2 + 1/2 R_1 \to R_2}{\sim}			
+				&\begin{bmatrix}[rr|r]
+					6 &4 & 0 \\
+					0 & 0 & 0 
+				\end{bmatrix} \\
+\stackrel{1/2 R_1 \to R_1}{\sim}			
+				&\begin{bmatrix}[rr|r]
+					3 &2 & 0 \\
+					0 & 0 & 0 
+				\end{bmatrix}
+			\end{align*}
+			Thus, we have
+			\[
+			\begin{bmatrix}
+				x_1 \\
+				x_2
+			\end{bmatrix} =
+			x_2
+			\begin{bmatrix}
+				-\frac{2}{3} \\
+				1
+			\end{bmatrix}, x_2 \text{ is free.}
+			\] 
+			Thus, for the eigenspace for $\lambda = 1$, $
+			\begin{bmatrix}
+				-\frac{2}{3} \\
+				1
+			\end{bmatrix}
+			$ gives a basis.
+		\item $\lambda = 5$. $\nul(A - 5I) = \nul \paren*{
+\begin{bmatrix}
+	2 & 4 \\
+	-3 & -6
+\end{bmatrix}
+			}$. 
+	\begin{align*}
+		\begin{bmatrix}[rr|r]
+			2 & 4 & 0 \\
+			-3 & -6 & 0 
+		\end{bmatrix} &\stackrel{1/2 R_1 \to R_1, 1/3R_2 \to R_2}{\sim} 
+		\begin{bmatrix}
+			1 & 2 & 0 \\
+			-1 & -2 & 0 
+		\end{bmatrix} \\
+		&\stackrel{R_2 + R_1 \to R_2}{\sim}
+		\begin{bmatrix}[rr|r]
+			1 & 2 & 0 \\
+			0 & 0 & 0
+		\end{bmatrix}
+	\end{align*}
+	Thus, we have
+	\[
+	\begin{bmatrix}
+	x_1 \\
+	x_2
+	\end{bmatrix} = 
+	x_2
+	\begin{bmatrix}
+-2 \\
+1
+\end{bmatrix},  x_2 \text{ is free.}
+	\] 
+	Thus, for the eigenspace for $\lambda = 5$, $
+	\begin{bmatrix}
+		-2 \\
+		1
+	\end{bmatrix}
+	$ gives a basis.
+	\end{itemize}
+\end{sol}
+\begin{sol}
+	By rotating around a line $\ell$, any vector $\bm{v}$ on $\ell$ will not be affected, and thus $T(\bm{v}) = \bm{v}$, meaning that $\ell$ is an eigenspace for the eigenvalue $\lambda = 1$. When the rotation is by $180\degree$, then there is an additional eigenvalue, as for vectors $\bm{u}$ orthogonal to $\ell$, $T(\bm{u}) = -\bm{u}$, meaning that the plane that passes through the origin and orthogonal to $\ell$ is an eigenspace for the eigenvalue $\lambda = -1$.
+\end{sol}
+\begin{sol} \
+	\begin{itemize} 
+		\item The characteristic polynomial is $\det(A - \lambda I) = 0$. This can be simplified to  $(5-\lambda)(3-\lambda) - 12 = \lambda^2 - 8 \lambda + 3 = p(\lambda)$.
+		\item The eigenvalues can be found by the quadratic formula:
+			\begin{align*}
+				\lambda &= \frac{8 \pm \sqrt{64 - 4(3)}}{2} \\
+						&= 4 \pm \sqrt{13}
+			\end{align*}
+			Thus, the eigenvalues are $\lambda = 4 + \sqrt{13}$ and $\lambda = 4 - \sqrt{13}$.
+		\item The corresponding eigenvectors can be found by solving for $\bm{x}$:
+			\[
+				(A - (4+\sqrt{13})I)\bm{x} = \bm{0}
+			\] 
+			\begin{align*}
+				\begin{bmatrix}[cc|c]
+					1 - \sqrt{13} & -3 & 0 \\
+					-4 & -1 - \sqrt{13} & 0
+				\end{bmatrix} \stackrel{\frac{-1-\sqrt{13}}{12}R_1 \to R_1}{\sim}
+				&\begin{bmatrix}[cc|c]
+					1 & \frac{1+\sqrt{13}}{4} & 0 \\
+					-4 & -1 - \sqrt{13} & 0
+				\end{bmatrix} \\
+				\stackrel{R_2 + 4R_1 \to R_2}{\sim}
+				&\begin{bmatrix}[cc|c]
+					1 & \frac{\sqrt{13} + 1}{4} & 0 \\
+					0 & 0 & 0 
+				\end{bmatrix}
+			\end{align*}
+			Thus, the eigenvector for $\lambda = 4 + \sqrt{13}$ is: 
+			$
+			\begin{bmatrix}[c]
+				\frac{- 1 - \sqrt{13}}{4} \\
+				1
+			\end{bmatrix}
+			$.
+\[
+	(A - (4 - \sqrt{13})I)\bm{x} = \bm{0}
+\] 
+\begin{align*}
+	\begin{bmatrix}[cc|c]
+		1 + \sqrt{13} & -3 & 0\\
+		-4 & -1 + \sqrt{13} & 0
+	\end{bmatrix} \stackrel{\frac{R_1}{1 + \sqrt{13}} \to R_1}{\sim} 
+	&\begin{bmatrix}[cc|c]
+		1 & \frac{1 - \sqrt{13}}{4} & 0 \\
+		-4 & -1 + \sqrt{13} & 0 
+	\end{bmatrix} \\
+	\stackrel{R_2 + R_1 \to R_2}{\sim}
+	&\begin{bmatrix}[cc|c]
+		1 & \frac{1-\sqrt{13}}{4} & 0 \\
+		0 & 0 & 0
+	\end{bmatrix}
+\end{align*}
+Thus, the eigenvector for $\lambda = 4 - \sqrt{13}$ is:
+$
+\begin{bmatrix}[c]
+	\frac{-1+\sqrt{13}}{4} \\
+	1
+\end{bmatrix}
+$.
+	\end{itemize}
+\end{sol}
+\begin{sol}
+	The characteristic polynomial is $\det(A - \lambda I) = 0$. We will compute the following:
+	\begin{align*}
+		\begin{vmatrix}[ccc]
+			5 - \lambda & -2 & 3 \\
+			0 & 1 - \lambda & 0 \\
+			6 & 7 & -2 - \lambda
+		\end{vmatrix} &= (5-\lambda)
+		\begin{vmatrix}[cc]
+			1 - \lambda & 0 \\
+			7 & -2 - \lambda
+		\end{vmatrix} + 6
+		\begin{vmatrix}[cc]
+			-2 & 3 \\
+			1-\lambda & 0
+		\end{vmatrix} \\
+		&= (5-\lambda)(1-\lambda)(-2-\lambda) - 6(3(1-\lambda)) \\
+	p(\lambda)	&= -\lambda^3 + 4\lambda^2 + 25\lambda - 28
+	\end{align*}
+\end{sol}
+\begin{sol} \
+	\begin{enumerate}[a)]
+		\item
+			\begin{proof}
+				If $A$ is similar to $B$, then $A = PBP^{-1}$. It follows that $\tr(A) = \tr(PBP^{-1})$.
+				\[
+					\tr(A) = \tr(PBP^{-1}) = \tr((PB)P^{-1}) = \tr(P^{-1}(PB)) = \tr(P^{-1}PB) = \tr(IB) = \tr(B)
+				\] 
+				Thus, $\tr(A) = \tr(B)$, as desired.
+			\end{proof}
+		\item 
+			\begin{proof}
+				If $A$ is diagonalizable, then $A = PDP^{-1}$, where $D$ is a diagonal matrix where the diagonal entries are the eigenvalues of $A$ that correspond to the eigenvectors in $P$. It follows that $\tr(A) = \tr(PDP^{-1})$.
+				\[
+					\tr(A) = \tr(PDP^{-1}) = \tr((PD)P^{-1}) = \tr(P^{-1}(PD)) = \tr(P^{-1}PD) = \tr(ID) = \tr(D)
+				\] 
+				As the trace of $D$ is the sum of the diagonal entries, and the diagonal entries are the eigenvalues of $A$, it follows that $\tr(A)$ is the sum of the eigenvalues of $A$, as desired.
+			\end{proof}
+		\item 
+			\begin{proof}
+				Let $A,B$ be $n \times n$ matrices. The sum of the diagonal of $AB$, $\tr(AB)$, can be written as the following, where $a_{ij}, b_{ij}$ denote the entry in the $i$-th row and $j$-th column of $A$ and $B$ respectively:
+				\begin{align*}
+					(a_{11}b_{11} + a_{12}b_{21} + \dots + a_{1n}b_{n1}) + (a_{21}b_{12} + a_{22}b_{22} + \\
+					\dots + a_{2n}b_{n_2}) +\dots + (a_{n1}b_{1n} + a_{n2}b_{2n} + \dots a_{nn}b_{nn})
+				\end{align*}
+				We can rearrange to form the following:
+				\begin{align*}
+					(a_{11}b_{11} + a_{21}b_{12} + \dots + a_{n1}b_{1n}) + (a_{12}b_{21} + a_{22}b_{22} + \\ 
+					\dots + a_{n2}b_{2n}) + \dots + (a_{1n}b_{n1} + a_{2n}b_{n2} + \dots + a_{nn}b_{nn})
+				\end{align*}
+				We note that this is equivalent to the sum of the diagonal of $BA$, $\tr(BA)$, and thus $\tr(AB) = \tr(BA)$, as desired.
+			\end{proof}
+	\end{enumerate}
+\end{sol}
+\begin{sol} \
+	\begin{enumerate}[a)]
+		\item The characteristic equation of $A$ is 
+		$
+		\begin{vmatrix}[cc]
+			2 - \lambda & 0 \\
+			0 & 2 - \lambda
+		\end{vmatrix} = (2-\lambda)^2 = p_A(\lambda)
+		$. The characteristic equation of $B$ is
+		$
+		\begin{vmatrix}[cc]
+			2 - \lambda & 0 \\
+			2 & 2 - \lambda
+		\end{vmatrix} = (2-\lambda)^2 = p_B(\lambda)
+		$. Thus, $p_A(\lambda) = p_B(\lambda)$.
+	\item 
+		\begin{itemize}
+			\item The eigenspace for the eigenvalue of $A$ can be found by $\nul(A - 2I) = 
+				\nul\paren*{
+\begin{bmatrix}
+	0 & 0 \\
+	0 & 0 
+\end{bmatrix}
+} = \spa{
+\begin{bmatrix}
+	1 \\
+	0
+\end{bmatrix},
+\begin{bmatrix}
+	0 \\
+	1
+\end{bmatrix}
+}
+				$. 
+			\item The eigenspace for the eigenvalue of $B$ can be found by $\nul(B - 2I) = 
+				\nul\paren*{
+\begin{bmatrix}
+	0 & 0 \\
+	2 & 0 
+\end{bmatrix}
+				}
+				$. The matrix is row equivalent to 
+				$
+\begin{bmatrix}
+	1 & 0 \\
+	0 & 0
+\end{bmatrix}
+$, which has the following solutions to the homogeneous system $B'\bm{x} = \bm{0}$:
+ \[
+\begin{bmatrix}
+x_1 \\
+x_2
+\end{bmatrix} = 
+\begin{bmatrix}
+	0 \\
+	1
+\end{bmatrix}
+\]
+Thus, the eigenspace for the eigenvalue of $B$ is $\spa{
+\begin{bmatrix}
+	0 \\
+	1
+\end{bmatrix}
+}$.
+		\end{itemize}
+	\item 
+		\begin{proof}
+			To show that $A$ and $B$ are not similar, we will show that there does not exist an invertible matrix $P$ such that $B = PAP^{-1}$. As $B$ is a $2 \times 2$ matrix and does not have 2 linearly independent eigenvectors, $B$ is not diagonalizable, and thus there does not exist a $P$ such that $PAP^{-1} = B$, and the proof is complete.
+		\end{proof}
+	\end{enumerate}
+\end{sol}
+\begin{sol}
+	We can find the eigenvalues of the matrix by first finding the solutions for the characteristic equation $\det(A-\lambda I) = 0$.
+	\begin{align*}
+		\begin{vmatrix}[cccc]
+			5- \lambda & -2 & 6 & -1 \\
+			0 & 3 - \lambda & h & 0 \\
+			0 & 0 & 5 -\lambda & 4 \\
+			0 & 0 & 0 & 1 - \lambda
+		\end{vmatrix} &= 5
+		\begin{vmatrix}[ccc]
+			3-\lambda & h & 0 \\
+			0 & 5-\lambda & 4 \\
+			0 & 0 & 1-\lambda
+		\end{vmatrix} \\
+		&= 5\paren*{
+		(3-\lambda)
+		\begin{vmatrix}[cc]
+			5-\lambda & 4 \\
+			0 & 1-\lambda
+		\end{vmatrix}
+		} \\
+	p(\lambda)	&= 5(3-\lambda)(5-\lambda)(1-\lambda) 
+	\end{align*}
+	We observe that the characteristic equation is not affected by the value of $h$, and thus the eigenvalues of the matrix do not depend on the values of $h$.
+	\\
+
+	The eigenspace for $\lambda = 5$ is $\nul(A - 5I) = \nul\paren*{
+\begin{bmatrix}
+	0 & -2 & 6 & -1 \\
+	0 & -2 & h & 0 \\
+	0 & 0 & 0 & 4 \\
+	0 & 0 & 0 & -4
+\end{bmatrix}
+	}$. We find the reduced row echelon form of the augmented matrix:
+	\begin{align*}
+		\begin{bmatrix}[rrrr|r]
+			0 & -2 & 6 & -1 & 0\\
+			0 & -2 & h & 0 & 0 \\
+			0 & 0 & 0 & 4 & 0\\
+			0 & 0 & 0 & -4 & 0
+		\end{bmatrix} \stackrel{R_4 + R_3 \to R_4}{\sim}
+		\begin{bmatrix}[rrrr|r]
+			0 & -2 & 6 & -1 & 0\\
+			0 & -2 & h & 0 & 0 \\
+			0 & 0 & 0 & 4 & 0\\
+			0 & 0 & 0 & 0 & 0
+		\end{bmatrix} \\
+		\stackrel{\frac{R_3}{4} \to R_3}{\sim}
+		\begin{bmatrix}[rrrr|r]
+			0 & -2 & 6 & -1 & 0\\
+			0 & -2 & h & 0 & 0 \\
+			0 & 0 & 0 & 1 & 0\\
+			0 & 0 & 0 & 0 & 0
+		\end{bmatrix}
+		\stackrel{R_1 + R_3 \to R_1}{\sim}
+		\begin{bmatrix}[rrrr|r]
+			0 & -2 & 6 & 0 & 0\\
+			0 & -2 & h & 0 & 0 \\
+			0 & 0 & 0 & 1 & 0\\
+			0 & 0 & 0 & 0 & 0
+		\end{bmatrix}
+	\end{align*}
+	If $h = 6$, we obtain the following reduced row echelon form:
+	\[
+		\begin{bmatrix}[rrrr|r]
+		0 & 1 & 3 & 0 & 0 \\
+		0 & 0 & 0 & 1 & 0 \\
+		0 & 0 & 0 & 0 & 0 \\
+		0 & 0 & 0 & 0 & 0 
+	\end{bmatrix}
+	\] 
+	This will yield the solutions
+	\[
+	\begin{bmatrix}
+	x_1 \\
+	x_2 \\
+	x_3 \\
+	x_4
+	\end{bmatrix} = 
+	x_1
+	\begin{bmatrix}
+		1 \\
+		0 \\
+		0 \\
+		0 
+	\end{bmatrix} +
+	x_3
+	\begin{bmatrix}
+		0 \\
+		-3 \\
+		1 \\
+		0
+	\end{bmatrix}
+	\]
+	and thus the eigenspace will be $
+	\spa{
+		\begin{bmatrix}
+			1 \\\;
+			0 \\
+			0 \\
+			0 
+		\end{bmatrix},
+		\begin{bmatrix}
+			0 \\
+			-3 \\
+			1 \\
+			0
+		\end{bmatrix}
+	}
+	$. If $h$ was another value, the eigenspace would be spanned by 3 vectors, which would make it 3-dimensional, instead of 2-dimensional as desiredd.
+\end{sol}
+\section{Proof Problems}
+\begin{sol}
+	\begin{proof}
+		Multiplying $A$ by $B$ means that every column in $AB$ is a linear combination of the columns of $A$. From the definition of column space, $\col(A)$ is the set of all linear combinations of the columns of $A$. It thus follows that $\col(AB) \subseteq \col(A)$. As the rank of a matrix is the dimension of the column space of the matrix and $\dim(\col(AB)) \leq \dim(\col(A))$, it follows that $\rank(AB) \leq \rank(A)$.
+		\\
+
+		 From Theorem 14 (The Rank Theorem) in Section 4.6, the dimensions of the column space and the row space of a matrix are equal, and thus $\rank A = \rank A^T$, as $\col(A^T) = \row(A)$,meaning $\dim\col(A^T) = \dim\row(A)$. From this we obtain the following:
+		 \[
+		 \rank(AB) = \rank((AB)^T) = \rank(B^TA^T)
+		 \] 
+		 From the first part of the proof, we know $\rank(B^TA^T) \leq \rank(B^T)$. As  $\rank(B^T) = \rank(B)$, $\rank(B^TA^T) \leq \rank (B)$, and thus  $\rank(AB) \leq \rank(B)$.
+		 \\
+
+		 It follows that, if $\rank(AB) \leq \rank(A) \land \rank(AB) \leq \rank(B)$, then $\rank(AB) \leq \min\set*{\rank(A), \rank(B)}$, as desired.
+	\end{proof}
+\end{sol}
+\begin{sol} \
+	\begin{enumerate}[a)]
+		\item 	
+			\begin{proof}\
+				\begin{itemize}
+					\item Let $u_1 + H = u_2 + H$ and $v_1 + H = v_2 + H$. Then, $\exists h_1 \in H \mid u_1 = u_2 + h_1$, and $\exists h_2 \in H \mid v_1 = v_2 + h_2$. The sum $(u_1 + v_1) + H$ can thus be expressed as  $((u_2 + h_1) + (v_2 + h_2)) + H = (u_2 + v_2) + (h_1 + h_2) + H$. As $h_1, h_2 \in H$, it follows that $h_1 + h_2 \in H$. Thus, $(u_1 + v_1) + H = (u_2 + v_2) + H$, and we have shown that addition is well-defined.
+					\item Let $c(u_1 + H) = c(u_2 + H)$. As $u_1 + H = u_2 + H$, it follows that $\exists h_1 \in H \mid u_1 = u_2 + h_1$. We can thus rewrite $c(u_1) + H$ as $c(u_2 + h_1) + H = cu_2 + ch_1 + H$. As $h_1 \in H$, the scalar multiple $ch_1 \in H$. Thus, $cu_1 + H = cu_2 + H$, and we have shown that multiplication is well-defined.
+				\end{itemize}
+				We have shown that both operations are well-defined, as desired.
+			\end{proof}
+		\item A basis for $V \setminus H$ is $\basis = \set*{
+				\begin{bmatrix}
+			0 \\
+			1 \\
+			0
+				\end{bmatrix} + H,
+				\begin{bmatrix}
+					0 \\
+					0 \\
+					1
+				\end{bmatrix} + H
+			}$. Geometrically, $V \setminus H$ is the set of all parallel lines to the line spanned by $
+\begin{bmatrix}
+	1 \\
+	0 \\
+	0
+\end{bmatrix}
+			$, the $x$-axis.
+		\item 
+			\begin{proof}
+				To show that a set $S$ is a basis for a vector space $V \setminus H$, we must show that:
+				\begin{enumerate}[(i)]
+					\item $S$ spans $V \setminus H$.
+					\item  $S$ is linearly independent.
+				\end{enumerate}
+				\begin{itemize}
+					\item As $\set*{u_1, u_2, \dots, u_k, u_{k+1}, \dots, u_n}$ is a basis for $V$, $\forall v \in V$, we can express $v$ as a linear combination of the basis vectors:
+						\[
+							v = x_1u_1 + x_2 u_2 + \dots + x_k u_k + x_{k+1}u_{k+1} + \dots + x_n u_n
+						\] 
+						Let $h = x_1 u_1 + x_2 u_2 + \dots + x_k u_k$. Then, $v = h + x_{k+1}u_{k+1} + \dots + x_n u_n$. As $h$ is a linear combination of the basis vectors of $H$, it follows that $h \in H$.
+						
+$\forall v, v + H \in V \setminus H$. We can express the coset formed by $v$ by the following:
+\begin{align*}
+	v + H &= (h + x_{k+1}u_{k+1} + \dots + x_n u_n) + H \\
+		  &= (h + H) + (x_{k+1}u_{k+1} + H) + \dots + (x_n u_n + H) \\
+		  &= H + x_{k+1}(u_{k+1} + H) + \dots + x_n(u_n + H) \\
+		  \intertext{As $H$ is the zero vector in $V \setminus H$, we can simplify further}
+		  &= x_{k+1}(u_{k+1} + H) + \dots + x_n(u_n + H)
+\end{align*}
+We observe that $v + H$ is a linear combination of the basis vectors in $\set*{u_{k+1} + H, \dots, u_n + H}$, and the set spans $V \setminus H$.
+\item To show that the set $\set*{u_{k+1} + H, \dots, u_n + H}$ is linearly independent, we will show that
+	\[
+		x_{k+1}(u_{k+1} + H) + \dots + x_n(u_n + H) = 0
+	\] 
+	only if $x_{k+1} = \dots = x_n = 0$. As the zero vector of $V\setminus H$ is $H$, we can rewrite the equation:
+	\begin{align*}
+		x_{k+1}(u_{k+1} + H) + \dots + x_n(u_n + H) &= H \\
+		(x_{k+1}u_{k+1} + H) + \dots + (x_n u_n + H) &= \\
+		(x_{k+1}u_{k+1} + \dots + x_n u_n) + H &= 
+	\end{align*}
+	Thus, $(x_{k+1}u_{k+1} + \dots + x_n u_n) \in H$ by definition of coset. As any vector in $H$ is a linear combination of the vectors in the basis $\set*{u_1, u_2, \dots, u_k}$, it follows that $x_{k+1}u_{k+1} + \dots + x_n u_n = x_1u_1 + x_2u_2 + \dots + x_k u_k$. Then:
+	\begin{align*}
+		x_{k+1}u_{k+1} + \dots + x_n u_n - x_1u_1 - x_2u_2 - \dots - x_k u_k &= 0 \\
+		(-x_1)u_1 + (-x_2)u_2 + \dots + (-x_k)u_k + x_{k+1}u_{k+1} + \dots + x_n u_n &= 0
+	\end{align*}
+	As $\set*{u_1, u_2, \dots, u_k, u_{k+1}, \dots u_n}$ is the basis for $V$, it follows that $u_1, u_2, \dots, u_k,\\ u_{k+1}, \dots, u_n$ are linearly independent. Thus,
+	$-x_1 = -x_2 = \dots = -x_k = x_{k+1} = \dots = x_n = 0$. Thus, $x_{k+1} = \dots = x_n = 0$ for	$x_{k+1}(u_{k+1} + H) + \dots + x_n(u_n + H) = H$. It follows that the set $\set*{u_{k+1} + H, \dots, u_n + H}$ is linearly independent.
+				\end{itemize}
+				As we have shown that the set is linearly independent and spans $V \setminus H$, we have shown that the set is a basis for $V \setminus H$, and the proof is complete.
+			\end{proof}
+		\item $\dim V \setminus H = n - k$. As $\dim V = n$ and $\dim H = k$, it follows that 
+\[
+			\dim V \setminus H = \dim V - \dim H
+\] 
+	\end{enumerate}
+\end{sol}
+\end{document}

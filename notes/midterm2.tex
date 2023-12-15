@@ -1,0 +1,632 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\usetikzlibrary{matrix,decorations.pathreplacing, calc, positioning,fit, bending}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{.}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{axiom}{Axiom}
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\newtheorem{sol}{Solution}[section]
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+\newcommand{\xor}{\oplus}
+\newcommand{\powset}{\mathcal{P}}
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Linear Algebra
+\newcommand{\nul}{\text{Nul}}
+\newcommand{\col}{\text{Col}}
+\newcommand{\row}{\text{Row}}
+\newcommand{\adj}{\text{adj}}
+\newcommand{\spa}[1]{\text{Span}\set*{#1}}
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\poly}{\mathbb{P}}
+\newcommand{\basis}{\mathcal{B}}
+\newcommand{\tr}{\text{tr}}
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\hypersetup{
+	linkcolor=magenta
+}
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Midterm 2 Study Guide
+		\endgroup \vskip 0.3cm
+		\textbf{Denny Cao} \\ \vskip 0.1cm
+		\hrulefill
+	\end{flushleft}\egroup
+}
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\setcounter{section}{1}
+\begin{remark*}
+	Midterm 2 will only cover Chapters 2.1-2.3, 3.1-3.3 and 4.1-4.7. The only things included in the study guide are areas in each section I am unfamiliar/uncomfortable with.
+\end{remark*}
+\tableofcontents
+\newpage
+\section{Matrix Algebra}
+\subsection{Matrix Operations}
+\begin{definition}
+	If $A$ is an $m \times n$ matrix, and if $B$ is an $n \times p$ matrix with columns $\bm{b_1}, \dots, \bm{b_p}$, then the product $AB$ is the $m \times p$ matrix whose columns are $A\bm{b_1}, \dots, A\bm{b_p}$.
+\end{definition}
+\begin{itemize}
+	\item Each column of $AB$ is a linear combination of the columns of $A$ using weights from the corresponding column of $B$.
+\end{itemize}
+\begin{theorem}
+	[Facts About Matrix Multiplication]
+	Let $A$ be an $m \times n$ matrix, and let $B$ and $C$ have sizes for which the indicated sums and products are defined.
+	\begin{enumerate}[a.]
+		\item $A(AB) = (AB)C$ -- Associative Law of Multiplication
+		\item  $A(B+C) = AB + AC$ -- Left Distributive Law
+		\item  $(B+C)A = BA + CA$ -- Right Distributive Law
+		\item  $\forall r(r(AB) = (rA)B = A(rB))$
+		\item  $I_mA = A = AI_n$ -- Identity for Matrix Multiplicatoin
+	\end{enumerate}
+\end{theorem}
+\begin{theorem}
+	[Facts About Tranpose Matrices]
+	Let $A$ and $B$ denote matrices whose sizes are appropriate for the following sums and products.
+	\begin{enumerate}[a.]
+		\item $(A^T)^T = A$
+		\item $(A+B)^T = A^T + B^T$
+		\item  $\forall r((rA)^T = rA^T)$ 
+		\item $(AB)^T = B^T A^T$
+	\end{enumerate}
+\end{theorem}
+\begin{itemize}
+	\item The transpose of a product of matrices is the product of their transposes in the \textbf{reverse} order.
+\end{itemize}
+\subsection{The Inverse of a Matrix}
+\begin{definition}
+	An $n\times n$ matrix is \textbf{invertible} if $\exists$ an $n \times n$ matrix $C$ s.t. 
+	\[
+		CA = I \quad \text{and} \quad AC = I
+	\] 
+	In this case, $C$ is an \textbf{inverse} of $A$, denoted $A^{-1}$. $C$ is \textbf{uniquely determined} by $A$ because if $\exists$ another matrix $B$ that was an inverse of $A$, then $B = BI = B(AC) = (BA)C = IC = C$.
+
+	A matrix that is \textbf{not invertible} is called a \textbf{singular matrix} and an invertible matrix is called a \textbf{nonsingular matrix}.
+\end{definition}
+\begin{theorem}
+	[Inverse of a $2\times 2$ Matrix]
+	Let $A =
+\begin{bmatrix}
+	a & b \\
+	c & d
+\end{bmatrix}
+	$. If $\det A \neq 0 \to A$ is invertible and
+	\[
+		A^{-1} = 
+		\frac{1}{\det A}
+		\begin{bmatrix}
+			d & -b \\
+			-c & a
+		\end{bmatrix}
+	\] 
+	If $\det A = 0 \to A$ is not invertible.
+\end{theorem}
+\begin{theorem}
+	If $A$ is an invertible $n \times n$ matrix, then $\forall \bm{b} \in \reals^n$, the equation $A\bm{x} = \bm{b}$ has the unique solution  $\bm{x} = A^{-1}\bm{b}$.
+\end{theorem}
+\begin{proof}
+	$\bm{x} = A^{-1}\bm{b}$ is a solution, as if we substitute, we obtain $A(A^{-1}\bm{b}) = I\bm{b} = \bm{b}$. We show there is a unique solution by showing that, if $\forall \bm{u}$, if $\bm{u}$ is a solution, then $\bm{u} = A^{-1}\bm{b}$. $A\bm{u} = \bm{b}$. We take the left inverse. $A^{-1}A\bm{u} = A^{-1}\bm{b}$, and thus $\bm{u} = A^{-1}\bm{b}$.
+\end{proof}
+\begin{theorem}
+	[Facts About Invertible Matrices]
+	\begin{enumerate}[a.]
+		\item If $A$ is an invertible matrix, then $A^{-1}$ is invertible and
+			\[
+				(A^{-1})^{-1} = A
+			\] 
+		\item If $A \land B$ are $n \times n$ invertible matrices, then so is $AB$, and the inverse of $AB$ is the product of the inverse of $A \land B$ in the reverse order:
+			\[
+				(AB)^{-1} = B^{-1}A^{-1}
+			\] 
+		\item If $A$ is an invertible matrix, then so is $A^T$ and the inverse of $A^T$ is the transpose of $A^{-1}$ :
+			\[
+				(A^T)^{-1} = (A^{-1})^T
+			\] 
+	\end{enumerate}
+\end{theorem}
+\begin{remark}
+	If an elementary row operation is performed on an $m \times n$ matrix $A$, the resulting matrix can be written as $EA$, where the $m \times m$ matrix $E$ is created by performing the same row operation on $I_m$.
+\end{remark}
+\begin{remark}
+	Each elementary matrix $E$ is invertible. The inverse of $E$ is the elementary matrix of the same type that transforms $E$ back into $I$.
+\end{remark}
+\begin{theorem}
+	An $n \times n$ matrix $A$ is invertible $\iff$ $A$ is row equivalent to $I_n$, and in this case, any sequence of elementary row operations that reduces $A$ to $I_n$ also transforms $I_n$ into $A^{-1}$.
+\end{theorem}
+\subsection{Characterizations of Invertible Matrices}
+\begin{theorem}
+	[The Invertible Matrix Theorem]
+	Let $A$ be a square $n \times n$ matrix. Then the following statements are equivalent. That is, for a given $A$, the statements are either all true or all false.
+	\begin{enumerate}[a.]
+		\item $A$ is an invertible matrix.
+		\item  $A$ is row equivalent to the $n \times n$ identity matrix.
+		\item $A$ has $n$ pivot positions.
+		\item The equation $A\bm{x} = \bm{0}$ has only the trivial solution.
+		\item The columns of $A$ form a linearly independent set.
+		\item The linear transformation $\bm{x} \mapsto A\bm{x}$ is one-to-one.
+		\item The equation $A\bm{x} = \bm{b}$ has at least one solution for each $\bm{b} \in \reals^n$.
+		\item The columns of $A$ span $\reals^n$.
+		\item The linear transformation $\bm{x} \mapsto A\bm{x}$ maps $\reals^n$ onto $\reals^n$.
+		\item There is an $n \times n$ matrix $C$ s.t. $CA = I$.
+		\item There is an $n \times n$ matrix $D$ s.t. $AD = I$.
+		\item $A^T$ is an invertible matrix.
+	\end{enumerate}
+\end{theorem}
+\begin{definition}
+	A linear transformation $T: \reals^n \to \reals^n$ is said to be \textbf{invertible} if $\exists$ function $S: \reals^n \to \reals^n$ s.t. 
+	\begin{align}
+		S(T(\bm{x})) &= \bm{x} \quad \forall \bm{x} \in \reals^n \\
+		T(S(\bm{x})) &= \bm{x} \quad \forall \bm{x} \in \reals^n
+	\end{align}
+\end{definition}
+\begin{theorem}
+	Let $T: \reals^n \to \reals^n$ be a linear transformation and let $A$ be the standard matrix for $T$. Then $T$ is invertible $\iff$ $A$ is an invertible matrix. In that case, the linear transformation $S$ given by $S(\bm{x}) = A^{-1}\bm{x}$ is the unique function satisfying equations (1) and (2).
+\end{theorem}
+\section{Determinants}
+\subsection{Introduction to Determinants}
+\begin{theorem}
+	[Cofactor Expansion]
+	The determinant of an $n \times n$ matrix $A$ can be computed by cofactor expansion across any row or down any column. The expansion across the $i$-th row using cofactors:
+	\[
+		\det A = a_{i1}C_{i1} + a_{i2}C_{i2} + \dots + a_{in}C_{in}
+	\] 
+	The cofactor expansion down the $j$-th columns is 
+	\[
+		\det A = a_{1j}C_{1j} + a_{2j}C_{2j} + \dots + a_{nj}C_{nj}
+	\] 
+	Where $C_{ij} = (-1)^{i + j}\det A_{ij}$.
+\end{theorem}
+\begin{theorem}
+	[Determinant of Triangular Matrix]
+	If $A$ is a triangular matrix, then $\det A$ is the product of the entries on the main diagonal of $A$.
+\end{theorem}
+\subsection{Properties of Determinants}
+\begin{theorem}
+	[Row Operations]
+	Let $A$ be a square matrix.
+	\begin{enumerate}[a.]
+		\item If a multiple of one row of $A$ is added to another row to produce a matrix $B$, then $\det B = \det A$
+		\item If two rows of $A$ are interchanged to produce $B$, then $\det B = - \det A$.
+		\item If one row of $A$ is multiplied by $k$ to produce $B$, then $\det B = k \cdot \det A$.
+	\end{enumerate}
+\end{theorem}
+\begin{remark}
+	As it is always possible to reduce to an echelon form $U$, the determinant of $A$ is as follows:
+	\[
+	\det A = 
+	\begin{cases}
+		(-1)^r \cdot (\text{product of pivots in } U) & \text{when } $A$ \text{ is invertible} \\
+		0 & \text{when } $A$ \text{ is not invertible}
+
+	\end{cases}
+	\] 
+\end{remark}
+\begin{theorem}
+	A square matrix $A$ is invertible $\iff \det A \neq 0$.
+\end{theorem}
+\begin{corollary}
+	$\det A = 0$ when the columns of $A$ are linearly dependent. Also, $\det A = 0$ when the \textbf{rows} of $A$ are linearly dependent (Rows of $A$ are columns of $A^T$, and linearly dependent columns of  $A^T$ make $A^T$ singular. When $A^T$ is singular, so is $A$ by the Invertible Matrix Theorem.) 
+\end{corollary}
+\begin{theorem}
+	If $A$ is an $n \times n$ matrix, then $\det A^T = \det A$.
+\end{theorem}
+\begin{proof}
+	[Proof Idea]
+	Cofactor expansion of $\det A$ along the first \textbf{row} equals the cofactor expansion of $\det A^T$ along the first \textbf{column}, and then use induction to prove this.
+\end{proof}
+\begin{remark}
+	It follows that we can perform operations on the columns of a matrix in a way that is analogous to the row operations we have considered and have the same effects on the determinants as row operations.
+\end{remark}
+\begin{theorem}
+	[Multiplicative Property]
+	If $A$ and $B$ are $n \times n$ matrices, then $\det AB = (\det A)(\det B)$.
+\end{theorem}
+\subsection{Cramer's Rule, Volume, and Linear Transformations}
+\begin{theorem}
+	[Cramer's Rule]
+	Let $A$ be an invertible $n \times n$ matrix. $\forall \bm{b} \in \reals^n$, the unique solution $\bm{x}$ of $A\bm{x} = \bm{b}$ has entries given by
+	\[
+	x_i = 
+	\frac{\det A_i(\bm{b})}{\det A}, \quad i = 1,2,\dots, n
+	\] 
+	where $A_i(\bm{b})$ is the matrix obtained from $A$ by replacing column $i$ by the vector $\bm{b}$.
+\end{theorem}
+\begin{example}
+	Use Cramer's rule to solve the system
+	\begin{align*}
+		3x_1 - 2x_2 &= 6 \\
+		-5x_1 + 4x_2 &= 8
+	\end{align*}
+\end{example}
+\begin{soln}
+	View the system as $A\bm{x} = \bm{b}$. Then:
+	\[
+	A = 
+	\begin{bmatrix}
+		3 & -2 \\
+		-5 & 4
+	\end{bmatrix}, \quad 
+	A_1(\bm{b}) = 
+	\begin{bmatrix}
+		6 & -2 \\
+		8 & 4
+	\end{bmatrix}, \quad
+	A_2(\bm{b}) =
+	\begin{bmatrix}
+		3 & 6 \\
+		-5 & 8
+	\end{bmatrix}
+	\]
+	Since $\det A = 2$, the system has a unique solution. By Cramer's rule,
+	\begin{align*}
+		x_1 &=
+		\frac{\det A_1(\bm{b})}{\det A} = \frac{24 + 16}{2} = 20 \\
+		x_2 &=
+		\frac{\det A_2(\bm{b})}{\det A} = \frac{24 + 30}{2} = 27
+	\end{align*}
+\end{soln}
+\begin{theorem}
+	[Inverse Formula]
+	Let $A$ be an invertible $n \times n$ matrix. Then
+	\[
+		A^{-1} = \frac{1}{\det A}\adj A
+	\] 
+\end{theorem}
+\begin{proof}
+	This is derived from Cramer's rule, as the $j$-th column of $A^{-1}$ is a vector $\bm{x}$ that satisfies $A\bm{x} = \bm{e}_j$, where  $\bm{e}_j$ is the $j$-th column of the identity matrix, and the $i$-th entry of $\bm{x}$ is the $(i,j)$-entry of $A^{-1}$. By Cramer's rule:
+	\[
+		\set*{(i,j)-\text{entry of }A^{-1}} = x_i = \frac{\det A_i(\bm{e}_j)}{\det A}
+	\] 
+	A cofactor expansion down column $i$ of $A_i(\bm{e_j})$ shows that
+	\[
+		\det A_i (\bm{e}_j) = (-1)^{i + j}\det A_{ji} = C_{ji}
+	\] 
+	Thus
+	\[
+		A^{-1} = \frac{1}{\det A}
+		\begin{bmatrix}[cccc]
+			C_{11} & C_{21} & \dots & C{n1} \\
+			C_{12} & C_{22} & \dots & C{n2} \\
+			\vdots & \vdots & & \vdots \\
+			C_{1n} & C_{2n} & \dots & C_{nn}
+		\end{bmatrix}
+	\] 
+	The matrix of the cofactors on the right side is called the \textbf{adjugate} of $A$.
+\end{proof}
+\begin{remark}
+	The adjugate matrix is the \textbf{transpose} of the matrix of cofactors.
+\end{remark}
+\begin{theorem}
+	[Geometric Interpretation of Determinants]
+	If $A$ is a $2 \times 2$ matrix, the area of the parallelogram determined by the columns of $A$ is $|\det A|$. If $A$ is a $3 \times 3$ matrix, the volume of the parallelepiped determined by the columns of $A$ is $|\det A|$.
+\end{theorem}
+\begin{theorem}
+	Let $T: \reals^2 \to \reals^2$ be the linear transformation determined by a $2 \times 2$ matrix $A$. If $S$ is a parallelogram in $\reals^2$, then
+	\[
+		\set*{\text{area of }T(S)} = |\det A| \cdot \set*{\text{area of } S}
+	\] 
+	If $T$ is determined by a $3 \times 3$ matrix $A$, and if $S$ is a parallelepiped in $\reals^3$, then
+	\[
+		\set*{\text{volume of }T(S)} = |\det A| \cdot \set*{\text{volume of } S}
+	\] 
+\end{theorem}
+\section{Vector Spaces}
+\subsection{Vector Spaces and Subspaces}
+\begin{definition}
+	To show a space is a \textbf{vector space}, must show that:
+	\begin{itemize}
+		\item $\forall a,b \in V (a + b \in V)$. (Closed under vector addition)
+		\item $\forall c, \forall a \in V (ca \in V)$. (Closed under scalar multiplication)
+		\item $\exists 0 \in V$.
+	\end{itemize}
+\end{definition}
+\begin{definition}
+	A \textbf{subspace} of a vector $V$ is a subset $H$ of $V$ that has three properties:
+	\begin{itemize}
+		\item Zero vector of $V$ is in $H$
+		\item $H$ is closed under vector addition.
+		\item  $H$ is closed under scalar multiplication.
+	\end{itemize}
+\end{definition}
+\begin{theorem}
+	$\bm{v_1},\dots,\bm{v_p} \subseteq V \to \spa{\bm{v_1}, \dots, \bm{v_p}}$ is a subspace of $V$.
+\end{theorem}
+\begin{remark}
+	We call $\spa{\bm{v_1},\dots,\bm{v_p}}$ \textbf{the subspace spanned} (or \textbf{generated}) by $\set*{\bm{v_1},\dots,\bm{v_p}}$. Given any subspace $H$ of $V$, a \textbf{spanning} (or \textbf{generating}) \textbf{set} for $H$ is a set $\set*{\bm{v_1},\dots, \bm{v_p}}$ in $H$ such that $H = \spa{\bm{v_1},\dots,\bm{v_p}}$.
+\end{remark}
+\subsection{Null Spaces, Column Spaces, and Linear Transformations}
+\begin{definition}
+	The \textbf{null space} of an $m \times n$ matrix $A$, written as $\nul A$, is the set of all solutions of the homogeneous equation $A\bm{x} = \bm{0}$. In set notation:
+	\[
+		\nul A = \set*{\bm{x} \mid \bm{x} \in \reals^n \land A\bm{x} = \bm{0}}
+	\] 
+\end{definition}
+\begin{remark}
+	A better description of $\nul A$ is the set of all $\bm{x} \in \reals^n$ that are mapped into the zero vector of $\reals^m$ via the linear transformation $\bm{x} \mapsto A\bm{x}$.
+\end{remark}
+\begin{theorem}
+	The null space of an $m \times n$ matrix $A$ is a subspace of $\reals^n$. Equivalently, the set of all solutions to a system $A\bm{x} = \bm{0}$ of $m$ homogeneous linear equations in $n$ unknowns is a subspace of $\reals^n$.
+\end{theorem}
+\begin{definition}
+	The \textbf{column space} of an $m \times n$ matrix $A$, written as $\col A$, is the set of all linear combinations of the columns of $A$. If $A  = 
+\begin{bmatrix}
+	\bm{a_1} & \cdots & \bm{a_n}
+\end{bmatrix}
+	$, then
+	\[
+		\col A = \spa{\bm{a_1}, \dots, \bm{a_n}}
+	\] 
+	We can write this as
+	\[
+		\col A = \set*{\bm{b} \mid \exists \bm{x} \in \reals^n \mid \bm{b} = A\bm{x}}
+	\] 
+\end{definition}
+\begin{theorem}
+	The column space of an $m \times n$ matrix $A$ is a subspace of $\reals^m$.
+\end{theorem}
+\begin{proof}
+	Since $\spa{\bm{a_1}, \dots, \bm{a_n}}$ is a subspace of $\reals^m$ by Theorem 4.3 (the column vectors of $A$ are in  $\reals^m$), it follows that $\col A$ is a subspace of $\reals^m$.
+\end{proof}
+\begin{remark}
+	The column space of an $m \times n$ matrix $A$ is all of $\reals^m$ $\iff$ The equation $A\bm{x} = \bm{b}$ has a solution $\forall \bm{b} \in \reals^m$
+\end{remark}
+\begin{definition}
+	The \textbf{kernel} (or \textbf{null space}) of a \textbf{linear transformation} $T$ from a vector space $V$ into a vector space $W$ is the set of all $\bm{u} \in V$ s.t. $T(\bm{u}) = \bm{0}$ (the zero vector in $W$). The \textbf{range} of $T$ is the set of all vectors in $W$ of the form $T(\bm{x})$ for some $\bm{x} \in V$.
+\end{definition}
+\begin{remark}
+	If $T$ is a matrix transformation $T(\bm{x}) = A\bm{x}$, then the kernel and the range of $T$ is just the null space and the column space of $A$.
+\end{remark}
+\subsection{Linearly Independent Sets; Bases}
+\begin{theorem}
+	An indexed set $\set*{\bm{v_1},\dots,\bm{v_p}}$ of two or more vectors, with $\bm{v_1} \neq 0$, is linearly dependent if and only if some $\bm{v_j}$ (with $j > 1$) is a linear combination of the preceding vectors, $\bm{v_1},\dots,\bm{v_{j-1}}$.
+\end{theorem}
+\begin{definition}
+	Let $H$ be a subspace of a vector space $V$. An indexed set of vectors $\basis = \set*{\bm{b_1}, \dots, \bm{b_p}}$ in $V$ is a \textbf{basis} for $H$ if
+	\begin{enumerate}[(i)]
+		\item $\basis$ is a linearly independent set, and
+		\item the subspace spanned by $\basis$ coincides with  $H$:
+			\[
+				H = \spa{\bm{b_1}, \dots, \bm{b_p}}
+			\] 
+	\end{enumerate}
+\end{definition}
+\begin{theorem}
+	[The Spanning Set Theorem]
+	Let $S = \set*{\bm{v_1},\dots,\bm{v_p}}$ be a set in $V$, and let $H = \spa{\bm{v_1},\dots,\bm{v_p}}$.
+	\begin{enumerate}[a.]
+		\item If one of the vectors in $S$, $\bm{v_k}$, is a linear combination of the remaining vectors in $S$, then the set formed from $S$ by removing $\bm{v_k}$ still spans $H$.
+		\item If $H \neq \set*{\bm{0}}$, some subset of $S$ is a basis for $H$.
+	\end{enumerate}
+\end{theorem}
+\begin{theorem}
+	The pivot columns of a matrix $A$ form a basis for $\col A$.
+\end{theorem}
+\begin{remark}
+	Be careful to use the pivot columns of $A$ itself for the basis of $\col A$!
+\end{remark}
+\begin{itemize}
+	\item We can view basis as a spanning set that is as small as possible, or
+	\item a linearly independent set that is as large as possible
+\end{itemize}
+\subsection{Coordinate Systems}
+\begin{theorem}
+	[The Unique Representation Theorem]
+	Let $\basis = \set*{\bm{b_1},\dots, \bm{b_n}}$ be a basis for a vector space $V$. Then $\forall \bm{x} \in V \exists$ a unique set of scalars $c_1, \dots, c_n$ s.t. 
+	\[
+		\bm{x} = c_1\bm{b_1} + \dots + c_n \bm{b_n}
+	\] 
+\end{theorem}
+\begin{definition}
+	Suppose $\basis = \set*{\bm{b_1},\dots, \bm{b_n}}$ is a basis for $V$ and $\bm{x} \in V$. The \textbf{coordinates of $\bm{x}$ relative to the basis $\bm{\basis}$} (or the $\bm{\basis}$-\textbf{coordinates of $\bm{x}$}) are the weights $c_1, \dots, c_n$ s.t. $\bm{x} = c_1\bm{b_1} + \dots + c_n\bm{b_n}$ .
+\end{definition}
+\begin{itemize}
+	\item If $c_1,\dots, c_n$ are the $\basis$-coordinates of  $\bm{x}$, then the vector in $\reals^n$
+		 \[
+			 [\bm{x}]_{\basis} = 
+			 \begin{bmatrix}[c]
+			 c_1 \\
+			 \vdots \\
+			 c_n
+			 \end{bmatrix}
+		\] 
+		is the \textbf{coordinate vector of $\bm{x}$ (relative to $\bm{\basis}$)}, or the \textbf{$\bm{\basis}$-coordinate vector of $\bm{x}$}. The mapping $\bm{x} \mapsto [\bm{x}]_\basis$ is the \textbf{coordinate mapping} (\textbf{determined by $\bm{\basis}$}).
+\end{itemize}
+\begin{remark}
+	Let $P_\basis = 
+\begin{bmatrix}
+	\bm{b_1} & \bm{b_2} & \dots & \bm{b_n}
+\end{bmatrix}
+$. The vector equation $\bm{x} = c_1 \bm{b_1} + c_2\bm{b_2} + \dots + c_n \bm{b_n}$ is equivalent to
+\[
+	\bm{x} = P_\basis[\bm{x}]_\basis
+\] 
+$P_\basis$ is the \textbf{change-of-coordinates matrix} from $\basis$ to the standard basis of $\reals^n$. Left-multiplication by $P_\basis$ transforms the coordinate vector $[\bm{x}]_\basis$ into $\bm{x}$. 
+\\
+
+Since the columns of $P_\basis$ form a basis for $\reals^n$, $P_\basis$ is invertible (by the Invertible Matrix Theorem). We can thus multiply by $P_\basis^{-1}$ on the left to convert $\bm{x}$ into its $\basis$-coordinate vector:
+\[
+	P_\basis^{-1}\bm{x} = [\bm{x}]_\basis
+\] 
+The correspondence $\bm{x} \mapsto [\bm{x}]_\basis$, produced here by $P_\basis^{-1}$, is the coordinate mapping mentioned earlier. Since  $P_\basis^{-1}$ is an invertible matrix, the coordinate mapping ins a one-to-one linear transformation from $\reals^n$ onto $\reals^n$, by the Invertible Matrix Theorem.
+\end{remark}
+\begin{theorem}
+	Let $\basis = \set*{\bm{b_1}, \dots, \bm{b_n}}$ be a basis for a vector space $V$. Then the coordinate mapping $\bm{x} \mapsto [\bm{x}]_\basis$ is a one-to-one transformation from $V$ onto $\reals^n$.
+\end{theorem}
+\subsection{Dimension of a Vector Space}
+\begin{theorem}
+	If a vector space $V$ has a basis $\basis = \set*{\bm{b_1}, \dots, \bm{b_n}}$, then any set in $V$ containing more than $n$ vectors must be linearly dependent.
+\end{theorem}
+\begin{theorem}
+	If a vector space $V$ has a basis of $n$ vectors, then every basis of $V$ must consist of exactly $n$ vectors.
+\end{theorem}
+\begin{definition}
+	If $V$ is spanned by a finite set, then $V$ is said to be \textbf{finite-dimensional}, and the \textbf{dimension} of $V$, written as $\dim V$, is the number of vectors in a basis for $V$. The dimension of the zero vector space $\set*{\bm{0}}$ is defined to be zero. If $V$ is not spanned by a finite set, then $V$ is said to be \textbf{infinite-dimensional}.
+\end{definition}
+\begin{theorem}
+	Let $H$ be a subspace of a finite-dimensional vector space $V$. Any linearly independent set in $H$ can be expanded, if necessary, to a basis for $H$. Also, $H$ is finite-dimensional and
+	\[
+	\dim H \leq \dim V
+	\] 
+\end{theorem}
+\begin{theorem}
+	[The Basis Theorem]
+	Let $V$ be a $p$-dimensional vector space, $p \geq 1$. Any linear independent set of exactly $p$ elements in $V$ is automatically a basis for $V$. Any set of exactly $p$ elements that spans $V$ is automatically a basis for $V$.
+\end{theorem}
+\begin{remark}
+	The dimension of $\nul A$ is the number of free variables in the equation $A\bm{x} = \bm{0}$, and the dimension of $\col A$ is the number of pivot columns in $A$. Thus, $\dim \nul A + \dim \col A = \text{\# of free variables $+$ \# of pivot columns} = \text{\# of columns}$.
+\end{remark}
+\subsection{Rank}
+\begin{definition}
+	If $A$ is an $m \times n$ matrix, each row of $A$ has $n$ entries and thus can be identified with a vector in $\reals^n$. The set of all linear combinations oft he row vectors is called the \textbf{row space} of $A$ and is denoted by $\row A$. Each row has $n$ entries, so $\row A$ is a subspace of $\reals^n$. Since the rows of $A$ are identified with the columns of $A^T$, we could also write that $\col A^T = \row A$.
+\end{definition}
+\begin{theorem}
+	If two matrices $A$ and $B$ are row equivalent, then their row spaces are the same. If $B$ is in echelon form, the nonzero rows of $B$ form a basis for the row space of $A$ as well as for that of $B$.
+\end{theorem}
+\begin{definition}
+	The \textbf{rank} of $A$ is the dimension of the column space of $A$.
+\end{definition}
+\begin{theorem}
+	[The Rank Theorem]
+	The dimensions of the column space and the row space of an $m \times n$ matrix $A$ are equal. This common dimension, the rank of $A$, equals the number of pivot positions in $A$ and satisfies the equation
+	\[
+	\rank A + \dim \nul A = n
+	\] 
+\end{theorem}
+\begin{theorem}
+	[The Invertible Matrix Theorem (continued)]
+	Let $A$ be an $n \times n$ matrix. Then the following statements are each equivalent to the statement that $A$ is an invertible matrix.
+	\begin{enumerate}[a.]
+		\setcounter{enumi}{12}
+		\item The columns of $A$ form a basis of $\reals^n$.
+		\item $\col A = \reals^n$.
+		\item $\dim \col A = n$.
+		\item  $\rank A = n$
+		\item  $\nul A = \set*{\bm{0}}$
+		\item $\dim \nul A = 0$
+	\end{enumerate}
+\end{theorem}
+\subsection{Change of Basis}
+\begin{theorem}
+	Let $\basis = \set*{\bm{b_1}, \dots, \bm{b_n}}$ and $\mathcal{C} = \set*{\bm{c_1}, \dots, \bm{c_n}}$ be bases of a vector space $V$. Then there is a unique $n \times n$ matrix $\underset{\mathcal{C} \leftarrow \basis}{P}$ such that
+	\[
+		[\bm{x}]_\mathcal{C} = \underset{\mathcal{C} \leftarrow \basis}{P}[\bm{x}]_\basis
+	\] 
+	The columns of $\underset{\mathcal{C} \leftarrow \basis}{P}[\bm{x}]_\basis$ are the $\mathcal{C}$-coordinate vectors of the vectors in the basis $\basis$. That is,
+\[
+\underset{\mathcal{C} \leftarrow \basis}{P}[\bm{x}]_\basis = 
+\begin{bmatrix}
+	\begin{bmatrix}
+		\bm{b_1}
+	\end{bmatrix}_\mathcal{C} & 	\begin{bmatrix}
+		\bm{b_2}
+\end{bmatrix}_\mathcal{C} & \dots & \begin{bmatrix}
+		\bm{b_n}
+	\end{bmatrix}_\mathcal{C}
+\end{bmatrix}
+\] 
+\end{theorem}
+\begin{definition}
+	$\underset{\mathcal{C} \leftarrow \basis}{P}$ is called the \textbf{change-of-coordinates matrix from $\bm{\basis}$ to  $\bm{\mathcal{C}}$}. Multiplication by this matrix converts $\basis$-coordinates to $\mathcal{C}$-coordinates.
+\end{definition}
+\begin{remark}
+	The columns of the change-of-coordinates matrix are linearly independent because they are coordinate vectors of the linearly independent set $\basis$. As the change-of-coordinates matrix is square, it follows that i must be invertible, by the Invertible Matrix Theorem. Left-multiplying both sides of the equation by the inverse yields
+	 \[
+		 (\underset{\mathcal{C} \leftarrow \basis}{P})^{-1}[\bm{x}]_\mathcal{C} = [\bm{x}]_\basis
+	\] 
+	Thus, $(\underset{\mathcal{C} \leftarrow \basis}{P})^{-1}$ is the matrix that converts $\mathcal{C}$-coordinates into $\basis $-coordinates. That is,
+	\[
+	(\underset{\mathcal{C} \leftarrow \basis}{P})^{-1} = \underset{\basis \leftarrow \mathcal{C}}{P}
+	\] 
+\end{remark}
+We obtain the change-of-coordinate matrix by the following:
+\[
+	\begin{bmatrix}[cc|cc]
+		\bm{c_1} & \bm{c_2} & \bm{b_1} & \bm{b_2}
+\end{bmatrix} \sim
+\begin{bmatrix}[c|c]
+	I & \underset{\mathcal{C} \leftarrow \basis}{P}
+\end{bmatrix}
+\] 
+\end{document}

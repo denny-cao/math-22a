@@ -1,0 +1,245 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../evan}
+\usepackage{graphicx}
+
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+
+\newcommand{\powset}{\mathcal{P}} % Power Set
+
+\newcommand{\degree}{^\circ}
+
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Contradiction
+\newcommand\contradiction{\mathbin{\mathpalette\xhash\relax}}
+\newcommand{\xhash}[2]{\ooalign{%
+Ê $#1\xxhash{#1}{-45}$\cr
+Ê $#1\xxhash{#1}{45}$\cr
+Ê }%
+}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\subtitle{PSet 0}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\usepackage{titling}
+\renewcommand\maketitlehooka{\null\mbox{}\vfill}
+\renewcommand\maketitlehookd{\vfill\null}
+\makeatletter
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{\@title} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		\normalsize Lecture 2: Proofs --- September 8, 2023 
+		\endgroup \vskip 0.3cm
+		\normalsize Pset Due: September 13, 2023 \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm
+		\hrulefill
+	\end{flushleft}\egroup
+}
+\makeatother
+
+\renewcommand{\theques}{\thesection.\alph{ques}} % Change subtheo counter for alpha output
+\declaretheorem[style=basehead,name=Answer,sibling=theorem]{ans}
+\renewcommand{\theans}{\thesection.\alph{ans}}
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section{Announcements}
+\begin{itemize}
+	\item Office Hours rooms change; check website. Currently, Sever 306 check back later.
+\end{itemize}
+\section{Review}
+\subsection{Matrices}
+\begin{definition}
+	[Matrix]	
+	A \textit{matrix} is $m \times n$, where $m$ is the number of rows, $n$ is the number of columns. The numbers in a matrix are called \textit{coefficients}.
+\end{definition}
+\begin{property}
+	[Row Operations]
+	\
+	\begin{itemize}
+		\item You can scale a row by a real number
+		\item Swap two rows
+		\item Add multiple of a row to another
+	\end{itemize}
+\end{property}
+\section{Introductory Set Theory}
+\subsection{Notation}
+\begin{definition}
+	[Set]
+	A \textit{set} is a collection of objects.
+\end{definition}
+\begin{notation}
+	[Member]
+	$p \in A$ means $p$ is in, or is a member, of the set  $A$.  $p \not\in A$ means $p$ is not in, or is not a member, of the set $A$.
+\end{notation}
+\begin{notation}
+	[Complement]
+	$\overline{A}$ means everything that is not in $A$. 
+\end{notation}
+\begin{definition}
+	[Prime Number]
+	A positive integer $p$ is \textit{prime} if $p$ is divisible by only itself and 1.
+\end{definition}
+\begin{example}
+	Does there exist 100 consecutive composite numbers?
+\end{example}
+\begin{proof}
+	Let $k \in \set*{0 \leq k \leq 100, k \in \ints}$. Then, $\forall k$ :
+	\[
+		\frac{101! + k}{k} \in \ints
+	\] 
+	As $k$ is a factor of $101!$ and $k$ is a factor of  $k$. Thus, there does exist 100 consecutive composite numbers starting from $101!$.
+\end{proof}
+\begin{notation}
+	[Set Builders]
+	\
+	\begin{itemize}
+		\item $\nats = \set*{0,1,2,3,...}$
+		\item $\ints = \set*{...,-1,0,1,...}$
+		\item $\nats = \set*{p \in \ints \mid p \geq 0}$
+	\end{itemize}
+\end{notation}	
+\begin{notation}
+	[Cardinality]
+	The cardinality is the size of the set, denoted by $|A|$. When  $A$ is finite, the cardinality is the number of elements.
+\end{notation}
+\begin{definition}
+	[Universal Set/Empty Set]
+	The empty set, $\emptyset$, is a set with no elements.
+\end{definition}
+\begin{definition}
+	[Cartesian Product]
+	$A \times B = \set*{(a,b) \mid a \in A \land b \in B}$
+\end{definition}
+\begin{example}
+	[Planes]
+	$\reals$ is all reals in the 1-dimensional plane. $\reals^2 = \reals \times \reals$, which is the cartesian product and creates the 2-dimensional plane by creating all ordered pairs of $(x,y)$. Same for $\reals^3$.
+\end{example}
+\begin{notation}
+	[Subset]
+	$B \subseteq A$ denotes that $B$ is a part of $A$.
+\end{notation}
+\begin{itemize}
+	\item $\emptyset \subseteq A \land A \subseteq A, \forall A$
+\end{itemize}
+\begin{definition}
+	[Power Set]
+	The power set of a set $A$ is the set of all subsets of $A$, denoted $\mathcal{P}(A)$.
+\end{definition}
+\begin{remark}
+	[Cardinality of the Power Set]
+	$|A| = n \to |\powset(A)| = 2^n$
+\end{remark}
+\begin{definition}
+	[Union]
+	The union of two sets  $ A$ and $B$ denoted $A \unite B$ is everything in $A$ or $B$. $A \unite B = \set*{c \mid c \in A \lor A \in B}$.
+\end{definition}
+\begin{definition}
+	[Intersection]
+	The intersection of two sets $A$ and $B$ denoted $A \inter B$ is everything in both $A$ and $B$. $A \inter B = \set*{c \mid c \in A \land A \in B}$.
+\end{definition}
+\subsection{Russell's Paradox}
+Paradox assertions without truth values.
+\section{Proofs}	
+\begin{definition}
+	[Existence Statement]
+	$\exists x \in A \mid P(x)$.
+\end{definition}
+\begin{itemize}
+	\item To disprove: Prove the negative. $\forall x \in A \mid \neg P(x)$
+	\item To prove: Find an $x \mid P(x)$.
+\end{itemize}	
+\begin{definition}
+	[Universal Statement]
+	$\forall x \in A \mid P(x)$.
+\end{definition}
+\begin{itemize}
+	\item To disprove: Prove that $\exists x \in A \mid \neg P(x)$.
+	\item To prove: Check all  $x$.
+\end{itemize}
+\begin{definition}
+	[Disprove by Contradiction]
+	Assume for purposes of contradiction that $P(x)$ is true and then deduce by logic that it is is false by coming to a contradiction, and therefore $P(x)$ is false.
+\end{definition}
+\begin{example}
+	Claim: $\sqrt 2$ is irrational.
+\end{example}
+\begin{proof}
+	By contradiction. Assume for purposes of contradiction that $\sqrt 2$ is rational. Then,  $\sqrt 2$ can be written in the form $p/q$ such that $q$ is the smallest possible number. 
+	\\
+	\begin{align*}
+		\sqrt 2 &= \frac{p}{q} \\
+		2 &= \frac{p^2}{q^2} \\
+		2q^2 &= p^2
+	\end{align*}
+	If $p$ is even:
+	\begin{align*}
+		2q^2 &= 4m^2 \\
+		q^2 &= 2m^2 
+	\end{align*}
+	This means that $q$ is divisible by 2 and not in lowest terms. $\contradiction$
+
+	If  $p$ is odd:
+	\begin{align*}
+		2q^2 &= 4b^2 + 4b + 1 \\
+		q^2 &= b^2 + 2b + 1/2 \\
+		q &= \sqrt{b^2 + 2b + 1/2}
+	\end{align*}
+	This means that  $q$ is not an integer. $\contradiction$
+	\end{proof}
+\end{document}

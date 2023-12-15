@@ -1,0 +1,251 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\usetikzlibrary{matrix,decorations.pathreplacing, calc, positioning,fit, bending}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{.}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{axiom}{Axiom}
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\newtheorem{sol}{Solution}[section]
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+\newcommand{\xor}{\oplus}
+\newcommand{\powset}{\mathcal{P}}
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Linear Algebra
+\newcommand{\nul}{\text{Nul}}
+\newcommand{\col}{\text{Col}}
+\newcommand{\row}{\text{Row}}
+\newcommand{\adj}{\text{adj}}
+\newcommand{\spa}[1]{\text{Span}\set*{#1}}
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\poly}{\mathbb{P}}
+\newcommand{\basis}{\mathcal{B}}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\dist}[1]{\text{dist}\paren*{#1}}
+\newcommand{\proj}[2]{\text{proj}_{#1}{#2}}
+\newcommand{\ip}[2]{\langle #1, #2 \rangle}
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\hypersetup{
+	linkcolor=magenta
+}
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 12
+		\endgroup \vskip 0.3cm
+		Due: Tuesday, December 5, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\section{Computational Problems}
+\begin{sol}
+	We list the values of each polynomial as a vector in $\reals^5$:
+	\[
+	\begin{bmatrix}
+		1 \\
+		1 \\
+		1 \\
+		1 \\
+		1
+	\end{bmatrix},
+	\begin{bmatrix}
+		-2 \\
+		-1 \\
+		0 \\
+		1 \\
+		2
+	\end{bmatrix}, 
+	\begin{bmatrix}
+		4 \\
+		1 \\
+		0 \\
+		1 \\
+		4
+	\end{bmatrix},
+	\begin{bmatrix}
+		-8 \\
+		-1 \\
+		0 \\
+		1 \\
+		8
+	\end{bmatrix},
+	\begin{bmatrix}
+		16 \\
+		1 \\
+		0 \\
+		1 \\
+		16
+	\end{bmatrix}
+	\] 
+	We then use the Gram-Schmidt Process to obtain an orthogonal basis. Let $p_i$ denote the $i$-th polynomial above. Let $v_i$ denote the $i$-th vector in the orthogonal basis for $\poly_4$:
+	\begin{align*}
+		p_0(t) &= 1 &\quad 
+		p_1(t) &= t - \frac{\ip{t}{p_0}}{\ip{p_0}{p_0}}p_0(t) = t - 0p_0(t)\\
+		v_0	&= 
+		\begin{bmatrix}
+			1 \\
+			1 \\
+			1 \\
+			1 \\
+			1
+		\end{bmatrix} &\quad
+		v_1	&= 
+			\begin{bmatrix}
+				-2 \\
+				-1 \\
+				0 \\
+				1 \\
+				2
+			\end{bmatrix} \\
+		p_2(t) &= t^2 - \frac{\ip{t^2}{p_0}}{\ip{p_0}{p_0}}p_0(t) - \frac{\ip{t^2}{p_1}}{\ip{p_1}{p_1}}p_1(t) &\quad 
+		p_3(t) &= t^3 - 
+		\frac{\ip{t^3}{p_0}}{\ip{p_0}{p_0}}p_0(t) - \frac{\ip{t^3}{p_1}}{\ip{p_1}{p_1}}p_1(t) - \frac{\ip{t^3}{p_2}}{\ip{p_2}{p_2}}p_2(t)
+		\\
+			&= 
+		t^2 - 2p_0(t) &\quad &= t^3 - \frac{17}{5}p_1(t)\\
+			v_2&= 
+			\begin{bmatrix}
+				2 \\
+				-1 \\
+				-2 \\
+				-1 \\
+				2
+			\end{bmatrix} &\quad v_3 &= 
+			\begin{bmatrix}
+				-6/5 \\
+				12/5 \\
+				0 \\
+				17/5 \\
+				74/5
+			\end{bmatrix} \\
+		\end{align*}
+		\begin{align*}
+			p_4(t) &= t^4 - \frac{\ip{t^4}{p_0}}{\ip{p_0}{p_0}}p_0(t) - \frac{\ip{t^4}{p_1}}{\ip{p_1}{p_1}}p_1(t) - \frac{\ip{t^4}{p_2}}{\ip{p_2}{p_2}}p_2(t) - \frac{\ip{t^4}{p_3}}{\ip{p_3}{p_3}}p_3(t)	\\
+				   &= t^4 - \frac{36}{5}p_0(t) - 13p_2(t) \\
+				   &= 
+				   \begin{bmatrix}
+				   	-216/5 \\
+					-96/5 \\
+					0 \\
+					-96/5 \\
+					-216/5
+				   \end{bmatrix}
+		\end{align*}
+\end{sol}
+\begin{sol}
+	\begin{proof}
+		To show that $\ip{u}{v} = T(u) \cdot T(v)$ defines an inner product on $V$, we show that, for all $u,v,w \in V$ and all scalars $c$:
+		\begin{itemize}
+			\item $\ip{u}{v} = \ip{v}{u}$: 
+				\begin{align*}
+					\ip{u}{v} &= T(u) \cdot T(v) \\
+							  &= T(v) \cdot T(u) \\
+							  &= \ip{v}{u}
+				\end{align*}
+			\item $\ip{u+v}{w} = \ip{u}{w} + \ip{v}{w}$: 
+				\begin{align*}
+					\ip{u + v}{w} &= (T(u) + T(v))\cdot T(w) \\
+								  &= T(u)\cdot T(w) + T(v)\cdot T(w) \\
+								  &= \ip{u}{w} + \ip{v}{w}
+				\end{align*}
+			\item $\ip{cu, v} = c\ip{u}{v}$:
+				\begin{align*}
+					\ip{cu}{v} &= cT(u) \cdot T(v) \\
+							   &= c(T(u) \cdot T(v)) \\
+							   &= c\ip{u}{v} 
+				\end{align*}
+		\item $(\ip{u}{u} \geq 0) \land (\ip{u}{u} = 0 \iff u = 0$):
+			\begin{align*}
+				\ip{u}{u} &= T(u) \cdot T(u) \geq 0 \\
+				\ip{u}{u} &= T(u) \cdot T(u) = 0 \iff T(u) = 0 \iff u = 0
+			\end{align*}
+		\end{itemize}
+		As all axioms are satisfied, the proof is complete.
+	\end{proof}
+\end{sol}
+\end{document}

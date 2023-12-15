@@ -1,0 +1,955 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{graphicx}
+\usepackage{bm}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\subtitle{PSet 1}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 3
+		\endgroup \vskip 0.3cm
+		Due: Wednesday, September 27, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm 
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\begin{itemize}
+	\item May Ng
+	\item Nina Khera
+	\item Vivian Hui
+\end{itemize}
+\section{Computational Problems}
+% Question 1.1
+\begin{ques}
+	Write the solution set of the homogeneous system below in parametric vector form.
+	\begin{align*}
+		x_1 + 3x_2 - 5x_3 &= 0 \\
+		x_1 + 4x_2 - 8x_3 &= 0 \\
+		-3x_1 - 7x_2 + 9x_3 &= 0
+	\end{align*}
+\end{ques}
+\textbf{Solution}
+
+We can represent the system as an augmented matrix:
+\begin{gather*}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & -5 & 0 \\
+		1 & 4 & -8 & 0 \\
+		-3 & -7 & 9 & 0 
+	\end{bmatrix}
+	\intertext{$\sim R_2 - R_1 \to R_2, R_3 + 3R_1 \to R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & -5 & 0 \\
+		0 & 1 & -3 & 0 \\
+		0 & 2 & -6 & 0 
+	\end{bmatrix}
+	\intertext{$\sim R_3 - 2R_2 \to R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & -5 & 0 \\
+		0 & 1 & -3 & 0 \\
+		0 & 0 & 0 & 0 
+	\end{bmatrix}
+	\intertext{$\sim R_1 - 3R_2 \to R_1$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 0 & 4 & 0 \\
+		0 & 1 & -3 & 0 \\
+		0 & 0 & 0 & 0 
+	\end{bmatrix}
+\end{gather*}
+\textbf{Thus, the solution set of the homogeneous system in parametric form is:} $\bm{x} = x_3
+\begin{pmatrix}[c]
+	-4 \\
+	3 \\
+	1	
+\end{pmatrix}$.
+% Question 1.2
+\begin{ques}
+	Describe all solutions in parametric form to the equation $A\bm{x} = \bm{0}$ with $A$ given below.
+	\[
+	\begin{bmatrix}
+		1 & 3 & 0 & -4 \\
+		2 & 6 & 0 & -8
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+We can represent as an augmented matrix:
+\begin{gather*}
+	\begin{bmatrix}[rrrr|r]
+		1 & 3 & 0 & -4 & 0 \\
+		2 & 6 & 0 & -8 & 0 
+	\end{bmatrix}
+	\intertext{$\sim R_2 - 2R_1 \to R_2$.}
+	\begin{bmatrix}[rrrr|r]
+		1 & 3 & 0 & -4 & 0 \\
+		0 & 0 & 0 & 0 & 0 
+	\end{bmatrix}
+\end{gather*}
+\textbf{Thus, the solution set in parametric form is:}
+	\[
+		\begin{pmatrix}
+			x_1 \\
+			x_2 \\
+			x_3 \\
+			x_4
+		\end{pmatrix}
+		= 
+		x_1
+		\begin{pmatrix}
+			0 \\
+			-3 \\
+			0 \\
+			4
+		\end{pmatrix}
+		+ x_2
+		\begin{pmatrix}
+			0 \\
+			1 \\
+			0 \\
+			0 
+		\end{pmatrix} + 
+		x_3 
+		\begin{pmatrix}
+			0 \\
+			0 \\
+			1 \\
+			0
+		\end{pmatrix} + 
+		x_4 
+		\begin{pmatrix}
+			0 \\
+			0 \\
+			0 \\
+			1
+		\end{pmatrix}
+	\]
+% Question 1.3
+\begin{ques}
+	Construct a $3 \times 3$ non-zero matrix $A$ such that the vector below is a non-trivial solution to the equation $A\bm{x} = \bm{0}$.
+	\[
+	\begin{bmatrix}
+		1 \\
+		-2 \\
+		1
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+Let $A = 
+\begin{bmatrix}
+	a_{11} & a_{12} & a_{13} \\
+	a_{21} & a_{22} & a_{32} \\
+	a_{31} & a_{32} & a_{33}
+\end{bmatrix}$. Then, $\begin{bmatrix}
+	a_{11} & a_{12} & a_{13} \\
+	a_{21} & a_{22} & a_{32} \\
+	a_{31} & a_{32} & a_{33}
+\end{bmatrix}
+\begin{bmatrix}
+	1 \\
+	-2 \\
+	1 
+\end{bmatrix} = 
+\begin{bmatrix}
+	0 \\
+	0 \\
+	0
+\end{bmatrix}$. Multiplying $A$ and $
+\begin{bmatrix}
+	1 \\
+	-2 \\
+	1
+\end{bmatrix}$ gives the matrix 
+$\begin{bmatrix}
+	a_{11} - 2a_{12} + a_{13} \\
+	a_{21} - 2a_{22} + a_{23} \\
+	a_{31} - 2a_{32} + a_{33}
+\end{bmatrix} = 
+\begin{bmatrix}
+	0 \\
+	0 \\
+	0
+\end{bmatrix}$. 
+
+\textbf{With $A = 
+\begin{bmatrix}
+	1 & 2 & 3 \\
+	4 & 5 & 6 \\
+	7 & 8 & 9
+\end{bmatrix}$, the equation is true.}
+% Question 1.4
+\begin{ques}
+	Suppose that $A$ is a $3 \times 3$ matrix and $\bm{y}$ is a vector in $\reals^3$ such that the equation $A\bm{x} = \bm{y}$ does not have a solution. Is there a vector $\bm{v} \in \reals^3$ such that the equation $A\bm{x} = \bm{v}$ has a unique solution? Make sure to explain your answer.	
+\end{ques} 
+\textbf{Solution}
+\begin{claim*}
+There does not exist a vector $\bm{v} \in \reals^3$ such that the equation $A\bm{x} = \bm{v}$ has a unique solution.
+\end{claim*}
+\begin{proof}
+	[Proof by contradiction]
+	As there exists a vector $\bm{y} \in \reals^3$ such that $A\bm{x} = \bm{y}$ does not have a solution, by Theorem 2 (Uniqueness and Existence Theorem) in Linear Algebra and Its Applications, the right most column of the augmented matrix is a pivot column, meaning in $A$, there exists a zero row. Therefore, as $A$ is a $3 \times 3$ matrix, there exists one column that is not a pivot column. 
+	\\
+
+	We will now show by contradiction that there does not exist a vector $\bm{v} \in \reals^3$ such that the equation $A\bm{x} = \bm{v}$ has a unique solution. Assume for purposes of contradiction that the opposite is true---that there exists a vector $\bm{v} \in \reals^3$ such that the equation $A\bm{x} = \bm{v}$ has a unique solution. If $A\bm{v}$ has a unique solution, then the reduced row echelon form of $A$ has no free columns, as otherwise there would be free variables for the system which would make the system have infinitely many solutions. Thus, all columns of $A$ must be pivot columns. $\contradiction$
+\\
+
+We reach a contradiction, as there exists a column that is not a pivot column if  $A \bm{x} = \bm{y}$ does not have a unique solution. Thus, the opposite is true; there does not exist a vector $\bm{v} \in \reals^3$ such that the equation $A\bm{x} = \bm{v}$ has a unique solution.
+\end{proof}
+
+% Question 1.5
+\begin{ques}
+	Let $A$ be an $m \times n$ matrix, and let $\bm{u}$ and $\bm{v}$ be vectors in $\reals^3$ such that $A\bm{u}=0$ and $A\bm{v}=0$. Explain why $A(c\bm{u} + d\bm{v}) = 0$ for any pair of real numbers $c$ and $d$.
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	$c(A\bm{u}) = c 0 = 0$, as any scalar of the zero vector is the zero vector. The same is true for $d(A\bm{v}) = d 0 = 0$. Thus,  $c(A\bm{u}) + d(A\bm{v}) = 0 + 0 = 0$. By Theorem 5 b. in Linear Algebra and Its Applications, $c(A\bm{u}) = A(c\bm{u})$ and $d(A\bm{v}) = A(d\bm{v})$. Thus, $c(A\bm{u}) + d(A\bm{v}) = A(c\bm{u}) + A(d\bm{v}) = 0$. By Theorem 5 a. in Linear Algebra and Its Applications, $A(c\bm{u}) + A(d\bm{v}) = A(c\bm{u} + d\bm{v}) = 0$.
+\end{proof}
+
+% Question 1.6
+\begin{ques}
+	Determine if the vectors below are linearly independent.
+	\[
+	\begin{bmatrix}
+		0 \\
+		0 \\
+		2
+	\end{bmatrix}, 
+	\begin{bmatrix}
+		0 \\
+		5 \\
+		-8
+	\end{bmatrix}, 
+	\begin{bmatrix}
+		-3 \\
+		4 \\
+		1
+	\end{bmatrix}
+	\] 
+\end{ques}
+
+\textbf{Solution}
+\begin{claim*}
+The vectors are linearly independent.
+\end{claim*}
+\begin{proof}
+To determine if the vectors are linearly independent, we can see if $A\bm{x} = 0$ has only the trivial solution, where the columns of $A$ are the vectors.
+\begin{gather*}
+	\begin{bmatrix}[rrr|r]
+		0 & 0 & -3 & 0 \\
+		0 & 5 & 4 & 0 \\
+		2 & -8 & 1 & 0 
+	\end{bmatrix}
+	\intertext{$\sim R_3 \lra R_1$.}
+\begin{bmatrix}[rrr|r]
+		2 & -8 & 1 & 0 \\
+		0 & 5 & 4 & 0 \\
+		0 & 0 & -3 & 0 
+	\end{bmatrix}
+	\intertext{$\sim 1/2 R_1 \to R_1, -1/3 R_3 \to R_3, 1/5 R_2 \to R_2$.}
+\begin{bmatrix}[rrr|r]
+	1 & -4 & \frac{1}{2} & 0 \\
+	0 & 1 & \frac{4}{5} & 0 \\
+		0 & 0 & 1 & 0 
+	\end{bmatrix}
+	\intertext{$\sim R_2 - 4/5 R_3 \to R_2, R_1 - 1/2 R_3 \to R_1$.}
+\begin{bmatrix}[rrr|r]
+	1 & -4 & 0 & 0 \\
+	0 & 1 & 0 & 0 \\
+		0 & 0 & 1 & 0 
+	\end{bmatrix}
+	\intertext{$\sim 4R_2 + R_1 \to R_1$.}
+\begin{bmatrix}[rrr|r]
+	1 & 0 & 0 & 0 \\
+	0 & 1 & 0 & 0 \\
+		0 & 0 & 1 & 0 
+	\end{bmatrix}
+\end{gather*}
+Thus, the solution is
+$\bm{x} = \begin{pmatrix}
+	0 \\
+	0 \\
+	0
+\end{pmatrix}$---the trivial solution. Therefore, the vectors are linearly independent.
+\end{proof}
+% Queestion 1.7
+\begin{ques}
+	Determine if the columns of the matrix depicted below form a linearly independent set.
+	\[
+	        \begin{bmatrix}
+            -4 & -3 & 0 \\
+            0 & -1 & 4 \\
+            1 & 0 & 3 \\
+            5 & 4 & 6
+        \end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+\begin{claim*}
+	The columns form a linearly independent set.
+\end{claim*}	
+\begin{proof}
+	To determine if the columns of the matrix are linearly independent, we can see if $A\bm{x} = 0$ has only the trivial solution, where $A$ is the matrix depicted.
+	\begin{gather*}
+		\begin{bmatrix}[rrr|r]
+			-4 & -3 & 0 & 0\\
+			0 & -1 & 4 & 0 \\
+			1 & 0 & 3 & 0\\
+			5 & 4 & 6 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_3 \lra R_1$.}
+		\begin{bmatrix}[rrr|r]
+			1 & 0 & 3 & 0\\
+			0 & -1 & 4 & 0 \\
+			-4 & -3 & 0 & 0\\
+			5 & 4 & 6 & 0
+	\end{bmatrix}
+		\intertext{$\sim 4R_1 + R_3 \to R_3, R_4 - 5R_1 \to R_4$.}
+		\begin{bmatrix}[rrr|r]
+			1 & 0 & 3 & 0\\
+			0 & -1 & 4 & 0 \\
+			0 & -3 & 12 & 0\\
+			0 & 4 & -9 & 0
+	\end{bmatrix}
+	\intertext{$-R_2 \to R_2, -1/4 R_3 \to R_3$.}
+		\begin{bmatrix}[rrr|r]
+		1 & 0 & 3 & 0\\
+			0 & 1 & -4 & 0 \\
+			0 & 1 & -4 & 0\\
+			0 & 4 & -9 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_2 - R_3 \to R_3$.}
+		\begin{bmatrix}[rrr|r]
+			1 & 0 & 3 & 0\\
+			0 & 1 & -4 & 0 \\
+			0 & 0 & 0 & 0\\
+			0 & 4 & -9 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_3 \lra R_4$.}
+		\begin{bmatrix}[rrr|r]
+			1 & 0 & 3 & 0\\
+			0 & 1 & -4 & 0 \\
+			0 & 4 & -9 & 0\\
+			0 & 0 & 0 & 0
+	\end{bmatrix}
+	\intertext{$\sim 4R_2 - R_3 \to R_3$.}
+		\begin{bmatrix}[rrr|r]
+			1 & 0 & 3 & 0\\
+			0 & 1 & -4 & 0 \\
+			0 & 0 & 7 & 0\\
+			0 & 0 & 0 & 0
+	\end{bmatrix}
+	\intertext{$\sim 1/7 R_3 \to R_3$.}
+		\begin{bmatrix}[rrr|r]
+			1 & 0 & 3 & 0\\
+			0 & 1 & -4 & 0 \\
+			0 & 0 & 1 & 0\\
+			0 & 0 & 0 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_1 - 3R_3 \to R_1, R_2 + 4R_3 \to R_2$.}
+		\begin{bmatrix}[rrr|r]
+			1 & 0 & 0 & 0\\
+			0 & 1 & 0 & 0 \\
+			0 & 0 & 1 & 0\\
+			0 & 0 & 0 & 0
+	\end{bmatrix}
+	\end{gather*}
+	Thus, the solution is $\bm{x} = 
+	\begin{pmatrix}
+		0 \\
+		0 \\
+		0
+	\end{pmatrix}$---the trivial solution. Therefore, the columns are linearly independent.
+\end{proof}
+% Question 1.8
+\begin{ques}
+	For what values of $\Vec{h}$ is $\Vec{v}_3$ depicted below in $\text{Span}\{\Vec{v_1},\Vec{v_2}\}$, and for what values of $h$ are the three vectors depicted below linearly independent?	
+\[
+        \begin{bmatrix}
+            2 \\ -4 \\ 1
+        \end{bmatrix}, 
+        \begin{bmatrix}
+            -6 \\ 7 \\ -3
+        \end{bmatrix}, 
+        \begin{bmatrix}
+            8 \\ h \\ 4
+        \end{bmatrix}
+\] 
+\end{ques}
+\textbf{Solution}
+\begin{claim*}
+	For all real numbers $h$, $\Vec{ v_3}$ is in $\text{Span}\{\Vec{v_1}, \Vec{v_2}\}$.
+\end{claim*}
+\begin{proof}
+	A vector is in the span of two other vectors if it is a linear combination of the two. If there is a solution to the system $A\bm{x} = \Vec{v_3}$, where the columns of $A$ are $\Vec{v_1}$ and $\Vec{v_2}$, then $\Vec{v_3}$ is in $\text{Span}\{{\Vec{v_1}, \Vec{v_2}}\}$.
+\begin{gather*}
+	\begin{bmatrix}[rr|r]
+		2 & -6 & 8 \\
+		-4 & 7 & h \\
+		1 & -3 & 4
+	\end{bmatrix}
+	\intertext{$\sim 1/2 R_1 \to R_1$.}
+	\begin{bmatrix}[rr|r]
+		1 & -3 & 4 \\
+		-4 & 7 & h \\
+		1 & -3 & 4
+	\end{bmatrix}
+	\intertext{$\sim R_3 - R_1 \to R_1$.}
+	\begin{bmatrix}[rr|r]
+		1 & -3 & 4 \\
+		-4 & 7 & h \\
+		0 & 0 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_2 + 4R_1 \to R_2$.}
+	\begin{bmatrix}[rr|c]
+		1 & -3 & 4 \\
+		0 & -5 & h + 16 \\
+		0 & 0 & 0
+	\end{bmatrix}
+	\intertext{$\sim -1/5 R_2 \to R_2$.}
+		\begin{bmatrix}[rr|c]
+		1 & -3 & 4 \\
+		0 & 1 & \frac{-16 - h}{5} \\
+		0 & 0 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_1 + 3R_2 \to R_1$.}
+		\begin{bmatrix}[rr|c]
+			1 & 0 & \frac{-28 - 3h}{5} \\
+		0 & 1 & \frac{-16 - h}{5} \\
+		0 & 0 & 0
+	\end{bmatrix}
+\end{gather*}
+There is a non-trivial solution when $h \neq -16$ and when $h \neq -\frac{28}{3}$. As it is impossible for $h$ to take on two different values, there is always a non-trivial solution for all real numbrers $h$. Thus, for all real numbers $h$, $\Vec{ v_3}$ is in $\text{Span}\{\Vec{v_1}, \Vec{v_2}\}$.
+\end{proof}
+\begin{claim*}
+	There are no values of $h$ that will make the three vectors linearly independent.
+\end{claim*}
+\begin{proof}
+	Vectors are linearly independent if $A\bm{x} = \bm{0}$ has only the trivial solution, where  the columns of $A$ are the vectors $\Vec{v_1}, \Vec{v_2}, \Vec{v_3}$.
+	\begin{gather*}
+		\begin{bmatrix}[rrr|r]
+			2 & -6 & 8 & 0 \\
+			-4 & 7 & h & 0 \\
+			1  & -3 & 4 & 0 
+		\end{bmatrix}
+	\intertext{$\sim 1/2 R_1 \to R_1$.}
+		\begin{bmatrix}[rrr|r]
+			1 & -3 & 4 & 0 \\
+			-4 & 7 & h & 0 \\
+			1  & -3 & 4 & 0 
+		\end{bmatrix}
+		\intertext{$\sim R_3 - R_1 \to R_3$.}
+		\begin{bmatrix}[rrr|r]
+			1 & -3 & 4 & 0 \\
+			-4 & 7 & h & 0 \\
+			0  & 0 & 0 & 0 
+		\end{bmatrix}
+		\intertext{$\sim 4R_1 + R_2 \to R_2$.}
+		\begin{bmatrix}[crc|r]
+			1 & -3 & 4 & 0 \\
+			0 & -5 & h+16 & 0 \\
+			0  & 0 & 0 & 0 
+		\end{bmatrix}
+		\intertext{$\sim -1/5 R_2 \to R_2$.}
+		\begin{bmatrix}[crc|r]
+			1 & -3 & 4 & 0 \\
+			0 & 1 & -\frac{h+16}{5} & 0 \\
+			0  & 0 & 0 & 0 
+		\end{bmatrix}
+		\intertext{$\sim 3R_2 + R_1 \to R_1$.}
+		\begin{bmatrix}[crc|r]
+			1 & 0 & \frac{-28 - 3h}{5} & 0 \\
+			0 & 1 & -\frac{h+16}{6} & 0 \\
+			0  & 0 & 0 & 0 
+		\end{bmatrix}
+	\end{gather*}
+	As $x_1$ and $x_2$ are basic variables and $x_3$ is free, each non-zero value of $x_3$ determines a non-trivial solution of $A\bm{x} = \bm{0}$. Thus, for no values of $h$ are $\Vec{v_1}, \Vec{v_2},$ and $\Vec{v_3}$ linearly independent; they are linearly dependent for all $h$.
+\end{proof}
+% Question 1.9
+\begin{ques}
+	How many pivot columns must a $5 \times 7$ matrix have if its columns span $\mathbb{R}^5$?
+\end{ques}
+\textbf{Solution}
+
+
+\begin{claim*}
+	A $5 \times 7$ matrix must have 5 pivot columns if its columns span $\reals^5$.
+\end{claim*}	
+\begin{proof}
+	By Theorem 4 in Linear Algebra and Its Applications, if the columns of a matrix $A$ of size $m \times n$ spans $\reals^m$, then it must also be the case that $A$ has a pivot position in every row. With a $5 \times 7$ matrix, to span $\reals^5$, it must be the case that $A$ has a pivot position in all 5 rows (5 pivot columns).	
+\end{proof}
+% Question 1.10
+\begin{ques}
+	For the matrix $A$ below: Without doing any computation, first explain why the columns of A have to be linearly dependent, and then why the equation $A\Vec{x} = \Vec{0}$ has infinitely many solutions. Having done that, delete as few columns as possible from A to depict a matrix B for which the equation $B\Vec{x} = \Vec{0}$ has only the trivial solution. 
+	\[
+	        A = \begin{bmatrix}
+            12 & 10 & -6 & -3 & 7 & 10 \\
+            -7 & -6 & 4 & 7 & -9 & 5 \\
+            9 & 9 & -9 & -5 & 5 & -1 \\
+            -4 & -3 & 1 & 6 & -8 & 9 \\
+            8 & 7 & -5 & -9 & 11 & -8
+        \end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+The columns of $A$ have to be linearly dependent, as by Theorem 8 in Linear Algebra and Its Applications; as there are more columns (more vectors) than there are rows (entries in each vector), the columns are linearly dependent. 
+\\
+
+The equation $A\Vec{x} = \vec{0}$ has infinitely many solutions because there will be at least 1 free variable, as there is one more column than rows. This means that each non-zero value of the free variable will determine the solution to $A\vec{x} = \vec{0}$, and thus there are infinitely many solutions.
+\\
+
+Using a reduced row echelon form calculator with the augmented matrix for  $A \vec{x} = \vec{0}$, we obtain:
+\[
+\begin{bmatrix}[rrrrrr|r]
+	1 & 0 & 2 & 0 & 2 & 0 & 0 \\
+	0 & 1 & -3 & 0 & -2 & 0 & 0 \\
+	0 & 0 & 0 & 1 & -1 & 0 & 0 \\
+	0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+	0 & 0 & 0 & 0 & 0 & 0 & 0 
+\end{bmatrix}
+\] 
+To form a matrix $B$ such that the only solution for $B \vec{x} = \vec{0}$ is the trivial solution, we must remove the columns that are not pivot columns in $A$, columns 3 and 5. Thus:
+ \[
+B = 
+\begin{bmatrix}
+	12 & -6 & -3 & 10 \\
+	-7 & 4 & 7 & 5 \\
+	9 & -9 & -5 & 1 \\
+	-4 & 1 & 6 & 9 \\
+ 	8 & -5 & -9 & -8	
+\end{bmatrix}
+\]
+as the augmented matrix for $B \vec{x} = \vec{0}$ can be reduced to 
+\[
+\begin{bmatrix}[rrrr|r]
+	1 & 0 & 0 & 0 & 0 \\
+	0 & 1 & 0 & 0 & 0 \\
+	0 & 0 & 1 & 0 & 0 \\
+	0 & 0 & 0 & 1 & 0 \\
+	0 & 0 & 0 & 0 & 0
+\end{bmatrix}
+\] 
+which means the only solution of the system is the trivial solution.
+\section{Proof Problems}
+% Question 2.1
+\begin{ques}
+	Prove that given any five vectors $\Vec{v_1}, \Vec{v_2}, \Vec{v_3}, \Vec{v_4}, \Vec{v_5} \in \mathbb{R}^3$ there exist real numbers $c_1,c_2,c_3,c_4,c_5$ not all zero such that both 
+    \begin{align*}
+		c_1\Vec{v_1} + c_2\Vec{v_2} + c_3\Vec{v_3} + c_4\Vec{v_4} + c_5\Vec{v_5} &= \Vec{0} \\
+        c_1+c_2+c_3+c_4+c_5 &= 0
+    \end{align*}
+    are true.
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	By Theorem 8 in Linear Algebra and Its Applications, as there are more vectors than there are entries in each vector ($5 > 3$), the vectors are linearly dependent. We can express the equation $c_1\Vec{v_1} + c_2\Vec{v_2} + c_3\Vec{v_3} + c_4\Vec{v_4} + c_5\Vec{v_5} = \Vec{0}$ in the form  $A\bm{c} = \bm{0}$, where the columns of $A$ are the vectors $v_1, v_2, v_3, v_4,$ and $v_5$, and $\bm{c}$ is the vector $
+	\begin{pmatrix}
+		c_1 \\
+		c_2 \\
+		c_3 \\
+		c_4 \\
+		c_5
+	\end{pmatrix}$. Let $v_{ij}$ denote the $i$th entry of the $j$th vector. Then, we can represent $A\bm{c} = \bm{0}$ can be expressed as an augmented matrix:
+	\[
+		\begin{bmatrix}[rrrrr|r]
+		v_{11} & v_{12} & v_{13} & v_{14} & v_{15} & 0 \\
+		v_{21} & v_{22} & v_{23} & v_{24} & v_{25} & 0 \\
+		v_{31} & v_{32} & v_{33} & v_{34} & v_{35} & 0 \\
+	\end{bmatrix}
+	\] 
+	The equation $c_1 + c_2 + c_3 + c_4 + c_5 = 0$ can be added as a row to the augmented matrix, where $\Vec{v} = 
+	\begin{pmatrix}
+		1 \\
+		1 \\
+		1 \\
+		1 \\
+		1
+	\end{pmatrix}$ .
+		\[
+		\begin{bmatrix}[rrrrr|r]
+		v_{11} & v_{12} & v_{13} & v_{14} & v_{15} & 0 \\
+		v_{21} & v_{22} & v_{23} & v_{24} & v_{25} & 0 \\
+		v_{31} & v_{32} & v_{33} & v_{34} & v_{35} & 0 \\
+		1  & 1 & 1 & 1 & 1 & 0
+	\end{bmatrix}
+	\] 
+	As there are only rows for five columns, by Theorem 8 of Linear Algebra and Its Applications, the set of vectors are linearly dependent, and thus there exists a non-trivial solution for $\bm{c}$ for the system. Thus, for any five vectors $\Vec{v_1}, \Vec{v_2}, \Vec{v_3}, \Vec{v_4}, \Vec{v_5} \in \reals^3$ there exist real numbers $c_1, c_2, c_3, c_4, c_5$ not all zero such that both equations are true.
+\end{proof}
+% Question 2.2
+\begin{ques}
+	Let $A$ be a $3 \times 4$ matrix and $\vec{b_1}, \vec{b_2}$ be two vectors in $\mathbb{R}^3$ such that both matrix equations $A\Vec{x} = \Vec{b}_1$ and $A\Vec{y}=\Vec{b}_2$ are consistent. Prove that there exists a vector $\Vec{p} \in \mathbb{R}^4$ such that the set of solutions $\Vec{y}$ to the second equation is the set of all vectors of the form $\Vec{x} + \Vec{p}$ where $\Vec{x}$ is any solution of the first equation. 
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	Let $\Vec{x'}$ be an element in the set of solutions $\Vec{x}$ and $\Vec{y'}$ be an element in the set of solutions  $\Vec{y}$. Let  $\Vec{p} = \Vec{y'} - \Vec{x'}$. Then, $A\Vec{p} = A(\Vec{y'} - \Vec{x'}) = A\Vec{y'} - A\Vec{x'}$ . As $A\Vec{y} = \Vec{b_2}$ and $A\Vec{x} = \Vec{b_1}$, $A$ multiplied by all elements in the set of solutions $\Vec{y}$ will be $\Vec{b_2}$ and $A$ multiplied by all elements in the set of solutions $\Vec{x}$ will be $\Vec{b_1}$. Thus, $\Vec{y'} = \Vec{b_2}$ and $\Vec{x'} = \Vec{b_1}$. 
+	\\
+
+	It follows that $A\Vec{p} = A\Vec{y'} - A\Vec{x'} = \Vec{b_2} - \Vec{b_1}$. Thus, $A\Vec{p} + A\Vec{x} = \Vec{b_2} - \Vec{b_1} + \Vec{b_1} = \Vec{b_2} = A\Vec{y}$. We can rewrite as: $A(\Vec{p} + \Vec{x}) = A\Vec{y}$. We can multiply both sides by the inverse of  $A$:  $A^{-1}A(\Vec{p} + \Vec{x}) = A^{-1}A\Vec{y}$. By definition of inverse,  $A^{-1}A = I$. By definition of identity matrix, $I(\Vec{p} + \Vec{x}) = \Vec{p} + \Vec{x}$ and  $I\Vec{y} = \Vec{y}$. Thus,  $\Vec{p} + \Vec{x} = \Vec{y}$. 
+	\\
+
+	We reach the conclusion that, for all elements $\Vec{a}$ in the set of solutions $\Vec{y}$, there exists, for all elements $\Vec{b}$ in the set of solutions $\Vec{x}$, a vector $p$ that is the difference between a solution of $\Vec{y}$ and a solution of $\Vec{x}$ such that  $\Vec{b} + \Vec{p} = \Vec{a}$.
+\end{proof}
+% Question 2.3
+\begin{ques}
+	[Injections, Surjections, Bijections] For each of the following functions, determine \emph{(with proof)} whether it is injective and/or surjective. If it is bijective, write down its inverse function. 
+    \begin{itemize}
+        \item[(a)] Let $f: \mathbb{Z} \to \mathbb{Z}$ be given by $f(n) = 2n+1$
+        \item[(b)] Let $f: \mathbb{R} \backslash \{1\} \to \mathbb{R} \backslash \{1\}$ be given by $f(x) = \left( \dfrac{x+1}{x-1}\right)^3$
+        \item[(c)] Let $f: \mathbb{Z} \to \mathbb{Z}^2$ be given by $f(k) = (2k,k+3)$
+    \end{itemize}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[(a)]
+	\item \ 
+		\begin{claim*}
+			$f$ is injective.
+		\end{claim*}
+		\begin{proof}
+			[Proof by contrapositive]
+			Suppose $x_1, x_2 \in \ints$ and $f(x_1) = f(x_2)$. Thus:
+			\begin{align*}
+				2x_1 + 1 &= 2x_2 + 1 \\
+				2x_1 &= 2x_2 \\
+				x_1 &= x_2
+			\end{align*}
+		As we have shown that $f(x_1) = f(x_2)$ if and only if $x_1 = x_2$, we have shown that $f$ is injective.
+		\end{proof}
+		\begin{claim*}
+			$f$ is not surjective.
+		\end{claim*}
+		\begin{proof}
+			Suppose $y$ is an element in the codomain of $f$. Thus, $y = 2n + 1$. The value in the domain that maps to $y$ is the value $\displaystyle\frac{y-1}{2}$. Let  $y = 2$. Thus, the value in the domain must be $\displaystyle\frac{1}{2}$. 
+			\\
+
+			However, $\displaystyle\frac{1}{2} \not\in \ints$.  As we have shown that there exists a value in the codomain $y$ such that there does not exist a value in the domain $x$ such that $f(x) = y$, we have shown that $f$ is not surjective.
+		\end{proof}
+	\item 
+		\begin{claim*}
+			$f$ is injective.
+		\end{claim*}
+		\begin{proof}
+			[Proof by contrapositive]
+			Suppose $x_1, x_2 \in \reals \setminus \set*{1}$ and $f(x_1) = f(x_2)$. Thus:
+			\begin{align*}
+				\paren*{\frac{x_1 + 1}{x_1 -1}}^3 &= \paren*{\frac{x_2 + 1}{x_2 -1}}^3 \\
+				\frac{x_1 + 1}{x_1 -1} &= \frac{x_2 + 1}{x_2 -1} \\
+				(x_1 -1)(x_2 + 1) &= (x_1 + 1)(x_2 - 1), x_1 \neq 1, x_2 \neq 1 \\
+				x_1x_2 +x_1 -x_2 - 1 &= x_1x_2 - x_1 + x_2 - 1, x_1 \neq 1, x_2 \neq 1 \\
+				2x_1 &= 2x_2, x_1 \neq 1, x_2 \neq 1 \\
+				x_1 &= x_2, x_1 \neq 1, x_2 \neq 1 
+			\end{align*} 
+			As $x = 1$ is not in the domain of $f$, we reach the conclusion that $x_1 = x_2$ on the domain of $f$. As we have shown that $f(x_1) = f(x_2)$ if and only if $x_1 = x_2$, we have shown that $f$ is injective. 
+		\end{proof} 
+			\begin{claim*}
+			$f$ is surjective.
+		\end{claim*}
+		\begin{proof}
+			Suppose $y$ is an element in the codomain of $f$. We will show that there exists an $x$ in the domain of $f$ such that $f(x) =y$.
+			\begin{align*}
+				y &= \paren*{\frac{x+1}{x-1}}^3 \\
+				\sqrt[3]y &= \frac{x+1}{x-1} \\
+				(x-1)\sqrt[3]y &= x+1, x \neq 1 \\
+				x\sqrt[3]y - \sqrt[3]y &= x + 1, x \neq 1 \\
+				x\sqrt[3]y - x &= 1 + \sqrt[3]y, x \neq 1 \\
+				x(\sqrt[3]y - 1) &= 1 + \sqrt[3]y, x \neq 1 \\
+				x &= \frac{\sqrt[3]y + 1}{\sqrt[3]y - 1}, x \neq 1, y \neq 1
+			\end{align*}
+			As $y=1$ is not in the codomain, the case when $y \neq 1$ is not considered. When $x = 1$, $\sqrt[3]y - 1 = \sqrt[3]y + 1 \to -1 = 1$ which is false, and thus it is never the case that, for any $y$, $x = 1$. Thus, the case when $x=1$ is not considered. Thus, for every $y$ in the codomain of $ f$, there exists a $x$ in the domain, $x = \displaystyle\frac{\sqrt[3]y + 1}{\sqrt[3]y - 1}$, such that $f(x) = y$. Thus,  $f$ is surjective.
+		\end{proof}
+		As $f$ is injective and surjective, $f$ is bijective. We can find the inverse of $f$ :
+		\begin{align*}
+			y &= \paren*{\frac{x+1}{x-1}}^3 \\
+			\intertext{Swap $x$ and $y$ to switch domain and range.}
+			x &= \paren*{\frac{y+1}{y-1}}^3 \\
+			\sqrt[3]{x} &= \paren*{\frac{y+1}{y-1}} \\
+		(y-1)\sqrt[3]{x} &= y+1 \\
+		y\sqrt[3]{x} - \sqrt[3]{x} &= y + 1 \\
+		y\sqrt[3]{x} - y &= 1 + \sqrt[3]{x} \\
+		y(\sqrt[3]{x} - 1) &= 1 + \sqrt[3]{x} \\
+		y &= \frac{\sqrt[3]{x} + 1}{\sqrt[3]{x} - 1}
+		\end{align*}
+		Thus, the inverse function is $\displaystyle f^{-1}(x) = \frac{\sqrt[3]{x} + 1}{\sqrt[3]{x} - 1}$.
+	\item \ 
+		\begin{claim*}
+			$f$ is injective.
+		\end{claim*}
+		\begin{proof}
+			[Proof by contrapositive]
+			Suppose $x_1, x_2 \in \ints$ and  $f(x_1) = f(x_2)$. Thus:
+			\[
+				(2x_1, x_1 + 3) = (2x_2, x_2 + 3)
+			\]
+			It follows that:
+			\begin{align*}
+				2x_1 &= 2x_2 & x_1 + 3 &= x_2 + 3 \\
+				x_1 &= x_2 & x_1 &= x_2
+			\end{align*}
+			As we have shown that $f(x_1) = f(x_2)$ if and only if $x_1 = x_2$, we have shown that $f$ is injective.
+		\end{proof}
+		\begin{claim*}
+			$f$ is not surjective.
+		\end{claim*}
+		\begin{proof}
+			Let $y$ be an element in the codomain of $f$. We will show that there exists a $y$ such that there does not exist a $x$ in the domain such that $f(x) = y$. 
+			\\
+
+			As $y \in \ints^2$, $y$ can be $(1,2)$. However, $f$ is defined as $f(x) = (2x, x+3)$, meaning  $1 = 2x$ and $2 = x+3$. For the first element in the ordered pair, $x = \displaystyle\frac{1}{2}$. However, this will give  $\displaystyle\frac{7}{2}$ as the second element in the ordered pair instead of 2. $x = \displaystyle\frac{1}{2}$ is also not in $\ints$, and thus the first element being 1 is not possible as well.
+			\\
+
+			We have shown that there exists a $y$ in the codomain of $f$ such that there does not exist a $x$ in the domain such that $f(x) = y$. Thus,  $f$ is not surjective.
+		\end{proof}
+\end{enumerate}
+
+% Question 2.4 
+\begin{ques}
+	[Function Warm-Up] Let $f: S \to T$ and $g: T \to U$. For each of the following statements, either prove the statement or provide a very concrete and simple counterexample to show that it's false. 
+    \begin{itemize}
+        \item[(a)] If $f$ and $g$ are surjections, then $g \circ f$ is a surjection.
+        \item[(b)] If $g \circ f$ is injective, then $f$ must be injective.
+        \item[(c)] If $g \circ f$ is injective, then $g$ must be injective.
+    \end{itemize}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[(a)]
+	\item \
+		\begin{claim*}
+			The statement that, if $f$ and $g$ are surjections, then $g \comp f$ is a surjection is \textbf{true}.
+		\end{claim*}
+	\begin{proof}
+		 As  $g$ is surjective, for all $u \in U$ there exists a corresponding $t \in T$ such that  $g(t) = u$. As $f$ is surjective, for all $t \in T$ there exists a corresponding $s \in S$ such that $f(s) = t$. Therefore,  $g(f(s)) = g(t) = u$, meaning $g \comp f (s) = u$. We have shown that $g \comp f$ is a surjection, as we have shown that, for all values $u$ in the range of $g \comp f$, $U$, there exists a corresponding value $t$ in the domain, $T$, such that $g(f(t)) = u$.
+	\end{proof}
+\item \
+	\begin{claim*}
+		The statement that, if $g \comp f$ is injective, then $f$ must be injective is \textbf{true}.
+	\end{claim*}
+	\begin{proof}
+		[Proof by contrapositive] The contrapositive of the statement is, if $f$ is not injective, then $g \comp f$ is not injective. If $f$ is not injective, then there exists $x_1, x_2 \in S$ such that $x_1 \neq x_2$ and $f(x_1) = f(x_2)$. Thus,  $g(f(x_1)) = g(f(x_2))$, as the same value is being inputted into $g$. 
+		\\
+
+		$g \comp f$ is not injective, as we have shown that there exists $x_1, x_2 \in S$ such that $x_1 \neq x_2$ and $g(f(x_1)) = g(f(x_2))$. As this statement is equivalent to the original, it is true that, if $g \comp f$ is injective, then $f$ must be injective.
+	\end{proof}
+\item \
+	\begin{claim*}
+		The statement that, if $g \comp f$ is injective, then $g$ must be injective is \textbf{false}.
+	\end{claim*}
+	\begin{proof}
+		[Proof by counterexample]
+		Let $S = \set*{0}, T = \set*{1,2}, U = \set*{3}$. Let $f: S\to T$ such that $f(0) = 1$, and  $g: T \to U$ such that $g(1) = 3$ and  $g(2) = 3$.
+		\\
+
+		Then, $g \comp f$ is injective, as $0$ is the only input and it maps to $3$, and thus for all $x_1, x_2$ in the domain of $g \comp f$---$S$---$x_1 \neq x_2 \to f(x_1) \neq f(x_2)$. However, $g$ is not injective, as there exists $x_1, x_2$ in the domain of $g$---$T$---such that $x_1 \neq x_2$ and $g(x_1) = g(x_2)$, as $g(1) = g(2) = 3$.
+	\end{proof}
+\end{enumerate}
+
+% Question 2.5
+\begin{ques}
+	[Equivalence Relations] For each of the following relations on the real numbers $\mathbb{R}$: If the relation is an equivalence relation, prove that it is by verifying the three axioms. Also give a complete (non-repetitive) list of the equivalence classes. If the relation is not an equivalence relation, identify by giving a counterexample which of the three axioms are not satisfied. 
+    \begin{itemize}
+        \item[(a)] $\sim_e$ is the relation on $\mathbb{R}$ such that $\forall x,y \in \mathbb{R}$, $x \sim_e y \iff x-y$ is even.
+        \item[(b)] $\sim_d$ is the relation on $\mathbb{R}$ such that $\forall x,y \in \mathbb{R}$, $x \sim_d y \iff (x-y)^2 < 9$.
+        \item[(c)] $\sim_l$ is the relation on $\mathbb{R}^2$ such that $\forall (x_1,y_1),(x_2,y_2) \in \mathbb{R}^2$, $(x_1,y_1) \sim_l (x_2,y_2) \iff x_2-x_1 = 3(y_2-y_1)$.
+    \end{itemize}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[(a)]
+	\item \
+		\begin{claim*}
+			The relation $\sim_e$ on $\reals$ is an equivalence relation.
+		\end{claim*}
+		\begin{proof}
+			To show that $\sim_e$ is an equivalence relation, we must show that $\sim_e$ is reflexive, symmetric, and transitive.
+	\begin{claim*}
+The relation $\sim_e$ on $\mathbb{R}$ is reflexive.
+	\end{claim*}
+	\begin{subproof}
+		[Subproof]
+		We must show that, for all $x$, $x \sim_e x$, or $x - x$ is even. 
+		\\
+
+		As $x - x = 0$ and $2(0) = 0$, there exists a $c \in \ints$ such that $2c = 0$. Thus, by definition of even number,  $x - x = 0$ is even. Therefore, $x \sim_e x$ which means the relation $\sim_e$ is reflexive.
+	\end{subproof}
+	\begin{claim*}
+		The relation $\sim_e$ on $\reals$ is symmetric.
+	\end{claim*}
+	\begin{subproof}
+		[Subproof]
+		We must show that, for all $x,y \in \reals$, $x \sim_e y \lra y \sim_e x$, or $x - y$ is even $\lra y -x$ is even. 
+		\\
+
+		We will first show that $x \sim_e y \to y \sim_e x$.
+		If $x-y$ is even, then the difference of $x$ and $y$ can be represented by  $2c, c \in \ints$. Thus,  $x - y = 2c$. We can multiply both sides by  $-1$ to get the equation $y - x = -2c$. Let $k = -c$. Thus, as there exists a $k \in \ints$ such that $y - x = 2k$, by definition of even number, $y - x$ is even and thus $y \sim_e x$.
+		\\
+
+		The same proof can be used to show $y \sim_e x \to x \sim_e y$. If $y - x$ is even, then the difference of $y$ and $x$ can be represented by $2c, c \in \ints$. Thus, $y-x = 2c$. We can multiply both sides by $-1$ to get the equation $x - y = -2c$. Let $k = -c$. Thus, as there exists a $k \in \ints$ such that $x - y = 2k$, by definition of even number, $x - y$ is even and thus $x \sim_e y$. Thus, the relation $\sim_e$ on $\reals$ is symmetric.
+	\end{subproof}
+	\begin{claim*}
+		The relation $\sim_e$ on $\reals$ is transitive.
+	\end{claim*}
+	\begin{subproof}
+		[Subproof]
+		We must show that, $\forall a,b,c \in \reals (a \sim_e b \land b \sim_e c \to a \sim_e c)$, or if $a - b$ is even and $b - c$ is even, then $a - c$ is even.
+		\\
+
+		If $a-b$ is even, then the difference of $a$ and $b$ can be represented by $2k, k \in \ints$. If $b - c$ is even, then the difference of $b$ and $c$ can be represented by $2d, d \in \ints$. Thus,  $a - b = 2k$ and $b - c = 2d$. It follows that $b = a - 2k$. We substitute this value for $b$ to get the equation $a - 2k - c = 2d$. Thus, $a - c = 2d + 2k = 2(d+k)$. Let  $d + k = t$. Then, $a - c = 2t$. As the difference of $a$ and $c$ can be represented as $2t, t \in \ints$, by definition of even number, $a - c$ is even, and thus $a \sim_e c$. Thus, the relation $\sim_e$ on $\reals$ is transitive.
+	\end{subproof}
+		As the relation $\sim_e$ is reflexive, symmetric, and transitive, it is an equivalence relation.
+		\end{proof}
+		\textbf{The equivalence classes are:}
+\begin{itemize}
+	\item $\set*{2k \mid k \in \ints}$
+	\item $\set*{2k + 1 \mid k \in \ints}$
+\end{itemize}
+	\item \
+		\begin{claim*}
+			The relation $\sim_d$ on $\reals$ is not an equivalence relation.
+		\end{claim*}
+		\begin{proof}
+			[Proof by counterexample]
+			To prove that a relation is not an equivalence relation, we show that it is not reflexive, symmetric, and transitive; it is sufficient to show that one property does not hold. We will show that $\sim_d$ is not transitive, or that there exists $a,b,c \in \reals$ such that $a \sim_d b \land b \sim_d c \land a \not\sim_d c$.
+			\\
+			
+			Let $a = 1, b = 2, c = 4$. Then, $a \sim_d b$, as $(1-2)^2 = 1$, which is less than 9. $b \sim_d c$, as $(2-4)^2 = 4$, which is less than 9. However, $a \not\sim_d c$, as $(1-4)^2 = 9$, which is not less than 9. Thus, $\sim_d$ is not transitive. As $\sim_d$ is not transitive, it is not an equivalence relation.
+		\end{proof}
+	\item 
+		\begin{claim*}
+			The relation  $\sim_l$ on $\reals^2$ is an equivalence relation.	
+		\end{claim*}
+		\begin{proof}
+To show that $\sim_e$ is an equivalence relation, we must show that $\sim_e$ is reflexive, symmetric, and transitive.
+
+			\begin{claim*}
+				The relation  $\sim_l$ on $\reals^2$ is reflexive.
+			\end{claim*}
+			\begin{subproof}
+				[Subproof]
+				We must show that, for all $(x_1,y_1) \in \reals^2$, $(x_1,y_1) \sim_l (x_1y_1)$, or that $x_1 - x_1 = 3(y_1 - y_1)$. We can simplify to $0=0$, which is true. Therefore, $x \sim_l x$ which means that the relation $\sim_l$ is reflexive. 
+			\end{subproof}
+			\begin{claim*}
+				The relation $\sim_l$ on $\reals^2$ is symmetric.
+			\end{claim*}
+			\begin{subproof}
+				[Subproof]
+				We must show that, for all $(x_1,y_1), (x_2,y_2) \in \reals^2$, $(x_1,y_1) \sim_l (x_2,y_2) \lra (x_2, y_2) \sim_l (x_1, y_1)$, or that $x_2 - x_1 = 3(y_2 - y_1) \to x_1 - x_2 = 3(y_1 - y_2)$. 
+\\
+
+We will first show that $(x_1, y_1) \sim_l (x_2, y_2) \to (x_2, y_2) \sim_l (x_1, y_1)$. If $x_2 - x_1 = 3(y_2 - y_1)$, then we can multiply both sides by $-1$, obtaining the equation $x_1 - x_2 = 3(y_1 - y_2)$. Thus, $(x_2, y_2) \sim_l (x_1, y_1)$.
+\\
+
+The same proof can be used to show $(x_2, y_2) \sim_l (x_1,y_1) \to (x_1, y_1) \sim_l (x_2, y_2)$. If $x_1 - x_2 = 3(y_1 - y_2)$, then we can multiply both sides of the equation by $-1$ to obtain $x_2 - x_1 = 3(y_2 - y_1)$. Thus, $(x_1, y_1) \sim_l (x_2, y_2)$. Thus, the relation $\sim_l$ on $\reals^2$ is symmetric.
+			\end{subproof}
+			\begin{claim*}
+				The relation $\sim_l$ on $\reals^2$ is transitive.
+			\end{claim*}
+			\begin{subproof}
+				[Subproof]
+				We must show that, $\forall x_1,x_2,x_3,y_1,y_2,y_3 \in \reals^2$, $(x_1,y_1) \sim_l (x_2,y_2) \land (x_2,y_2) \sim_l (x_3,y_3) \to (x_1,y_1) \sim_l (x_3,y_3)$, or if  $x_2 - x_1 = 3(y_2 - y_1)$ and  $x_3 - x_2 = 3(y_3 - y_2)$, then  $x_3 - x_1 = 3(y_3 - x_1)$. 
+				\begin{align*}
+					x_3 - x_2 &= 3(y_3 - y_2) \\
+					x_2 &= x_3 - 3(y_3 - y_2)
+				\end{align*}
+				We substitute this in for $x_2$ in $x_2 - x_1 = 3(y_2 - y_1)$:
+				\begin{align*}
+					x_3 - 3(y_3 - y_2) - x_1 &= 3(y_2 - y_1) \\
+					x_3 - 3y_3 + 3y_2 - x_1 &= 3y_2 - 3y_1 \\
+					x_3 - x_1 &= 3y_3 - 3y_1 \\
+					x_3 - x_1 &= 3(y_3 - y_1)
+				\end{align*}
+				Thus, $(x_1, y_1) \sim_l (x_3, y_3)$. Thus, the relation $\sim_l$ on $\reals^2$ is transitive.
+			\end{subproof}
+		As the relation $\sim_l$ is reflexive, symmetric, and transitive, it is an equivalence relation.
+		\end{proof}
+		\textbf{The equivalence class is:}
+		\begin{itemize}
+			\item $\set*{(x,3x) \mid x \in \reals}$
+		\end{itemize}
+\end{enumerate}
+\end{document}
+

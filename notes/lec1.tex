@@ -1,0 +1,164 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../evan}
+\usepackage{graphicx}
+
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+
+\newcommand{\degree}{^\circ}
+
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Contradiction
+\newcommand\contradiction{\mathbin{\mathpalette\xhash\relax}}
+\newcommand{\xhash}[2]{\ooalign{%
+Ê $#1\xxhash{#1}{-45}$\cr
+Ê $#1\xxhash{#1}{45}$\cr
+Ê }%
+}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\subtitle{PSet 0}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\usepackage{titling}
+\renewcommand\maketitlehooka{\null\mbox{}\vfill}
+\renewcommand\maketitlehookd{\vfill\null}
+\makeatletter
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{\@title} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		\normalsize Week 1: September 6, 2023 
+		\endgroup \vskip 0.3cm
+		\normalsize Pset Due: September 13, 2023 \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm
+		\hrulefill
+	\end{flushleft}\egroup
+}
+\makeatother
+
+\renewcommand{\theques}{\thesection.\alph{ques}} % Change subtheo counter for alpha output
+\declaretheorem[style=basehead,name=Answer,sibling=theorem]{ans}
+\renewcommand{\theans}{\thesection.\alph{ans}}
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section{Administrative Stuff}
+\begin{itemize}
+	\item \textbf{Office Hours}: Sunday -- Tuesday (4-6pm) and Thursday (7-9pm) at Northwest B101
+	\item Homework available on Wednesdays and due next Wednesday
+	\begin{itemize}
+		\item Submit on Gradescope
+	\end{itemize} 
+	\item Midterms: October 12 and November 9 at 4-5:30pm
+	\item Finals: December 12
+\end{itemize}
+\begin{remark}
+	[$\sqrt{2}$ Myth]
+Pythagorians discovered that it was not possible to be a rational number in  $\frac{p}{q}$ form, which was against their beliefs of everything being able to be expressed as integers.
+\end{remark}
+\section{Linear Algebra}
+\subsection{Applications of Linear Algebra}
+We can solve this simple system with matrices and augmented matrices:
+\begin{align*}
+	10x + 5y &= 3 \\
+	5x - 2y &= 7
+\end{align*}
+\[
+\begin{bmatrix}
+	10 & 5 & 3 \\
+	5 & -2 & 7 \\
+\end{bmatrix}
+\]
+We can also represent graphs as matrices with adjacency matrix.
+\begin{definition}
+	[Linear Equation] A \textbf{linear equation} in the variables $x_1,...,x_n$ is an equation in the following form:
+	\[
+	a_1x_1 + a_2x_2 + ... + a_n x_n = b
+	\] 
+	where $b$ and the coefficients $a_1, ..., a_n$ are real or complex numbers. A \textbf{system of linear equations} is a collection of one or more linear equations involving the same variables. A \textbf{solution} to the linear system is a list of $(s_1,...,s_n)$ of numbers that are solutions to each of the linear equations in the system.
+\end{definition}
+Fundamental questions for systems:
+\begin{itemize}
+	\item Does there exist at least one solution?
+	\item If solution exists, how can we find it?
+	\item If solution exists, is it unique?
+\end{itemize}
+\begin{definition}
+	[Unique and Inconsistent]
+	A linear system is \textbf{unique} if there is a solution and otherwise, \textbf{inconsistent} (if there is no solution).
+\end{definition}
+\begin{fact}
+	A linear system has either no solution, exactly one solution, or infinitely many.	
+\end{fact}
+\begin{definition}
+	[Elementary Row Operations]
+	The following elementary row operations preserve solutions:
+	\begin{itemize}
+		\item Replace one row by the sum of itself and a multiple of another	
+		\item Interchange two rows (Swap)
+		\item Multiply all entries in a row by a non-zero constant (Scaling a vector)
+	\end{itemize}
+\end{definition}
+\begin{definition}
+	[Row Equivalent]
+	Two matrices are called \textbf{row equivalent} if there is a sequence of elementary row operations changing one matrix to another.
+\end{definition}
+\begin{fact}
+	If the augmented matrices of two linear systems are row equivalent, then they have the same solution set.
+\end{fact}
+\end{document}
+

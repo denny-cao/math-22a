@@ -1,0 +1,232 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../evan}
+\usepackage{graphicx}
+
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+
+\newcommand{\powset}{\mathcal{P}} % Power Set
+
+\newcommand{\degree}{^\circ}
+
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Contradiction
+\newcommand\contradiction{\mathbin{\mathpalette\xhash\relax}}
+\newcommand{\xhash}[2]{\ooalign{%
+Ê $#1\xxhash{#1}{-45}$\cr
+Ê $#1\xxhash{#1}{45}$\cr
+Ê }%
+}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\subtitle{PSet 0}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\usepackage{titling}
+\renewcommand\maketitlehooka{\null\mbox{}\vfill}
+\renewcommand\maketitlehookd{\vfill\null}
+\makeatletter
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{\@title} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		\normalsize Lecture 3: Row Reduction and Row Echelon Forms --- September 11, 2023
+		\endgroup \vskip 0.3cm
+		\normalsize Pset Due: September 13, 2023 \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm
+		\hrulefill
+	\end{flushleft}\egroup
+}
+\makeatother
+
+\renewcommand{\theques}{\thesection.\alph{ques}} % Change subtheo counter for alpha output
+\declaretheorem[style=basehead,name=Answer,sibling=theorem]{ans}
+\renewcommand{\theans}{\thesection.\alph{ans}}
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section{Announcements}
+\begin{itemize}
+	\item Office Hours: Monday, 4-6 and 7-9 in Sever 306
+	\item Check website for Office Hours on Tuesday
+	\item Office Hours w/Prof: Tuesday, 3-4 in Science Center 504 and Wednesday, 4-5 in Science Center 504
+\end{itemize}
+\section{Row Echelon Form}
+\begin{definition}
+	[Row Echelon Form]
+	A matrix is in \textit{row echelon form} if:
+	\begin{enumerate}
+		\item All rows consisting of only zeros are at the bottom.
+		\item The leading coefficient (pivot) of a non-zero row is always strictly to the right of the leading coefficient of the row above it.
+	\end{enumerate}
+\end{definition}
+\begin{remark}
+	Row echelon form is when the matrix is an upper triangular matrix.
+\end{remark}
+\begin{definition}
+	[Reduced Row Echelon Form]	
+	A matrix in row echelon form is in \textit{reduced row echelon form} if:
+	\begin{enumerate}
+		\item The leading entries are all 1.
+		\item Each leading 1 is the only non-zero entry in its column.
+	\end{enumerate}
+\end{definition}
+\begin{remark}
+	Reduced row echelon is when the main diagonal is full with 1s and every other entry is 0.
+\end{remark}
+\begin{fact}
+	Each matrix is row equivalent to one and only one reduced echelon matrix.
+\end{fact}
+\begin{definition}
+	[Pivot Position/Column]
+	A \textit{pivot position} in a matrix $A$ is a location that corresponds to a leading 1 in the reduced row echelon form. A \textit{pivot column} is a column that has a pivot position.
+\end{definition}
+\begin{algorithm}
+	[Gaussian Elimination]
+	\
+	\begin{enumerate}
+		\item The leftmost non-zero column is a pivot column.
+		\item Select a non-zero entry in the pivot column as pivot. Interchange rows to move this entry to the top.
+		\item Use elementary row operations to create zeros below the pivot.
+		\item Apply (1)--(3) to the submatrix obtained by removing pivot row and column. Repeat until all non-zero rows are modified.
+		\item Beginning with rightmost pivot and working upwards and to the left, create 0's above each pivot. Scale pivot position entries to be 1.
+	\end{enumerate}
+\end{algorithm}
+\begin{theorem}
+	Given a matrix $A$, Gaussian Elimination produces $\text{rref}(A)$ and there is a unique  $\text{rref}(A)$.
+\end{theorem}
+\begin{proof}
+	To get to $\text{rref}(A)$, we used elementary row operations. We can invert these row operations from  $\text{rref}(A)$ to the original matrix.
+\end{proof}
+\begin{definition}
+	[Basic, Free]
+	The variables corresponding to the pivot columns in an augmented matrix are called \textit{basic} and the others are called \textit{free}.
+\end{definition}
+\begin{fact}
+	A linear system is \textbf{consistent} if and only if the \textbf{rightmost column in the augmented matrix is not a pivot column.} If the system is \textbf{consistent}, then it has a textbf{unique solution} when there are \textbf{no free variables} and \textbf{infinite solutions} when there is one or more free variables.
+\end{fact}
+\begin{itemize}
+	\item System is inconsistent if any non-zero coefficients in the rightmost column in the augmented matrix is not zero in rows with all zeros.
+\end{itemize}
+\begin{definition}
+	[Column/Row Vector]
+	A matrix with 1 column is called a \textit{column} vector. A matrix with one row is called a \textit{row vector}.
+\end{definition}
+\begin{itemize}
+	\item We can add vectors of the same size by adding components:
+	\[
+		\vec{u} + \vec{v} =
+		\begin{pmatrix}
+			u_1 \\
+			\vdots \\
+			u_n
+		\end{pmatrix} + 
+		\begin{pmatrix}
+			v_1 \\
+			\vdots \\
+			v_n
+		\end{pmatrix} =
+		\begin{pmatrix}
+			u_1 + v_1 \\
+			\vdots \\
+			u_n + v_n 
+		\end{pmatrix}
+	\] 
+\item We can scale a vector by a real number $c$ by multiplying components by $c$ :
+	\[
+		c\vec{u} = c 
+		\begin{pmatrix}
+			u_1 \\
+			\vdots \\
+			u_n 
+		\end{pmatrix} = 
+		\begin{pmatrix}
+			cu_1 \\
+			\vdots \\
+			cu_n 
+		\end{pmatrix}
+	\] 
+\end{itemize}
+\begin{definition}
+	[Linear Combination]
+	Given $\vec{v_1}, \dots, \vec{v_p} \in \reals^n$ and scalars $c_1, \dots, c_p$, the vector:
+	\[
+		\vec{y} = c_1 \vec{v_1} + \dots + c_p \vec{v_p}
+	\] 
+	is called the \textit{linear combination} of $\vec{v_1}, \dots, \vec{v_p}$ with weights $c_1, \dots, c_p$.
+\end{definition}
+\begin{remark}
+	A vector equation 
+	\[
+		\vec{b} = x_1 \vec{a_1} + x_2 \vec{a_2} + \dots + x_n \vec{a_n}
+	\] 
+	has the same solutions as the augment matrix
+	\[
+		\begin{bmatrix}{cccc|c}
+			\vec{a_1} & \vec{a_2} & \dots & \vec{a_n} & \vec{b}
+	\end{bmatrix}
+	\] 
+\end{remark}
+\begin{definition}
+	[Span]
+	If $\vec{v_1}, \dots, \vec{v_p} \in \reals^n$, then the set of all linear combinations of $\vec{v_1}, \dots, \vec{v_p}$ is called the \textit{span} of $\vec{v_1}, \dots, \vec{v_p}$. We write this set as $\text{Span}\{\vec{v_1}, \dots, \vec{v_p}\}$.
+\end{definition}
+\begin{itemize}
+	\item Span of $\vec{v}$ is the line through $\vec{v}$, as it contains all possible scales of the vector.
+	\item Span of two vectors is any point in plane if they are not parallel, as any point can be produced by a linear combination if they are not parallel.
+\end{itemize}
+\end{document}

@@ -1,0 +1,969 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\subtitle{PSet 1}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 5
+		\endgroup \vskip 0.3cm
+		Due: Wednesday, October 11, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm 
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\begin{itemize}
+	\item May Ng
+\end{itemize}
+\section{Computational Questions}
+\begin{ques}
+	Compute the product $AB$ of the matrices below in two ways: First, by the definition where $Ab_1$ and $Ab_2$ are computed separately ($\vec{b_1}$ and $\vec{b_2}$ are the two columns of B). Then compute AB by the row-column rule on page 98 of \emph{Linear Algebra}.
+    \begin{align*}
+        A = \begin{bmatrix}
+            -1 & 2 \\ 5 & 4 \\ 2 & -3 
+        \end{bmatrix}, &B = \begin{bmatrix}
+            3 & -2 \\ -2 & 1
+        \end{bmatrix}
+    \end{align*}
+\end{ques}
+\textbf{Solution}
+\begin{align*}
+	A\vec{b_1} &= \begin{bmatrix}
+            -1 & 2 \\ 5 & 4 \\ 2 & -3 
+        \end{bmatrix} \times
+		\begin{bmatrix}
+			3 \\
+			-2
+		\end{bmatrix} &
+		A\vec{b_2} &= \begin{bmatrix}
+            -1 & 2 \\ 5 & 4 \\ 2 & -3 
+        \end{bmatrix} \times 
+		\begin{bmatrix}
+			-2 \\
+			1
+		\end{bmatrix} \\
+			 &= 3 
+			 \begin{bmatrix}
+			 	-1 \\
+				5  \\
+				2
+			 \end{bmatrix} +
+			 -2 
+			 \begin{bmatrix}
+			 	2 \\
+				4 \\
+				-3
+			 \end{bmatrix}
+			&
+			&= 
+			-2
+			\begin{bmatrix}
+				-1 \\
+				5 \\
+				2
+			\end{bmatrix} +
+			1
+			\begin{bmatrix}
+				2 \\
+				4 \\
+				-3
+			\end{bmatrix} \\
+			&= 
+			\begin{bmatrix}
+				-3 \\
+				15 \\
+				6
+			\end{bmatrix} +
+			\begin{bmatrix}
+				-4 \\
+				-8 \\
+				6
+			\end{bmatrix}
+		&
+		&= 
+		\begin{bmatrix}
+			2 \\
+			-10 \\
+			-4
+		\end{bmatrix} +
+		\begin{bmatrix}
+			2 \\
+			4 \\
+			-3
+		\end{bmatrix} \\
+			A\vec{b_1}	&= 
+		\begin{bmatrix}
+			-7 \\
+			7 \\
+			12
+		\end{bmatrix}
+		&
+			A\vec{b_2}	&= 
+		\begin{bmatrix}
+			4 \\
+			-6 \\
+			-7
+		\end{bmatrix}
+\end{align*}
+Thus, $A
+\begin{bmatrix}
+	\vec{b_1} & \vec{b_2}
+\end{bmatrix}
+= 
+\begin{bmatrix}
+	-7 & 4 \\
+	7 & -6 \\
+	12 & -7
+\end{bmatrix}
+$.
+\\
+
+By the row-column rule:
+\begin{align*}
+	AB &= 
+	\begin{bmatrix}
+		-1(3) + 2(-2) & -1(-2) + 2(1) \\
+		5(3) + 4(-2) & 5(-2) + 4(1) \\
+		2(3) -3(-2) & 2(-2) - 3(1)
+	\end{bmatrix} \\
+	   &= 
+	   \begin{bmatrix}
+		   -7 & 4 \\
+		   7 & -6 \\
+		   12 & -7
+	   \end{bmatrix}
+\end{align*}
+\begin{ques}
+	For the matrices A and B depicted below, what value(s) of the number $k$, if any, will make $AB=BA$?
+    \begin{align*}
+        A = \begin{bmatrix}
+            2 & 5 \\ -3 & 1
+        \end{bmatrix}, &B = \begin{bmatrix}
+            4 & -5 \\ 3 & k
+        \end{bmatrix}
+    \end{align*}
+\end{ques}
+\textbf{Solution}
+\begin{align*}
+	AB &= 
+	\begin{bmatrix}
+		2(4) + 5(3) & 2(-5) + 5(k) \\
+		-3(4) + 1(3) & -3(-5) + 1(k)
+	\end{bmatrix} &
+	BA &= 
+	\begin{bmatrix}
+		4(2) - 5(-3) & 4(5) - 5(1) \\
+		3(2) + k(-3) & 3(5) + k(1)
+	\end{bmatrix} \\
+	   &= 
+	   \begin{bmatrix}[cc]
+		   23 & -10 + 5k \\
+		   -9 & 15 + k
+	   \end{bmatrix} &
+	   &= 
+	   \begin{bmatrix}[cc]
+		   23 & 15 \\
+		   6 - 3k & 15 + k
+	   \end{bmatrix}
+\end{align*}
+We set up a system of equations:
+\[
+	\begin{cases}
+		-10 + 5k &= 15 \\
+		6 - 3k &= -9 
+	\end{cases}
+\] 
+	We solve for $x$ : 
+	\begin{align*}
+		-10 + 5k &= 15 \\
+		5k &= 25 \\
+		k &= 5
+	\end{align*}
+	We verify that this solution works with the second equation:
+	\begin{align*}
+		6 - 3(5) &= 6 - 15 \\
+				&= -9
+	\end{align*}
+	Thus, when $k = 5$, $AB = BA$.
+\begin{ques}
+	For the matrix A below, construct a $2 \times 2$ matrix B with two non-zero columns such that $AB$ is the zero matrix. 
+    \begin{align*}
+        A = \begin{bmatrix}
+            3 & -6 \\ -1 & 2
+        \end{bmatrix}
+    \end{align*}
+\end{ques}
+\textbf{Solution}
+
+Let $b_{ij}$ represent the entry in the  $i$-th row and $j$-th column of $B$.
+\begin{align*}
+	A
+	\begin{bmatrix}
+		b_{11} \\
+		b_{21}
+	\end{bmatrix} &= 
+	\begin{bmatrix}
+		0 \\
+		0
+	\end{bmatrix} \\
+	A\vec{b_1} &= \begin{bmatrix}[rr|r]
+		3 & -6 & 0 \\
+		-1 & 2 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_2 + 1/3 R_1 \to R_2$.}
+&= \begin{bmatrix}[rr|r]
+		3 & -6 & 0 \\
+		0 & 0 & 0
+	\end{bmatrix}
+	\intertext{$\sim 1/3 R_1 \to R_1$.}
+&= \begin{bmatrix}[rr|r]
+		1 & -2 & 0 \\
+		0 & 0 & 0
+	\end{bmatrix}
+\end{align*}
+Thus, $b_{11} = 2b_{21}$. As the augmented matrix for $\vec{b_2}$ will be the same, it follows that $b_{12} = 2b_{22}$. Let $b_{11} = b_{12} = 1$. Then, $b_{21} = b_{22} = 2$. Thus, a matrix  $B$ such that $AB$ is the zero matrix is:
+\[
+B = \begin{bmatrix}
+ 1 & 1 \\
+ 2 & 2
+\end{bmatrix}
+\] 
+\begin{ques}
+	Let $\vec{u}$ and $\vec{v}$ denote the vectors below (the left-hand one is $\vec{u}$, the right-hand one is $\vec{v}$). View them as column matrices with one column. Compute the four matrices $\vec{v}^T\vec{u}$, $\vec{u}^T\vec{v}$ and $\vec{u}\vec{v}^T$ and $\vec{v}\vec{u}^T$.
+    \begin{align*}
+        \begin{bmatrix}
+            5 \\ -7 \\ 2
+        \end{bmatrix} & \begin{bmatrix}
+            -3 \\ 8 \\ 0
+        \end{bmatrix}
+    \end{align*}
+\end{ques}
+\textbf{Solution}
+\begin{align*}
+	\vec{u} &= 
+	\begin{bmatrix}
+		5 \\
+		-7 \\
+		2
+	\end{bmatrix} & 
+	\vec{u}^T &=
+	\begin{bmatrix}
+		5 & -7 & 2
+	\end{bmatrix} \\
+	\vec{v} &= \begin{bmatrix}
+		-3 \\
+		8 \\
+		0 
+	\end{bmatrix} &
+		\vec{v}^T &= 
+		\begin{bmatrix}
+			-3 & 8 & 0
+		\end{bmatrix}
+\end{align*}
+\begin{align*}
+	\vec{v}^T\vec{u} &= 
+	\begin{bmatrix}
+		-3 & 8 & 0
+	\end{bmatrix} \times
+	\begin{bmatrix}
+		5 \\
+		-7 \\
+		2
+	\end{bmatrix} & 
+	\vec{u}^T \vec{v} &=
+	\begin{bmatrix}
+		5 & -7 & 2 
+	\end{bmatrix} \times
+	\begin{bmatrix}
+		-3 \\
+		8 \\
+		0
+	\end{bmatrix} \\
+					  &= 
+					  \begin{bmatrix}
+					  	-3(5) + 8(-7) + 0(2)
+					  \end{bmatrix}
+					  &
+					  &= 
+					  \begin{bmatrix}
+					  	5(-3) -7(8) + 2(0)
+					  \end{bmatrix} \\
+					  &= 
+					  \begin{bmatrix}
+					  	-71
+					\end{bmatrix} &
+					  &=
+					  \begin{bmatrix}
+					  	-71
+					  \end{bmatrix}
+\end{align*}
+\begin{align*}
+	\vec{u}\vec{v}^T &=
+	\begin{bmatrix}
+		5 \\
+		-7 \\
+		2
+	\end{bmatrix} \times
+	\begin{bmatrix}
+		-3 & 8 & 0
+	\end{bmatrix} & 
+	\vec{v}\vec{u}^T &= 
+	\begin{bmatrix}
+		-3 \\
+		8 \\
+		0
+	\end{bmatrix} \times
+	\begin{bmatrix}
+		5 & -7 & 2
+	\end{bmatrix}
+	\\
+					 &= 
+	\begin{bmatrix}
+		5(-3) & 5(8) & 5(0) \\
+		-7(-3) & -7(8) & -7(0) \\
+		2(-3) & 2(8) & 2(0)
+	\end{bmatrix} &
+					 &=
+					 \begin{bmatrix}
+						 -3(5) & -3(-7) & -3(2) \\
+						 8(5) & 8(-7) & 8(2) \\
+						 0(5) & 0(-7) & 0(2)
+					 \end{bmatrix}
+	\\
+					 &= 
+					 \begin{bmatrix}
+						 -15 & 40 & 0 \\
+						 21 & -56 & 0 \\
+						 -6 & 16 & 0
+					 \end{bmatrix} &
+					 &=
+					 \begin{bmatrix}
+						 -15 & 21 & -6 \\
+						 40 & -56 & 16 \\
+						 0 & 0 & 0 
+					 \end{bmatrix}
+\end{align*}
+\begin{ques}
+	Find the inverses of the matrices below (if they exist). 
+    \begin{align*}
+        \begin{bmatrix}
+            5 & 10 \\ 4 & 7
+        \end{bmatrix}
+        \begin{bmatrix}
+            1 & -2 & 1 \\ 4 & -7 & 3 \\ -2 & 6 & -4
+        \end{bmatrix}
+    \end{align*}
+\end{ques}
+\textbf{Solution}
+
+Let the first matrix be $A$ and the second be $B$.
+\\
+
+$\text{det}(A) = 5(7) - 4(10) = 35 - 40 = -5 \neq 0$, and thus by Theorem 4 in Lay's Linear Algebra, the $2\times 2$ matrix is invertible. The inverse is:
+\[
+	A^{-1} = -\frac{1}{5} 
+	\begin{bmatrix}
+		7 & -10 \\
+		-4 & 5
+	\end{bmatrix} = 
+	\begin{bmatrix}
+		-\frac{7}{5} & 2 \\
+		\frac{4}{5} & -1
+	\end{bmatrix}
+\] 
+The inverse of $B$ can be found using an augmented matrix:
+\begin{align*}
+	(B \mid I) &= 
+	\begin{bmatrix}[rrr|rrr]
+		1 & -2 & 1 & 1 & 0 & 0 \\
+		4 & -7 & 3 & 0 & 1 & 0 \\
+		-2 & 6 & -4 & 0 & 0 & 1
+	\end{bmatrix}
+	\intertext{$\sim R_2 - 4R_1 \to R_2$ and $R_3 + 2R_1 \to R_3$.}
+			   &= \begin{bmatrix}[rrr|rrr]
+		1 & -2 & 1 & 1 & 0 & 0 \\
+		0 & 1 & -1 & -4 & 1 & 0 \\
+		0 & 2 & -2 & 2 & 0 & 1
+	\end{bmatrix}
+	\intertext{$\sim R_3 - 2R_2 \to R_3$.}
+			   &= \begin{bmatrix}[rrr|rrr]
+		1 & -2 & 1 & 1 & 0 & 0 \\
+		0 & 1 & -1 & -4 & 1 & 0 \\
+		0 & 0 & 0& 10 & -2 & 1
+	\end{bmatrix}
+\end{align*}
+From Theorem 8 (The Invertible Matrix Theorem) in Lay's Linear Algebra, if a $n \times n$ matrix is invertible, then there are $n$ pivot positions. However, we have shown that $B$ in an echelon form has a column without a pivot position, and thus is not invertible.
+\begin{ques}
+	Mark each of the statements below as either true or false and justify your answers.
+	\begin{enumerate}[(a)]
+        \item A product of invertible $n \times n$ matrices is invertible, and the inverse of the product is the product of their inverses in the same order.
+        \item If A is invertible, then the inverse of $A^{-1}$ is A itself.
+        \item If $A = \begin{bmatrix}
+            a & b \\ c & d
+        \end{bmatrix}$ and $ad=bc$, then A is not invertible.
+        \item If A can be row-reduced to the identity matrix, then A must be invertible.
+        \item If A is invertible, then elementary row operations that reduce A to the identity $I_n$ also reduce $A^{-1}$ to $I_n$.
+    \end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[(a)]
+	\item \textbf{False}. From Theorem 6 in Lay's Linear Algebra, a product of invertible $n \times n$ matrices is invertible, and the inverse of the product is the inverse of their inverses in \textit{reverse} order, not the same order.
+	\item \textbf{True}. From Theorem 6 in Lay's Linear Algebra, $\paren*{A^{-1}}^{-1} = A$.
+	\item \textbf{True}. The determinant of the $2 \times 2$ matrix is $ad - bc$. When $ad = bc$, $\text{det} (A) = 0$. From Theorem 4 in Lay's Linear Algebra, if the determinant is 0, then the matrix is not invertible.
+	\item \textbf{True}. From Theorem 7 in Lay's Linear Algebra, a $n \times n$ matrix $A$ is invertible if and only if $A$ is row equivalent to $I_n$.
+	\item \textbf{False}. From Theorem 7 in Lay's Linear Algebra, if $A$ is invertible, then elementary row operations that reduce $A$ to the identity $I_n$ also transform $I_n$ into $A^{-1}$, not the other way around.
+\end{enumerate}
+\begin{ques}
+	Explain why the columns of an $n \times n$ matrix span $\mathbb{R}^n$ when that matrix is invertible.
+\end{ques}
+\textbf{Solution}
+
+By Theorem 7 in Lay's Linear Algebra, if an $n \times n$ matrix is invertible, then it can be reduced to the identity $I_n$, meaning there exists a pivot position in every column. Thus, any vector $v \in \reals^n$ can be expressed as a linear combination of the columns of the $n \times n$ matrix, and thus the columns span $R^n$.
+\begin{ques}
+	Let $T$ denote a linear transformation that maps $\mathbb{R}^n$ onto $\mathbb{R}^n$ (it is surjective). Show that $T^{-1}$ exists and that it also maps $\mathbb{R}^n$ onto $\mathbb{R}^n$. Are $T$ and/or $T^{-1}$ one-to-one? Either way, explain your answer.
+\end{ques}
+\textbf{Solution}
+
+Let $A$ be the standard matrix such that $T(\vec{x}) = A\vec{x}$. By Theorem 8 (The Invertible Matrix Theorem) in Lay's Linear Algebra, the linear transformation $\vec{x} \mapsto A\vec{x} \implies$ the linear transformation $\vec{x} \mapsto A\vec{x}$ is one-to-one. As $T$ is both surjective and injective, $T$ is bijective. As $T$ is bijective, $T$ is invertible, and thus $T^{-1}$ exists. As $T^{-1}$ exists, we know that $A$ is invertible, which means $A^{-1}$ is invertible. Thus, by Theorem 8, the linear transformation $T^{-1}$ maps $\reals^{n}$ onto $\reals^{n}$. Both $T$ and $T^{-1}$ are one-to-one, as by Theorem 8, as both linear transformations map $\reals^{n}$ onto $\reals^{n}$, the linear transformations are one-to-one.
+\begin{ques}
+	An $n \times n$ \emph{upper triangular matrix} is one whose entries below the diagonal are zeroes.
+    \begin{itemize}
+        \item[(a)] Show that the product of two upper triangular matrices is upper triangular.
+        \item[(b)] Show that the inverse of an upper triangular matrix is upper triangular. 
+        \item[(c)] Show that an upper triangular matrix is invertible if and only if its diagonal entries are all non-zero.
+    \end{itemize}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[(a)]
+	\item 
+		\begin{proof}
+			Let $A$ and $B$ be $n \times n$ upper triangular matrices. Let $a_{ij}$ denote the entry in the $i$-th row and $j$-th column for $A$ and $b_{ij}$ denote the entry in the $i$-th row and $j$-th column for $B$. Let $C = AB$ and  $c_{ij}$ denote the entry in the $i$-th row and $j$-th column for $C$.
+			Then:
+			\[
+				c_{ij} = \sum_{k=1}^{n} a_{ik}b_{kj}
+			\] 
+			We can break this sum into two parts: The sum from  $k = 1$ to $k = i-1$, and the sum from $k = i$ to $k = n$:
+			\[
+				c_{ij} = \sum_{k=1}^{i-1} a_{ik}b_{kj} + \sum_{k = i}^{n} a_{ik}b_{kj}
+			\] 
+			By definition of upper triangular matrices, the entires below the diagonal are zeroes. Thus, when $i > j$, $a_{ij} = 0$ and $b_{ij} = 0$. Thus, $\displaystyle\sum_{k=1}^{i-1} a_{ik}b_{kj} = 0$ when $i > j$, as $a_{ik}$ will always be 0 and $\displaystyle\sum_{k = i}^{n} a_{ik}b_{kj} = 0$ when $i > j$, as $b_{kj}$ will always be 0. It follows that, when $i > j$, $c_{ij} = 0 + 0 = 0$ and thus $C$ is upper triangular and the proof is complete.
+		\end{proof}
+	\item 
+		\begin{proof}
+			By Theorem 7 in Lay's Linear Algebra, if a $n \times n$ matrix $A$ is invertible, then elementary row operations that reduce $A$ to the identity $I_n$ also transform $I_n$ into $A^{-1}$. We first establish that $I_n$ is upper triangular, as the entries below the diagonal are zeroes. We will now show that all elementary row operations preserves the upper triangular nature. 
+			\\
+
+			\textbf{Interchanging}: Interchanging is not necessary to transform an upper triangular matrix into the identity matrix, as an upper triangular matrix is in echelon form.
+			\\
+
+			\textbf{Replacement}: To obtain the identity matrix from an upper triangular matrix, replacement operations will be done with a row and rows below in order to maintain the pivot positions along the diagonals. For a row $i$, all columns $j$ such that $i \leq j$ can have values that are non-zero. Let $k$ be a row below $i$. As $k > i$, it follows that the columns that can have values that are non-zero for row $k$ is a subset of the columns that can have non-zero values for row $i$. Thus, when adding a multiple of row $k$ to row $i$, the only change in values are for the columns that can have non-zero values which will still maintain the upper triangular property, where for  $i > j$, $a_{ij} = 0$.
+			\\
+
+			\textbf{Scaling}: When multiplying a row by a non-zero constant, all zeroes in the row will remain 0, and thus will maintain the upper triangular property.
+			\\
+
+			As we have shown that all elementary row operations to the identity matrix which is an upper triangular matrix preserves the property of an upper triangular matrix, the inverse of an upper triangular matrix $A$, $A^{-1}$, is upper triangular.
+		\end{proof}
+	\item 
+		\begin{proof}
+			By Theorem 7 in Lay's Linear Algebra, a $n \times n$ matrix $A$ is invertible if and only if $A$ is row equivalent to $I_n$. For an upper triangular matrix, if there exists an entry in the diagonal that is 0, then that column is not a pivot column, and no elementary row operations can fill the entry so it is 1 to be row equivalent to $I_n$. Thus, an upper triangular matrix is invertible if its diagonal entries are all non-zero.
+			\\
+
+			We will now prove the other direction, that if an upper triangular matrix's diagonal entries are all non-zero, then it is invertible. A matrix is invertible if the determinant is not 0. For an upper triangular matrix, the determinant is the product of the entries in the diagonal. If an entry in the diagonal is 0, then the determinant is 0 and is not invertible.
+			\\
+
+			We have proved the biconditional statement and the proof is complete.
+		\end{proof}
+\end{enumerate}
+\begin{ques}
+	Suppose A and C are $n \times n$ matrices. Prove that $AC = I_n$ if and only if $CA = I_n$ (thus, a matrix is invertible if and only if it has a right or left inverse).
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	We will first prove that $AC = I_n \implies CA = I_n$.
+	\\
+
+	We can multiply both sides of $AC = I_n$ by $A$ on the right:
+	\begin{align*}
+		ACA &= I_n A \\
+		A(CA) &= A
+	\end{align*}
+	We observe that $CA = I_n$, as by definition of the identity matrix, $AI = A$. Thus, we have shown that $AC = I_n \implies CA = I_n$.
+	\\
+
+	A symmetrical argument can be made to prove that $CA = I_n \implies AC = I_n$.
+	\\
+
+	We can multiply both sides of $CA = I_n$ by $C$ on the right:
+	\begin{align*}
+		CAC &= I_n C \\
+		C(AC) &= C
+	\end{align*}
+	We observe that $AC = I_n$, as by definition of the identity matrix, $CI = C$. Thus, we have shown that $CA = I_n \implies CA = I_n$.
+% 	If $AC = I_n$, then $C = C(AC) = (CA)C$. As $AC = I_n$ and $\text{det}(I_n) = 1$, it follows that $\text{det}(AC) = 1$, and thus  $\text{det} (A) \cdot \text{det}(C) = 1$, meaning  $\text{det}(C) \neq 0$. Thus, from Theorem 4 in Lay's Linear Algebra, $C$ is invertible. This means there exists a matrix $C^{-1}$ such that $CC^{-1} = I_n$. Multiplying both sides of $C = (CA)C$ by $C^{-1}$ on the right, we get:	 
+% 	\begin{align*}
+% 		 (CA)CC^{-1} &= C C^{-1} \\
+% 		 CA &= I_n
+% 	\end{align*}
+% 	Thus, we have shown that $AC = I_n \implies CA = I_n$.
+% 	\\
+% 
+% 	A symmetrical argument can be made to prove that $CA = I_n \implies AC = I_n$.
+% 	\\
+% 
+% 	If $CA = I_n$, then $A = A(CA) = (AC)A$. As $CA = I_n$ and $\text{det}(I_n) = 1$, it follows that $\text{det}(CA) = 1$, and thus $\text{det}(C) \cdot \text{det}(A) = 1$, meaning  $\text{det}(A) \neq 0$. Thus, from Theorem 4 in Lay's Linear Algebra, $A$ is invertible. This means there exists a matrix $A^{-1}$ such that $AA^{-1} = I_n$. Multiplying both sides of $A = (AC)A$ by $A^{-1}$ on the right, we get:
+% 	\begin{align*}
+% 		(AC)AA^{-1} &= A A^{-1} \\
+% 		AC &= I_n
+% 	\end{align*}
+% Thus, we have shown that $CA = I_n \implies AC = I_n$.
+	\\
+
+	As we have proved both directions, we have proved that $AC = I_n \iff CA = I_n$ and the proof is complete.
+\end{proof}
+\section{Proof Questions}
+\begin{ques}
+	[Domino-style Induction] In this problem, a domino is just a $2 \times 1$ rectangle (that is, all dominoes are identical - there are no dots). We will consider the problem of how many different ways there are to tile a $2 \times n$ chessboard with dominoes (that is, how many ways are there to cover the surface of the chessboard exactly with the dominoes laid side by side). One of the length 2 sides of the chessboard is labeled, so if you have two different tilings that are the same after you rotate one of them by 180 degrees, that should still count as two different tilings.
+\begin{enumerate}[(a)]
+        \item There is only one way to tile a  $2 \times 1$ chessboard with dominoes. There are two ways to tile a  $2 \times 2$. There are 3 ways to tile a  $2 \times 3$. What are they? Draw some pictures!
+        \item How many ways are there to tile a  $2 \times 4$ chessboard? Hint: the answer is not 4.
+        \item Try the  $2 \times 5$ case, too. Conjecture a general rule that describes how many ways there are to tile a  $2 \times n$ chessboard. You may want to muster the troops for this part - ask your classmates, check out Cliff's office hours, go to Math Night.
+        \item Prove your conjecture using mathematical induction.
+    \end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[(a)]
+	\item The three ways to tile a $2 \times 3$ are:
+		\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+		\draw (0, 0) grid (3, 2);
+		\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+		\draw[cyan, fill] (1.25,1.25) rectangle (2.75,1.75);
+		\draw[cyan, fill] (1.25,.25) rectangle (2.75,.75);
+    \end{tikzpicture} \quad
+    \begin{tikzpicture}
+		\draw (0, 0) grid (3, 2);
+		\draw[cyan, fill] (0.25,1.25) rectangle (1.75,1.75);
+		\draw[cyan, fill] (0.25,.25) rectangle (1.75,.75);
+		\draw[cyan, fill] (2.25,.25) rectangle (2.75,1.75);
+    \end{tikzpicture} \quad
+    \begin{tikzpicture}
+		\draw (0, 0) grid (3, 2);
+		\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+		\draw[cyan, fill] (1.25,.25) rectangle (1.75,1.75);
+		\draw[cyan, fill] (2.25,.25) rectangle (2.75,1.75);
+    \end{tikzpicture} 
+    \caption{Three possibilities of tiling a $2\times 3$ board with dominoes.}
+\end{figure}
+\item There are 5 ways to tile a $2 \times 4$ chessboard. They are:
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\draw (0, 0) grid (4, 2);
+\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+\draw[cyan, fill] (1.25,.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (2.75,1.75);
+\draw[cyan, fill] (3.25,.25) rectangle (3.75,1.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (4, 2);
+\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+\draw[cyan, fill] (1.25,.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,1.25) rectangle (3.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (3.75,.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (4, 2);
+\draw[cyan, fill] (.25,.25) rectangle (1.75,.75);
+\draw[cyan, fill] (.25,1.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (2.75,1.75);
+\draw[cyan, fill] (3.25,.25) rectangle (3.75,1.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (4, 2);
+\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+\draw[cyan, fill] (1.25,1.25) rectangle (2.75,1.75);
+\draw[cyan, fill] (1.25,.25) rectangle (2.75,.75);
+\draw[cyan, fill] (3.25,.25) rectangle (3.75,1.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (4, 2);
+\draw[cyan, fill] (.25,.25) rectangle (1.75,.75);
+\draw[cyan, fill] (.25,1.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (3.75,.75);
+\draw[cyan, fill] (2.25,1.25) rectangle (3.75,1.75);
+\end{tikzpicture}
+\caption{Five possibilities of tiling a $2\times 4$ chessboard with dominoes.}
+\end{figure}
+\item \
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\draw (0, 0) grid (5, 2);
+\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+\draw[cyan, fill] (1.25,.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (2.75,1.75);
+\draw[cyan, fill] (3.25,.25) rectangle (3.75,1.75);
+\draw[cyan, fill] (4.25,.25) rectangle (4.75,1.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (5, 2);
+\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+\draw[cyan, fill] (1.25,.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,1.25) rectangle (3.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (3.75,.75);
+\draw[cyan, fill] (4.25,.25) rectangle (4.75,1.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (5, 2);
+\draw[cyan, fill] (.25,.25) rectangle (1.75,.75);
+\draw[cyan, fill] (.25,1.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (2.75,1.75);
+\draw[cyan, fill] (3.25,.25) rectangle (3.75,1.75);
+\draw[cyan, fill] (4.25,.25) rectangle (4.75,1.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (5, 2);
+\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+\draw[cyan, fill] (1.25,1.25) rectangle (2.75,1.75);
+\draw[cyan, fill] (1.25,.25) rectangle (2.75,.75);
+\draw[cyan, fill] (3.25,.25) rectangle (3.75,1.75);
+\draw[cyan, fill] (4.25,.25) rectangle (4.75,1.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (5, 2);
+\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+\draw[cyan, fill] (1.25,.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (2.75,1.75);
+\draw[cyan, fill] (3.25,.25) rectangle (4.75,.75);
+\draw[cyan, fill] (3.25,1.25) rectangle (4.75,1.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (5, 2);
+\draw[cyan, fill] (.25,.25) rectangle (1.75,.75);
+\draw[cyan, fill] (.25,1.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (3.75,.75);
+\draw[cyan, fill] (2.25,1.25) rectangle (3.75,1.75);
+\draw[cyan, fill] (4.25,.25) rectangle (4.75,1.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (5, 2);
+\draw[cyan, fill] (.25,.25) rectangle (.75,1.75);
+\draw[cyan, fill] (1.25,.25) rectangle (2.75,.75);
+\draw[cyan, fill] (1.25,1.25) rectangle (2.75,1.75);
+\draw[cyan, fill] (3.25,1.25) rectangle (4.75,1.75);
+\draw[cyan, fill] (3.25,.25) rectangle (4.75,.75);
+\end{tikzpicture} \quad
+\begin{tikzpicture}
+\draw (0, 0) grid (5, 2);
+\draw[cyan, fill] (.25,.25) rectangle (1.75,.75);
+\draw[cyan, fill] (.25,1.25) rectangle (1.75,1.75);
+\draw[cyan, fill] (2.25,.25) rectangle (2.75,1.75);
+\draw[cyan, fill] (3.25,.25) rectangle (4.75,.75);
+\draw[cyan, fill] (3.25,1.25) rectangle (4.75,1.75);
+\end{tikzpicture} 
+\caption{Eight possibilities of tiling a $2\times 4$ chessboard with dominoes.}
+\end{figure}
+\begin{proposition*}
+	Let $P(n)$ be the number of possible ways to tile a $2 \times n$ board with dominoes. Then, $P(n)$ will be the  $n+1$-th term of the Fibonacci sequence defined by the recursive relation:
+	\[
+		a_n = a_{n-1} + a_{n-2}, a_0 = 0, a_1 = 1
+	\] 
+\end{proposition*}
+\item 
+	\begin{proof}
+		[Proof by strong induction] Let the Fibonacci sequence be defined by the following recursive relation:
+		\[
+			a_n = a_{n-1} + a_{n-2}, a_0 = 0, a_1 = 1
+		\] 
+		Let $P(n)$ be the statement that a $2 \times n$ board  can be covered in $a_{n+1}$ ways, $n \in \ints^+$.
+		\\
+
+		\textit{Base Cases}: $n=1, n=2$. 
+		
+		\begin{itemize}
+\item			
+		When $n=1$, a $2 \times 1$ board is the same size as a domino, and thus can only be covered by 1 domino in 1 way:
+		\begin{figure}[H]
+		\centering
+	\begin{tikzpicture}
+		\draw (0,0) grid (1,2);
+			\draw[cyan, fill] (.25, .25) rectangle (.75, 1.75);
+	\end{tikzpicture}
+	\caption{One possibility of tiling a $2 \times 1$ chessboard with dominoes.}
+\end{figure}
+As $a_{n+1} = a_2 = a_1 + a_0 = 1 + 0 = 1$, $P(1)$ holds.
+\item When $n=2$, from (a), a $2\times 2$ board can be covered in 2 ways. They are as follows:
+		\begin{figure}[H]
+		\centering
+	\begin{tikzpicture}
+		\draw (0,0) grid (2,2);
+			\draw[cyan, fill] (.25, .25) rectangle (.75, 1.75);
+			\draw[cyan, fill] (1.25, .25) rectangle (1.75, 1.75);
+	\end{tikzpicture} \quad
+	\begin{tikzpicture}
+		\draw (0,0) grid (2,2);
+			\draw[cyan, fill] (.25, .25) rectangle (1.75, .75);
+			\draw[cyan, fill] (.25, 1.25) rectangle (1.75, 1.75);
+	\end{tikzpicture} 
+	\caption{Two possibility of tiling a $2 \times 2$ chessboard with dominoes.}
+\end{figure}
+As $a_{n+1} = a_3 = a_2 + a_1 = 1 + 1 = 2$, $P(2)$ holds.
+		\end{itemize}
+
+		\textit{Inductive Hypothesis}: Assume for all $c \in \ints^+$ such that $1 \leq c \leq k$ where $k \in \ints^+$ and $k \geq 2$, $P(c)$ is true. We will show that $[P(1) \land P(2) \land \dots \land P(k-1) \land P(k)]\implies P(k+1)$.
+	\\
+
+	\textit{Inductive Step}:
+First, we will visualize the $2 \times k$ board with its dominoes and the $2 \times (k-1)$ board with its dominoes. We will assume $P(k-1)$ and $P(k)$ are true from the inductive hypothesis:
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\draw[RubineRed, fill] (0,0) rectangle (5,2);	
+		\draw [very thick,decorate,decoration={calligraphic brace,amplitude=10pt,mirror}] (0,-.1) -- (5,-.1);
+		\node at (2.5,-.75){$k-1$ columns};
+	\end{tikzpicture} \quad
+	\begin{tikzpicture}
+		\draw[RubineRed, fill] (0,0) rectangle (5,2);	
+		\draw[Orange, fill] (5,0) rectangle (6,2);	
+		\draw (5,0) grid (6,2);
+		\draw [very thick,decorate,decoration={calligraphic brace,amplitude=10pt,mirror}] (0,-.1) -- (6,-.1);
+		\node at (3,-.75){$k$ columns};
+	\end{tikzpicture} \quad
+\end{figure}
+Now, we want to extend both of these boards to a $2 \times (k+1)$ board. There are two ways to do this:
+\begin{itemize}
+	\item With the $2 \times (k-1)$ board, we can add two horizontal dominoes to the right most side.
+	\item With the $2 \times k$ board, we can add one horizontal domino to the right most side.
+\end{itemize}
+We show this visually:
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\draw[RubineRed, fill] (0,0) rectangle (5,2);	
+		\draw (5,0) grid (7,2);
+		\draw[fill, cyan] (5.25, .25) rectangle (6.75, .75);
+		\draw[fill, cyan] (5.25, 1.25) rectangle (6.75, 1.75);
+		\draw [very thick,decorate,decoration={calligraphic brace,amplitude=10pt,mirror}] (0,-.1) -- (5,-.1);
+		\node at (2.5,-.75){$k-1$ columns};
+	\end{tikzpicture} \quad
+	\begin{tikzpicture}
+		\draw[RubineRed, fill] (0,0) rectangle (5,2);	
+		\draw[Orange, fill] (5,0) rectangle (6,2);	
+		\draw (6,0) grid (7,2);
+		\draw[fill, cyan] (6.25, .25) rectangle (6.75, 1.75);
+		\draw [very thick,decorate,decoration={calligraphic brace,amplitude=10pt,mirror}] (0,-.1) -- (6,-.1);
+		\node at (3,-.75){$k$ columns};
+	\end{tikzpicture} \quad
+\end{figure}
+\begin{itemize}
+	\item There are $P(k-1)$ combinations with two horizontal dominoes to the right most side of a $2 \times (k-1)$ board.
+	\item There are $P(k)$ combinations with one vertical domino to the right most side of a $2 \times k$ board.
+\end{itemize}
+Therefore, the total number of ways to tile a $2 \times (k+1)$ board is the sum of the ways in which we can extend the $2 \times k$ board or the $2 \times (k-1)$ board, which we obtain from the inductive hypothesis:
+\[
+	P(k+1) = P(k-1) + P(k) = a_{k} + a_{k+1}
+\] 
+Now, we will relate this to the Fibonacci sequence. We have shown that the number of ways to tile a $2 \times (k+1)$ board is $a_{k} + a_{k+1}$. We can rewrite this as:
+\[
+	a_{k+2} = a_k + a_{k+1}
+\] 
+This completes the inductive step. We have shown that if $P(1) \land P(2) \land \dots \land P(k-1) \land P(k)$ are true, then $P(k+1)$ is also true. By the principle of strong induction, we have established that for all positive integers $n$, $P(n)$ is true, where $P(n)$ represents the number of ways to tile a $2 \times n$ board with dominoes, and it follows the Fibonacci sequence.
+	\end{proof}
+\end{enumerate}
+\begin{ques}
+	Let A,B,C be $n \times n$ matrices such that $ABC=I$. 
+    \begin{itemize}
+        \item Does it necessarily follow that $BCA=I$?
+        \item Does it necessarily follow that $BAC=I$?
+    \end{itemize}
+    If you answer yes, provide a proof. If you answer no, provide a counterexample.
+\end{ques}
+\textbf{Solution}
+\begin{claim*}
+	$ABC = I \implies BCA = I$.
+\end{claim*}
+\begin{proof}
+	If $ABC = I$, we can multiply both sides of the equation by $A$ from the right to obtain:
+	\begin{align*}
+		ABCA &= IA \\
+		A(BCA) &= A
+		\intertext{As a matrix times the identity matrix is itself, it follows that:}
+		BCA &= I
+	\end{align*}
+	Thus, we have shown that $ABC = I \implies BCA = I$ and the proof is complete.
+\end{proof}
+\begin{claim*}
+	If $ABC = I$, it does not necessarily follow that $BAC = I$.
+\end{claim*}
+\begin{proof}
+	[Proof by counterexample]
+	Let $A = 
+\begin{bmatrix}
+	1 & 2 \\
+	3 & 4
+\end{bmatrix}
+	, B = 
+\begin{bmatrix}
+	5 & 6 \\
+	7 & 8
+\end{bmatrix}, C =
+\begin{bmatrix}
+	\frac{25}{2} & -\frac{11}{2} \\
+	-\frac{129}{12} & \frac{57}{12}
+\end{bmatrix}
+	$. Then:
+	\begin{align*}
+		ABC &= 
+		\begin{bmatrix}
+			1 & 2 \\
+			3 & 4
+		\end{bmatrix} \times
+		\begin{bmatrix}
+			5 & 6 \\
+			7 & 8
+		\end{bmatrix} \times
+\begin{bmatrix}
+	\frac{25}{2} & -\frac{11}{2} \\
+	-\frac{129}{12} & \frac{57}{12}
+\end{bmatrix} \\
+			&= 
+			\begin{bmatrix}
+				19	& 22 \\
+				43	& 50
+			\end{bmatrix} \times
+\begin{bmatrix}
+	\frac{25}{2} & -\frac{11}{2} \\
+	-\frac{129}{12} & \frac{57}{12}
+\end{bmatrix} \\
+			&= 
+			\begin{bmatrix}
+				1 & 0 \\
+				0 & 1
+			\end{bmatrix}
+	\end{align*}
+	However:
+	\begin{align*}
+		BAC &= 
+		\begin{bmatrix}
+			5 & 6 \\
+			7 & 8
+		\end{bmatrix} \times
+		\begin{bmatrix}
+			1 & 2 \\
+			3 & 4
+		\end{bmatrix} \times
+\begin{bmatrix}
+	\frac{25}{2} & -\frac{11}{2} \\
+	-\frac{129}{12} & \frac{57}{12}
+\end{bmatrix} \\
+			&= 
+\begin{bmatrix}
+	23	& 34 \\
+	31 &	46
+\end{bmatrix} \times
+\begin{bmatrix}
+	\frac{25}{2} & -\frac{11}{2} \\
+	-\frac{129}{12} & \frac{57}{12}
+\end{bmatrix} \\
+			&= 
+		\begin{bmatrix}
+			-78	& 35 \\
+			-107	& 48
+		\end{bmatrix}
+	\end{align*}
+	As we have shown that there exists matrices $A,B,C$ such that $ABC = I \land BAC \neq I$, we have shown that the claim is correct.
+\end{proof}
+\end{document}

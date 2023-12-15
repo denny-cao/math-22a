@@ -1,0 +1,1050 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\usetikzlibrary{matrix,decorations.pathreplacing, calc, positioning,fit, bending}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\subtitle{PSet 1}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 6
+		\endgroup \vskip 0.3cm
+		Due: Wednesday, October 18, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm 
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\begin{itemize}
+	\item May Ng
+\end{itemize}
+\section{Computational Questions}
+\begin{ques}
+	Compute the determinant of the matrices below by cofactor expansion (Choose a row or column that involves the least amount of work.)
+	\[
+	\begin{vmatrix}
+		1 & -2 & 5 & 2 \\
+		0 & 0 & 3 & 0 \\
+		2 & -4 & -3 & 5 \\
+		2 & 0 & 3 & 5
+	\end{vmatrix} \quad
+	\begin{vmatrix}
+		6 & 3 & 2 & 4 & 0 \\
+		9 & 0 & -4 & 1 & 0 \\
+		8 & -5 & 6 & 7 & 1 \\
+		2 & 0 & 0 & 0 & 0 \\
+		4 & 2 & 3 & 2 & 0
+	\end{vmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+We evaluate the first determinant by cofactor expansion on the second row:
+\begin{align*}
+		\begin{vmatrix}
+		1 & -2 & 5 & 2 \\
+		0 & 0 & 3 & 0 \\
+		2 & -4 & -3 & 5 \\
+		2 & 0 & 3 & 5
+	\end{vmatrix} &=
+    -3 
+	\begin{vmatrix}
+	1 & -2 & 2 \\
+		2 & -4 & 5 \\
+		2 & 0 & 5
+	\end{vmatrix} \\
+	\intertext{We evaluate the $3 \times 3$ determinant by cofactor expansion on the second column:}
+	&= 
+	-3 \paren*{
+2 
+\begin{vmatrix}
+	2 & 5 \\
+	2 & 5
+\end{vmatrix} - 
+4
+\begin{vmatrix}
+	1 & 2 \\
+	2 & 5
+\end{vmatrix}
+}\\
+&= -3 (2(0) - 4(5 - 4)) \\
+&= -3(-4) \\
+&= 12
+\end{align*}
+We evaluate the second determinant by cofactor expansion on the fifth column:
+\begin{align*}
+		\begin{vmatrix}
+		6 & 3 & 2 & 4 & 0 \\
+		9 & 0 & -4 & 1 & 0 \\
+		8 & -5 & 6 & 7 & 1 \\
+		2 & 0 & 0 & 0 & 0 \\
+		4 & 2 & 3 & 2 & 0
+	\end{vmatrix} &= 
+	1 \paren*{
+		\begin{vmatrix}
+			6 & 3 & 2 & 4 \\
+			9 & 0 & -4 & 1 \\
+			2 & 0 & 0 & 0 \\
+			4 & 2 & 3 & 2 
+		\end{vmatrix}
+	}
+	\intertext{We evaluate the $4 \times 4$ determinant by cofactor expansion on the third row:}
+	&= 
+	2 
+	\begin{vmatrix}
+		3 & 2 & 4 \\
+		0 & -4 & 1 \\
+		2 & 3 & 2
+	\end{vmatrix}
+	\intertext{We evaluate the $3 \times 3$ determinant by cofactor expansion on the second row:}
+	&= 
+	2\paren*{
+		4 
+		\begin{vmatrix}
+			3 & 4 \\
+			2 & 2
+		\end{vmatrix} -
+		1
+		\begin{vmatrix}
+			3 & 2 \\
+			2 & 3
+		\end{vmatrix}
+	} \\
+	&= 
+	2\paren*{-4(6-8) - 1(9-4)} \\
+	&= 2(8 - 5) \\
+	&= 2(3) \\
+	&= 6
+\end{align*}
+\begin{ques}
+	Explore the effect of an elementary row operation on the determinant of a matrix: State the row operation to go from the left most matrix to the right most, and compute the determinant for both.
+	\[
+	\begin{bmatrix}
+		3 & 2 \\
+		5 & 4
+	\end{bmatrix},
+	\begin{bmatrix}[cc]
+		3 & 2 \\
+		5 + 3k & 4 + 2k
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+To go from the left matrix to the right, $\sim R_2 + kR_1 \to R_2$. The determinant of both are as follows:
+\begin{align*}
+	\begin{vmatrix}
+		3 & 2 \\
+		5 & 4
+	\end{vmatrix} &= 12 - 10 & 
+	\begin{vmatrix}[cc]
+		3 & 2 \\
+		5 + 3k & 4 + 2k
+	\end{vmatrix} 
+	&= 3(4+2k) - 2(5+3k) \\
+	&= 2 & &= 12 + 6k - 10 - 6k \\
+	& & &= 2
+\end{align*}
+\begin{ques}
+	Compute the determinants of the following elementary matrices:
+	\[
+	\begin{bmatrix}
+		1 & 0 & 0 \\
+		0 & 1 & 0 \\
+		0 & k & 1
+	\end{bmatrix} \quad
+	\begin{bmatrix}
+		1 & 0 & 0 \\
+		0 & 1 & 0 \\
+		k & 0 & 1
+	\end{bmatrix} \quad
+	\begin{bmatrix}
+		0 & 0 & 1 \\
+		0 & 1 & 0 \\
+		1 & 0 & 0
+	\end{bmatrix} \quad
+	\begin{bmatrix}
+		0 & 1 & 0 \\
+		1 & 0 & 0 \\
+		0 & 0 & 1
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+$I = 
+\begin{bmatrix}
+	1 & 0 & 0 \\
+	0 & 1 & 0 \\
+	0 & 0 & 1 
+\end{bmatrix}
+$. By Theorem 2 in Section 3.1 in Lay's Linear Algebra, $\det I = 1$.
+\begin{itemize}
+	\item The first matrix is obtained by $\sim R_3 + kR_2 \to R_3$. By Theorem 3 in Section 3.2 in Lay's Linear Algebra, $
+\begin{vmatrix}
+	
+		1 & 0 & 0 \\
+		0 & 1 & 0 \\
+		0 & k & 1
+\end{vmatrix} = \det I = 1$.
+\item The second matrix is obtained by $\sim R_3 + kR_1 \to R_3$. By Theorem 3 in Section 3.2 in Lay's Linear Algebra,$
+\begin{vmatrix}
+	
+		1 & 0 & 0 \\
+		0 & 1 & 0 \\
+		k & 0 & 1
+\end{vmatrix} = \det I = 1$.
+\item The third matrix is obtained by $\sim R_1 \leftrightarrow R_3$. By Theorem 3 in Section 3.2 in Lay's Linear Algebra,
+$	\begin{vmatrix}
+		0 & 0 & 1 \\
+		0 & 1 & 0 \\
+		1 & 0 & 0
+	\end{vmatrix} = - \det I = -1$.
+\item The fourth matrix is obtained by $\sim R_1 \leftrightarrow R_2$. By Theorem 3 in Section 3.2 in Lay's Linear Algebra,$
+	\begin{vmatrix}
+		0 & 1 & 0 \\
+		1 & 0 & 0 \\
+		0 & 0 & 1
+	\end{vmatrix} = - \det I = -1$.
+\end{itemize}
+
+\begin{ques}
+	Assume that the matrix presented directly below has determinant equal to 7.
+	\[
+	\begin{vmatrix}
+		a & b & c \\
+		d & e & f \\
+		g & h & i 
+	\end{vmatrix} = 7.
+	\]
+	Use the preceding fact to compute the determinants of the following matrices:
+	\[
+		\begin{vmatrix}[ccc]
+		a & b & c \\
+		5d & 5e & 5f \\
+		g & h & i
+	\end{vmatrix} \quad
+	\begin{vmatrix}
+		d & e & f \\
+		a & b & c \\
+		g & h & i
+	\end{vmatrix} \quad
+	\begin{vmatrix}[ccc]
+		a & b & c \\
+		d + 3g & e + 3h & f + 3i \\
+		g & h & i
+	\end{vmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+\begin{itemize}
+	\item By Theorem 3 in Section 3.2 in Lay's Linear Algebra, as $\sim 5R_2 \to R_2$, $		\begin{vmatrix}[ccc]
+		a & b & c \\
+		5d & 5e & 5f \\
+		g & h & i
+	\end{vmatrix} = 5 \times 7 = 35$.
+\item By Theorem 3 in Section 3.2 in Lay's Linear Algebra, as $\sim R_1 \leftrightarrow R_2$, $
+	\begin{vmatrix}
+		d & e & f \\
+		a & b & c \\
+		g & h & i
+	\end{vmatrix} = - 7
+	$.
+\item By Theorem 3 in Section 3.2 in Lay's Linear Algebra, as $\sim R_2 + 3R_3 \to R_2$, $
+	\begin{vmatrix}[ccc]
+		a & b & c \\
+		d + 3g & e + 3h & f + 3i \\
+		g & h & i
+	\end{vmatrix} = 7
+	$
+\end{itemize}
+\begin{ques}
+	Use determinants to decide if the four vectors below are linearly independent.
+	\[
+	\begin{bmatrix}
+		3 \\
+		5 \\
+		-6 \\
+		4
+	\end{bmatrix},
+	\begin{bmatrix}
+		2 \\
+		-6 \\
+		0 \\
+		7
+	\end{bmatrix},
+	\begin{bmatrix}
+		-2 \\
+		-1 \\
+		3 \\
+		0
+	\end{bmatrix}, 
+	\begin{bmatrix}
+		 0 \\
+		 0 \\
+		 0 \\
+		 -2
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+Let the columns of  $A$ be the vectors above. Thus:
+\begin{align*}
+	 A &= 
+\begin{bmatrix}
+	3 & 2 & -2 & 0 \\
+	5 & -6 & -1 & 0 \\
+	-6 & 0 & 3 & 0 \\
+	4 & 7 & 0 & -2
+\end{bmatrix}
+\intertext{We evaluate $\det A$ by cofactor expansion on the fourth column:}
+\det A	&= -2
+	\begin{vmatrix}
+		3 & 2 & -2 \\
+		5 & -6 & -1 \\
+		-6 & 0 & 3
+	\end{vmatrix}
+	\intertext{We evaluate the $3 \times 3$ matrix by cofactor expansion on the third row:}
+	&= -2 \paren*{
+		-6
+		\begin{vmatrix}
+			2 & -2 \\
+			-6 & -1
+		\end{vmatrix} +
+		3
+		\begin{vmatrix}
+			3 & 2 \\
+			5 & -6
+		\end{vmatrix}
+	} \\
+	&= -2(-6(-2-12)+3(-18-10)) \\
+	&= -2(84 - 84) \\
+	&= 0
+\end{align*}
+As $\det A = 0$, by Theorem 4 in Section 3.2 in Lay's Linear Algebra, $A$ is not invertible, and thus by the Invertible Matrix Theorem, the columns of $A$ are not linearly independent.
+\begin{ques}
+	Let $A$ and $B$ denote $4 \times 4$ matrices with $\det{A} = -3$ and $\det{B} = -1$. Compute:
+	\begin{enumerate}[a.]
+		\item $\det{AB}$
+		\item  $\det{B^5}$
+		\item  $\det{2A}$
+		\item  $\det{A^T B A}$
+		\item	$\det{B^{-1}AB}$
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[a.]
+	\item By Theorem 6 (Multiplicative Property) in Section 3.2, $\det AB = (\det A)(\det B) = -3 \times -1 = 3$.
+	\item By Theorem 6,  $\det B^5 = (\det B)(\det B)(\det B)(\det B)(\det B) = -1^5 = -1$.
+	\item By Theorem 3, since  $2A$ multiplies all rows by 2 and there are 4 rows, $\det 2A = 2^4 \det A = 2^4(-3) = 16(-3) = -48$.
+	\item By Theorem 6, $\det{A^T B A} = \det{A^T B}\det{A} = \det{A^T}\det{B}\det{A}$. By Theorem 5,  $\det{A^T} = \det A$. Thus,  $\det{A^T B A} = -3(-1)(-3) = -9$. 
+	\item By Theorem 6, $\det{B^{-1} A B} = \det{B^{-1} A}\det{B} = \det{B^{-1}}\det{A}\det{B} = \displaystyle\frac{\det A \det B}{\det B} = \det A = -3$.
+\end{enumerate}
+\begin{ques}
+	Suppose that all entries of a square matrix $A$ are integers and that $\det A = 1$. Explain why all entries of $A^{-1}$ are also integers.
+\end{ques}
+\textbf{Solution}
+
+From Theorem 8, $A^{-1} = \displaystyle\frac{1}{\det A} \text{adj} A$. As $\det A = 1$, $A^{-1} = \text{adj} A$. As the adjugate of $A$ is the transpose of the cofactors of $A$, since all entries of $A$ are integers, then all cofactors are integers. Thus, all entries of $A^{-1}$ are integers.
+\begin{ques}
+	Find the volume of the parallelopiped in $\reals^3$ with one vertex at the origin and with its adjacent vertices at the respective points where the coordinates $(x,y,z)$ have the following values: $(1,3,0), (-2,0,2),$ and $(-1,3,-1)$.
+\end{ques}
+\textbf{Solution}
+
+Let  $A$ be the following:
+\begin{align*}
+	A &= 
+	\begin{bmatrix}
+		1 & -2 & -1 \\
+		3 & 0 & 3 \\
+		0 & 2 & -1
+	\end{bmatrix} 
+	\intertext{By Theorem 9, the volume of the parallelepiped determined by $A$ is $|\det A|$. We evaluate the determinant by cofactor expansion on the first column:}
+	\det A &= 1 
+	\begin{vmatrix}
+		0 & 3 \\
+		2 & -1 
+	\end{vmatrix} - 
+	3 
+	\begin{vmatrix}
+		-2 & -1 \\
+		2 & -1
+	\end{vmatrix} \\
+		   &= -6 - 3(2 + 2) \\
+		   &= -6 - 12 \\
+		   &= -18 \\
+	|\det A| &= 18
+\end{align*}
+Thus, the volume of the parallelepiped is 18 $\text{units}^3$.
+\begin{ques}
+	Compute the adjugate matrix below and then use the adjugate to give the inverse of the matrix (see Theorem 8 in Section 3.3).
+	\[
+	\begin{bmatrix}
+		1 & 1 & 3 \\
+		-2 & 2 & 1 \\
+		0 & 1 & 1
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+The 9 cofactors are as follows:
+\begin{align*}
+	C_{11} &= + 
+	\begin{vmatrix}
+		2 & 1 \\
+		1 & 1
+	\end{vmatrix} = 1 & 
+	C_{12} &= -
+	\begin{vmatrix}
+		-2 & 1 \\
+		0 & 1
+	\end{vmatrix} = 2 &
+	C_{13} &= +
+	\begin{vmatrix}
+		-2 & 2 \\
+		0 & 1
+	\end{vmatrix} = -2 \\
+	C_{21} &= -
+	\begin{vmatrix}
+		1 & 3 \\
+		1 & 1
+	\end{vmatrix} = 2 &
+	C_{22} &= +
+	\begin{vmatrix}
+		1 & 3 \\
+		0 & 1
+	\end{vmatrix} = 1
+		   &
+	C_{23} &= -
+	\begin{vmatrix}
+		1 & 1\\
+		0 & 1
+	\end{vmatrix} = -1 \\
+	C_{31} &= +
+	\begin{vmatrix}
+		1 & 3 \\
+		2 & 1
+	\end{vmatrix} = -5 & 
+	C_{32} &= -
+	\begin{vmatrix}
+		1 & 3 \\
+		-2 & 1
+	\end{vmatrix} = -7 &
+	C_{33} &= +
+	\begin{vmatrix}
+		1 & 1 \\
+		-2 & 2
+	\end{vmatrix} = 4
+\end{align*}
+Thus:
+\[
+	\text{adj} A = 
+	\begin{bmatrix}
+		1 & 2 & -5 \\
+		2 & 1 & -7 \\
+		-2 & -1 & 4
+	\end{bmatrix}
+\] 
+We evaluate $
+\begin{vmatrix}
+	1 & 1 & 3 \\
+	-2 & 2 & 1 \\
+	0 & 1 & 1
+\end{vmatrix}
+$ by cofactor expansion on the first column:
+\begin{align*}
+	\det A &= 1
+	\begin{vmatrix}
+		2 & 1 \\
+		1 & 1
+	\end{vmatrix} + 2
+	\begin{vmatrix}
+		1 & 3 \\
+		1 & 1
+	\end{vmatrix} \\
+		   &= (2-1) + 2(1 - 3) \\
+		   &= 1 - 4 \\
+		   &= -3
+\end{align*}
+From Theorem 8:
+\begin{align*}
+	A^{-1} &= \frac{1}{\det A} \text{adj} A \\
+		  &= -\frac{1}{3} 	\begin{bmatrix}
+		1 & 2 & -5 \\
+		2 & 1 & -7 \\
+		-2 & -1 & 4
+	\end{bmatrix} \\
+		  &= 
+\begin{bmatrix}
+	-\frac{1}{3} & -\frac{2}{3} & \frac{5}{3} \\
+	-\frac{2}{3} & -\frac{1}{3} & \frac{7}{3} \\
+	\frac{2}{3} & \frac{1}{3} & -\frac{4}{3}
+\end{bmatrix}
+\end{align*}
+\begin{ques}
+	Let $S$ denote the parallelogram determined by the vectors
+	\[
+	\begin{bmatrix}
+		-2 \\
+		3
+	\end{bmatrix} \quad
+	\begin{bmatrix}
+		-2 \\
+		5
+	\end{bmatrix}
+	\] 
+	Compute the area of $S$; and supposing that $A$ denotes the matrix below, compute the area of the image of $S$ via the linear transformation $\vec{x} \mapsto A\vec{x}$.
+	\[
+	\begin{bmatrix}
+		6 & -3 \\
+		-3 & 2
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+By Theorem 9, the area of the parallelogram $S$ determined by the columns of the matrix $B$ is $|\det B|$. Let $B = 
+\begin{bmatrix}
+	-2 & -2 \\
+	3 & 5
+\end{bmatrix}
+$. Then, $|\det B| = |(-10 + 6)| =|-4| = 4$. Thus, the area of  $S$ is 4 $\text{units}^2$.
+\\
+
+By Theorem  10, the area of the transformation for a parallelogram $S$ is:
+\[
+ \set*{\text{area of } T(S)} = | \det A| \set*{\text{area of } S}
+\]
+$\det A = 12 - 9 = 3$. Thus, the area of  $T(S) = 3(4) = 12 \text{ units}^2$.
+\section{Proof Problems}
+\begin{ques}
+	[A Bit More Cardinality] Construct an explicit bijection from $[0,1)$ and  $(0,1)$.
+\end{ques}
+\textbf{Solution}
+\begin{claim*}
+	Let $f: [0,1) \to (0,1)$ such that
+	\[
+	f(x) =
+	\begin{cases}
+		\displaystyle \frac{1}{2} & x = 0 \\
+		\displaystyle\frac{x}{2} & x \in \set*{\displaystyle\frac{1}{2}^n \mid n \in \ints^+} \\
+		x & x \not\in \set*{\displaystyle\frac{1}{2}^n \mid n \in \ints^+} \land x \neq 0
+	\end{cases}
+	\] 
+	Then, $f$ is bijective.
+\end{claim*}
+\begin{proof} \
+	\begin{claim*}
+		$f$ is injective.
+	\end{claim*}
+	\begin{subproof}
+		[Subproof]
+		To prove that $f$ is injective, we will show that for all $x_1, x_2 \in [0,1)$, it is the case that $x_1 \neq x_2 \implies f(x_1) \neq f(x_2)$. Let $S = \set*{\displaystyle\frac{1}{2}^n \mid n \in \ints^+}$. We will consider the possible outputs of $f$:
+		\begin{enumerate}
+			\item Let $x_1 = 0$. Then, $f(x_1) = \displaystyle\frac{1}{2}$. 
+				\begin{enumerate}
+					\item If $x_2 \neq 0$ and $x_2 \in S$, then $f(x_2) = \displaystyle\frac{x_2}{2}$. If $f(x_2) = \displaystyle\frac{1}{2}$, then $x_2 = 1$, but $1 \not \in S$, and thus $f(x_2) \neq f(x_1)$.
+					\item If $x_2 \neq 0 \land x_2\not\in S$, then $f(x_2) = x_2$. If $f(x_2) = \displaystyle\frac{1}{2}$, then $x_2 = \displaystyle\frac{1}{2}$, however, $\displaystyle\frac{1}{2} \in S$ but $x_2 \not\in S$, and thus $f(x_2) \neq f(x_1)$.
+				\end{enumerate}
+			\item Let $x_1 \in S$. Then, $f(x_1) = \displaystyle\frac{x_1}{2}$. 
+\begin{enumerate}
+	\item If $x_2 \neq x_1$ and $x_2 \in S$, then $f(x_2) = \displaystyle\frac{x_2}{2}$. We will prove that $x_1 \neq x_2 \implies f(x_1) \neq f(x_2)$ for this case by proving the contrapositive, or by showing that $f(x_1) = f(x_2) \implies x_1 = x_2$.
+		\begin{align*}
+			f(x_1) &= f(x_2) \\
+			\frac{x_1}{2} &= \frac{x_2}{2} \\
+			x_1 &= x_2
+		\end{align*}
+		Thus, by contrapositive, we have proven that in this case, $x_1 \neq x_2 \implies f(x_1) \neq f(x_2)$.
+	\item If $x_2 \neq x_1$, then $x \not \in S$. In this case, $x_2 = 0$, or $x_2 \not\in S \land x \neq 0$.
+		\begin{enumerate}
+			\item If $x_2 = 0$, then $f(x_2) = \displaystyle\frac{1}{2}$. As $f(x_1) = \displaystyle\frac{x_1}{2}$, $x_1$ must be 1 if $f(x_1) = f(x_2) = \displaystyle\frac{1}{2}$. However, $1 \not \in S$, and thus $f(x_1) \neq f(x_2)$.
+			\item If $x_2 \not \in S \land x \neq 0$, then $f(x_2) = x_2$. If  $f(x_2) = f(x_1) = \displaystyle\frac{x_1}{2}$, as $\displaystyle\frac{x_1}{2} \in S$ and $f(x_2)$ is the identity function, then $x_2$ must be in $S$. However, $x_2 \not \in S$ and thus $f(x_1) \neq f(x_2)$.
+		\end{enumerate}
+\end{enumerate}
+\item Let $x_1 \not \in S \land x_2 \neq 0$. Then, $f(x_1) = x_1$.
+	\begin{enumerate}
+		\item If $x_2 \in S$, then $f(x_2) = \displaystyle \frac{x_2}{2}$.
+			If  $f(x_1) = f(x_2) = \displaystyle\frac{x_2}{2}$, as $\displaystyle\frac{x_2}{2} \in S$ and $f(x_1)$ is the identity function, then $x_1$ must be in $S$. However, $x_1 \not \in S$ and thus $f(x_1) \neq f(x_2)$.
+\item If $x_2 = 0$, then $f(x_2) = \displaystyle\frac{1}{2}$. If $f(x_1) = f(x_2) = \displaystyle\frac{1}{2}$, then since $f(x_1)$ is the identity function, $x_1 = \displaystyle\frac{1}{2}$, but $\displaystyle\frac{1}{2} \in S$ but $x_1 \not\in S$, and thus $f(x_1) \neq f(x_2)$.
+\item if $x_2 \not\in S \land x_2 \neq 0$, then $f(x_2) = x_2$. We will prove that $x_1 \neq x_2 \implies f(x_1) \neq f(x_2)$ for this case by proving the contrapositive, or by showing that $f(x_1) = f(x_2) \implies x_1 = x_2$.
+	\begin{align*}
+		f(x_1) &= f(x_2) \\
+		x_1 &= x_2
+	\end{align*}
+	Thus, by contrapositive, we have proven that in this case, $x_1 \neq x_2 \implies f(x_1) \neq f(x_2)$.
+	\end{enumerate}
+		\end{enumerate}
+		Since we have shown that for every case, $x_1 \neq x_2 \implies f(x_1) \neq f(x_2)$, we have shown that $f$ is injective.
+	\end{subproof}	
+	\begin{claim*}
+		$f$ is surjective.
+	\end{claim*}
+	\begin{subproof}
+		[Subproof]
+		We will show that, for all $y \in (0,1)$, there exists a $x \in [0,1)$ such that $f(x) = y$. Let $S = \set*{\displaystyle\frac{1}{2}^n \mid n \in \ints^+}$. We can partition the codomain into 2 disjoint sets: $\set*{x \mid x \not \in S, 0 < x < 1} \unite \set*{x \mid x \in S, 0 < x < 1}$. We will exhibit a surjection from $f$ to each disjoint set, and as the union of the two disjoint sets is the codomain  $(0,1)$, we will show that $f$ is surjective.
+		\begin{itemize}
+			\item $\forall y \mid 0 < y < 1 \land y \not \in S$, $f(y) = y$. As $y $ is in the domain, there is a surjection to the set of values in the codomain that are not in $S$.
+			\item We partition the values in the codomain that are in $S$ into two disjoint sets: $\set*{\displaystyle\frac{1}{2}} \unite \set*{\displaystyle\frac{1}{2}^n \mid n > 1, n \in \ints^+}$. 
+			\begin{itemize}
+			\item When $y = \displaystyle\frac{1}{2}$, $f(0) = y$. As there exists an $x$ in the codomain that maps to $\displaystyle\frac{1}{2}$, $f$ is surjective to the partition $\set*{\displaystyle\frac{1}{2}}$. 
+			\item When $y \in \set*{\displaystyle\frac{1}{2}^n \mid n > 1, n \in \ints^+}$, let $x = 2y$. Then, as $2y \in S$, $f(2y) = \displaystyle\frac{2y}{2} = y$. Thus, there exists an $x$, $x = 2y$, such that $f(x) = y$. Thus, $f$ is surjective to the partition $\set*{\displaystyle\frac{1}{2}^n \mid n > 1, n \in \ints^+}$.
+			\item As we can exhibit a surjection to both disjoint sets of the values in the codomain that are in $S$, $f$ is surjective to the values in the codomain that are in $S$.
+			\end{itemize}
+		\end{itemize}
+			As we can exhibit a surjection to both disjoint sets of the values in the codomain that are not in $S$ and in $S$, $f$ is surjective.
+	\end{subproof}
+	As we have shown that $f$ is injective and surjective, it follows that $f$ is bijective, and the proof is complete.
+\end{proof}
+\begin{ques}
+	Let $T_n$ be the $n\times n$ matrix given by
+	\[
+	T_n = 
+	\begin{bmatrix}[cccccc]
+		1 & i & 0 & 0 & \dots & 0 \\
+		i & 1 & i & 0 & \dots & 0 \\
+		0 & i & 1 & i & \dots & 0 \\
+		\vdots & & \ddots & & & \vdots \\
+		0 & \dots & 0 & i & 1 & i \\
+		0 & \dots & \dots & 0 & i & 1
+
+	\end{bmatrix}
+	\] 
+	\begin{enumerate}[(a)]
+	\item Compute $\det T_n$ for $2,3,4$ and form a conjecture for $\det T_n$.
+	\item Use mathematical induction to prove your conjecture.
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[(a)]
+	\item 
+		\begin{align*}
+			\det T_2 &= 
+\begin{vmatrix}
+	1 & i \\
+	i & 1 
+\end{vmatrix} = 1 - i^2 = 2 \\
+			\det T_3 &= 
+\begin{vmatrix}
+	1 & i & 0 \\
+	i & 1 & i \\
+	0 & i & 1
+\end{vmatrix} = 
+1 
+\begin{vmatrix}
+	1 & i \\
+	0 & 1
+\end{vmatrix} - 
+i 
+\begin{vmatrix}
+	i & i \\
+	0 & 1
+\end{vmatrix} + 0
+\begin{vmatrix}
+	i & 1 \\
+	0 & i
+\end{vmatrix}
+= \det T_2 - i (i) = 2 - i^2 = 2 + 1 = 3 \\
+			\det T_4 &= 
+\begin{vmatrix}
+	1 & i & 0 & 0 \\
+	i & 1 & i & 0 \\
+	0 & i & 1 & i \\
+	0 & 0 & i & 1
+\end{vmatrix} = 
+1 
+\begin{vmatrix}
+	1 & i & 0 \\
+	i & 1 & i \\
+	0 & i & 1
+\end{vmatrix} - i
+\begin{vmatrix}
+	i & i & 0 \\
+	0 & 1 & i \\
+	0 & i & 1
+\end{vmatrix} + 
+0
+\begin{vmatrix}
+	i & 1 & 0 \\
+	0 & i & i \\
+	0 & 0 & 1
+\end{vmatrix} - 0
+\begin{vmatrix}
+	i & 1 & i \\
+	0 & i & 1 \\
+	0 & 0 & i
+\end{vmatrix} \\
+					 &= \det{T_3} - i \paren*{i 
+\begin{vmatrix}
+	1 & i \\
+	i & 1
+\end{vmatrix} - 
+i 
+\begin{vmatrix}
+	0 & i \\
+	0 & 1
+\end{vmatrix}
+					 } \\
+\det T_4					 &= \det T_3 - i^2 \det T_2 = \det T_3 + \det T_2 = 3 + 2 = 5 
+		\end{align*}
+		From this, we form the following claim: 
+		\begin{proposition*}
+			If $T_n$ is the  $n \times n$ matrix given by 
+	\[
+	T_n = 
+	\begin{bmatrix}[cccccc]
+		1 & i & 0 & 0 & \dots & 0 \\
+		i & 1 & i & 0 & \dots & 0 \\
+		0 & i & 1 & i & \dots & 0 \\
+		\vdots & & \ddots & & & \vdots \\
+		0 & \dots & 0 & i & 1 & i \\
+		0 & \dots & \dots & 0 & i & 1
+
+	\end{bmatrix}
+	\] 
+	then for all $n \in \nats$, $\det T_n = f_{n+1}$. where $f_n$ is the $n$-th term of the fibonnaci sequence given by the recursive relation:
+\[
+	f_n = f_{n-1} + f_{n-2}, f_1 = 1, f_2 = 1
+\] 
+		\end{proposition*}
+	\item 
+		\begin{proof}
+			[Proof by strong induction] Let $P(n)$ be the statement that $\det T_n = f_{n+1}$. We will show by principle of strong induction that $P(n)$ is true for all $n \in \nats$.
+			\\
+
+			\textit{Base Cases}: 
+\begin{itemize}
+	\item $n = 1$. $T_1$ is the $1 \times 1$ matrix $
+\begin{bmatrix}
+	1
+\end{bmatrix}
+$ and therefore $\det T_1 = 1$. As $f_{1+1} = f_2 = 1$, $P(1)$ holds.
+\item  $n = 2$. $T_2 = 2$ from (a). As $f_{2 + 1} = f_3 = f_2 + f_1 = 1 + 1 = 2$, $P(2)$ holds.
+\item $n = 3$. $T_3 = 3$ from (a). As $f_{3+1} = f_4 = f_3 + f_2 = 2 + 1 = 3$, $P(3)$ holds.
+\end{itemize}
+
+\textit{Inductive Hypothesis}: Assume for all $c \in \ints^+$ such that  $1 \leq c \leq k$ where  $k \in \ints^+$ and  $k \geq 3$, $P(c)$ is true. We will show that $[P(1) \land P(2) \land \dots \land P(k-1) \land P(k)] \implies P(k+1)$.
+			\\
+
+			\textit{Inductive Step}: From $T_k$, we can form $T_{k+1}$ by:
+\begin{itemize}
+	\item adding a $(k+1)$-th row formed the first $(k-1)$ elements being 0 with the $k$-th element in the row being $i$
+	\item adding a $(k+1)$-th column formed by the first $(k-1)$ elements being 0 with the $k$-th element in the column being $i$ 
+	\item the $(k+1)$-th element of both intersect and is 1
+\end{itemize}
+We visualize this below:
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[>=stealth,thick,baseline, node distance=5mm and 0mm,]
+    \matrix (M) [matrix of math nodes, {left delimiter=[},{right delimiter=]}]{ 
+		1 & i & 0 & 0 & \dots & 0 & 0 \\
+		i & 1 & i & 0 & \dots & 0 & 0 \\
+		0 & i & 1 & i & \dots & 0 & 0 \\
+		\vdots & & \ddots & & & \vdots & \vdots \\
+		0 & \dots & 0 & i & 1 & i & 0 \\
+		0 & \dots & \dots & 0 & i & 1 & i\\
+		0 & \dots & \dots & \dots & 0 & i & 1 \\
+	};
+\draw[red,very thick] 
+        (M-7-1.north west) -| (M-7-7.south east) -| (M-7-1.north west);
+\draw [decorate,decoration={brace,amplitude=10pt, mirror, raise=5pt},red] (M-7-1.south) -- (M-7-7.south) node [midway, below=15pt] {$k+1$-th row};
+\draw[blue,very thick] 
+        (M-1-7.north west) -| (M-7-7.south east) -| (M-1-7.north west);
+\draw [decorate,decoration={brace,amplitude=10pt, raise=10pt},blue] (M-1-7.east) -- (M-7-7.east) node [midway, right=20pt] {$k+1$-th column};
+    \end{tikzpicture}
+	\caption{Forming $T_{k+1}$ by extending $T_k$}
+\end{figure}
+$\det T_{k+1}$ can be computed as follows:
+\[
+	\det T_{k+1} = a_{11} \det A_{11} - a_{12} \det A_{12} + \dots \pm a_{1, k+1} \det A_{1, k+1}
+\]
+where $a_{tj}$ denotes the element in the $t$-th row and $j$-th column and $A_{tj}$ denotes the matrix obtained by removing the $t$-th row and $j$-th column.
+
+We first note that, for all $a_{1j}$ where  $j > 2$, $a_{1j} = 0$, as, if the matrix is larger than or is a $2 \times 2$, we construct iteratively starting at $n=1$, the second column will be $n-1=0$ 0's followed by $i$ in $a_{12}$ and then 1 in $a_{22}$, and for every next row, there will be a 0 in the first position $a_{1j}$.
+\\
+
+As $k > 1$, $k$ is at least 2. Since all $a_{1j} = 0$ where $j > 2$, we can simplify $\det T_{k+1}$ :
+\[
+	\det T_{k+1} = a_{11} \det A_{11} - a_{12} \det A_{12}
+\] 
+$a_{11}$ is our base case for our iterative construction and $ a_{11} = 1$. From above, we know $ a_{12} = i$. Thus, we can further simplify:
+\[
+	\det T_{k+1} =  \det A_{11} - i(\det A_{12})
+\] 
+For a matrix $T_{k+1}$, for any element $a_{tj}$, if there exists a column to the right, then $a_{t+1, j+1} = a_{tj}$. Thus, by removing the first row, the column to the right will be equivalent the original column. It follows that if we remove the first column of $T_{k+1}$, we will obtain the matrix $T_{k}$. We visualize this below:
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[>=stealth,thick,baseline, node distance=5mm and 0mm,]
+    \matrix (M) [matrix of math nodes, {left delimiter=[},{right delimiter=]}]{ 
+		1 & i & 0 & 0 & \dots & 0 & 0 \\
+		i & 1 & i & 0 & \dots & 0 & 0 \\
+		0 & i & 1 & i & \dots & 0 & 0 \\
+		\vdots & & \ddots & & & \vdots & \vdots \\
+		0 & \dots & 0 & i & 1 & i & 0 \\
+		0 & \dots & \dots & 0 & i & 1 & i\\
+		0 & \dots & \dots & \dots & 0 & i & 1 \\
+	};
+\draw[red] 
+        (M-1-1.north) -- (M-7-1.south);
+\draw[red] 
+        (M-1-1.west) -- (M-1-7.east);
+    \end{tikzpicture}
+	\caption{$T_k$ is formed when the first row and column is removed.}
+\end{figure}
+
+Thus, for $T_{k+1}$, $\det A_{11} = \det T_{k}$:
+\[
+	\det T_{k+1} = \det T_k - i(\det A_{12})
+\] 
+We now visualize the resulting matrix when the first row and second column is removed:
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[>=stealth,thick,baseline, node distance=5mm and 0mm,]
+    \matrix (M) [matrix of math nodes, {left delimiter=[},{right delimiter=]}]{ 
+		1 & i & 0 & 0 & \dots & 0 & 0 \\
+		i & 1 & i & 0 & \dots & 0 & 0 \\
+		0 & i & 1 & i & \dots & 0 & 0 \\
+		\vdots & & \ddots & & & \vdots & \vdots \\
+		0 & \dots & 0 & i & 1 & i & 0 \\
+		0 & \dots & \dots & 0 & i & 1 & i\\
+		0 & \dots & \dots & \dots & 0 & i & 1 \\
+	};
+\draw[red] 
+        (M-1-2.north) -- (M-7-2.south);
+\draw[red] 
+        (M-1-1.west) -- (M-1-7.east);
+    \end{tikzpicture}
+	\caption{$A_{12}$.}
+\end{figure}
+Let $S = A_{12}$. To compute the determinant of $S$, we evaluate:
+\[
+\det S = a_{11} \det S_{11} - a_{12} \det S_{12} = i \det S_{11} - i \det S_{12}
+\] 
+We visualize the resulting matrix when the first row and first column of $S$ is removed:
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[>=stealth,thick,baseline, node distance=5mm and 0mm,]
+    \matrix (M) [matrix of math nodes, {left delimiter=[},{right delimiter=]}]{ 
+		i  & i & 0 & \dots & 0 & 0 \\
+		0  & 1 & i & \dots & 0 & 0 \\
+		\vdots  & \ddots & & & \vdots & \vdots \\
+		0 &  0 & i & 1 & i & 0 \\
+		0 &  \dots & 0 & i & 1 & i\\
+		0 &  \dots & \dots & 0 & i & 1 \\
+	};
+\draw[red] 
+        (M-1-1.north) -- (M-6-1.south);
+\draw[red] 
+        (M-1-1.west) -- (M-1-6.east);
+    \end{tikzpicture}
+	\caption{$T_{k-1}$ is formed when the first row and column is removed.}
+\end{figure}
+We can thus simplify $S$ :
+\[
+	\det S = i(\det T_{k-1}) - i(\det S{12})
+\] 
+We visualize the resulting matrix when the first row and first column of $S$ is removed:
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[>=stealth,thick,baseline, node distance=5mm and 0mm,]
+    \matrix (M) [matrix of math nodes, {left delimiter=[},{right delimiter=]}]{ 
+		i  & i & 0 & \dots & 0 & 0 \\
+		0  & 1 & i & \dots & 0 & 0 \\
+		\vdots  & \ddots & & & \vdots & \vdots \\
+		0 &  0 & i & 1 & i & 0 \\
+		0 &  \dots & 0 & i & 1 & i\\
+		0 &  \dots & \dots & 0 & i & 1 \\
+	};
+\draw[red] 
+        (M-1-2.north) -- (M-6-2.south);
+\draw[red] 
+        (M-1-1.west) -- (M-1-6.east);
+    \end{tikzpicture}
+	\caption{$S_{12}$.}
+\end{figure}
+The determinant can be computed using cofactor expansion across the first column. As the first column of $S_{12}$ is all 0, the determinant is thus 0. It follows that
+\[
+	\det A_{12} = i(\det {T_{k-1}})
+\] 
+Thus:
+\[
+	\det T_{k+1} = \det T_k - i(i(\det {T_{k-1}})) = \det T_k - i^2(\det T_{k-1}) = \det T_k + \det T_{k-1}
+\] 
+From the inductive hypothesis, $\det T_{k} = f_{k+1}$ and $\det T_{k-1} = f_{k}$. It follows that
+\[
+	\det T_{k+1} = f_{k+1} + f_{k}
+\] 
+By definition of fibonnaci sequence, $\det T_{k+1} = f_{k+2}$. Thus, by principle of strong induction, we have shown that  $P(n)$ is true for $n \geq 1$.
+		\end{proof}
+\end{enumerate}
+\begin{ques}
+	[Permutation]	A rearrangement of the ordering of the integers $\set*{1,2,\dots,n}$ is said to be a permutation. The set of such permutations is denoted by  $S_n$.
+	\begin{enumerate}[(a)]
+		\item Prove that $S_n$ has $n!$ elements (remember that $n! = n(n-1)(n-2)\dots 1$).
+		\item Prove that a permutation from $S_n$ can be represented by an $n \times n$ matrix with the following two properties: Each row has all zeros except for one entry which is 1; and each column has all zeros except for one entry which is 1. The representation is such that if  $A$ denotes such a matrix and $\vec{v}$ denotes the column vector
+			\[
+				\vec{v} = 
+				\begin{pmatrix}[c]
+				1 \\
+				\vdots \\
+				n
+				\end{pmatrix}
+			\] 
+			then that permutation's rearrangement of $\set*{1,\dots, n}$ is the order of the numbers as they appear in the successive entries of the vector $A\vec{v}$.
+		\item Prove that if $A $ and $B$ are two permutation matrices, then $AB$ is one also.
+		\item Prove that permutation matrices are invertible, and that the inverse of a permutation matrix is a permutation matrix.
+		\item Prove that $\det A = \pm 1$ if $A$ is a permutation matrix.
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[(a)]
+	\item 
+		\begin{proof}
+			[By induction]
+			Let $P(n)$ be the statement that $|S_n| = n!$,  or that the number of permutations of the set $\set*{1, 2, \dots, n}$ is $n!$, $n \in \ints^+$.
+			\\
+			
+			\textit{Base Case}: $n = 1$. The number of ways to arrange 1 element is 1, and thus $|S_1| = 1$. $1! = 1$, so $P(1)$ holds.
+			\\
+
+			\textit{Inductive Hypothesis}: Assume $P(k)$ is true, $k > 1, k \in \ints^+$. We will show that $P(k) \implies P(k+1)$.
+			\\
+
+			\textit{Inductive Step}:  When we append $k+1$ to this set, we now insert $k+1$ into each permutation. With each permutation, there are $k+1$ positions we can insert $k+1$. From the inductive hypothesis, the number of permutations of the set  $\set*{1, 2, \dots, k}$ is $k!$. As there are $k+1$ ways to insert into $k!$ permutations, there are $k! \cdot (k+1) = (k+1)!$ permutations of the set $\set*{1,2,\dots,k,k+1}$. Thus, $|S_{k+1}| = (k+1)!$.
+			\\
+
+			Thus, by principle of induction, we have shown that $P(n)$ is true.
+		\end{proof}
+	\item 
+		\begin{proof}
+			Let $A$ be a $n \times n$ matrix where each row has all zeros except for one entry which is 1 and each column has all zeros except for one entry which is 1. Let $A\vec{v} = \vec{b}$, where $\vec{v} = 
+\begin{bmatrix}
+	1 \\
+	\vdots \\
+	n
+\end{bmatrix}
+$, and $\vec{b} = 
+\begin{bmatrix}
+	b_1 \\
+	\vdots \\
+	b_n
+\end{bmatrix}
+$. Let  $a_{ij}$ denote the element in the $i$-th row and $j$-th column of $A$. Then, $b_i = 1(a_{i,1}) + 2(a_{i,2}) + \dots + n(a_{i,n})$. We can see that, as each row of $A$ has 0 in all entries besides 1 that has a value of 1, if the $i$-th row of $A$ has a 1 in the $j$-th column, then the $i$-th element in the vector $\vec{b}$ will be the value $j$, where $1 \leq j \leq n, j \in \ints$. As each column of $A$ has 0 in all entries besides 1 that has a value of 1, a number in the set $\set*{1,2,\dots, n}$ can only appear once in  $\vec{b}$. Thus, the elements of $\vec{b}$ are a permutation of $\set*{1,2,\dots, n}$. We have shown that we can use a permutation matrix to represent a permutation from $S_n$.
+		\end{proof}
+	\item 
+		\begin{proof}
+			$A$ and $B$ are both $n \times n$ matrices.
+			\\
+
+			As $A$ is a permutation matrix, $A\vec{x} = \vec{0}$ only has the trivial solution since the permutation $\vec{0}$ is only the result of $\vec{v} = \vec{0}$, as all entries are 0; there only exists 1 permutation of $\vec{0}$. Thus, the columns of $A$ are linearly independent. From Theorem 12 in Section 1.9 of Lay's Linear Algebra, the transformation, if we let $A$ be the standard matrix for a linear transformation $T: \reals^n \to \reals^n$, then $T$ is one-to-one. Thus, all inputs will map to a unique output. 
+			\\
+
+			Let each column of $B$ be an input for $T$. As $B$ is a permutation matrix, each row only has 1 entry with 1 and every other entry is 0, and thus each column is unique.  Let $\vec{b}_j$ be the $j$-th column of $b$. Then, for each $\vec{b}_j, j \leq n, j \in \ints^+$, $T(\vec{b}_j)$ will be a unique output. Each will be a permutation of $n-1$ 0's and $1$ 1. As there are $n$ different permutations of $n-1$ 0's and 1 1, and each of the $n$ columns map to a unique permutation, there will exist a bijection.
+			\\
+
+			As $T(\vec{b_1}) = A\vec{b_1}, T(\vec{b_2}) = A\vec{b_2}, \dots, T(\vec{b_n}) = A\vec{b_n}$, and from above, will result in all permutations of $n-1$ 0's and 1 1 without two being the same, it follows that $AB$ will result in a permutation matrix, as there does not exist a row where there is more than 1 1, as there does not exist a $A\vec{b_i} = A\vec{b_k}, i \neq k, i, k \leq n$, and there does not exist a column where there is more than 1 1, as each column is a permutation of $n-1$ 0's and 1 1.
+		\end{proof}
+	\item 
+		\begin{proof}
+			By Theorem 7 in Section 2.2 of Lay's Linear Algebra, we can show that a permutation matrix $A$ is invertible by showing that it is row equivalent to $I_n$. As $A$ is a permutation matrix, every row has 1 element that is 1 and every other element is 0, and the same is true for columns. It follows that every row has a pivot position and every other element in the row is 0 and thus, by only interchanging the rows, we can produce the identity matrix.
+			\\
+
+			By Theorem 7 in Section 2.2 Lay's Linear Algebra, the sequence of elementary row operations that reduces $A$ to $I_n$ also transforms $I_n$ into $A^{-1}$. As we obtain the identity matrix from $A$ by only interchanging rows, we do not affect the property that each column has only 1 element that is 1 and the rest is 0, and each row only has 1 element that is 1 and the rest is 0, and thus the inverse of $A$, $A^{-1}$, is also a permutation matrix.
+		\end{proof}
+	\item 
+		\begin{proof}
+			As we have shown in (d), any permutation matrix can be formed by a series of interchange operations of the Identity matrix. As $\det I_n = 1$, by Theorem 3 of Section 3.2 in Lay's Linear Algebra, if the amount of interchange operations to obtain $A$ is even, then  $\det A = \det I_n = 1$, and if the amount of interchange operations to obtain $A$ is odd, then $\det A = -\det I_n = -1$. Thus, $\det A = \pm 1$.
+		\end{proof}
+\end{enumerate}
+\end{document}
+

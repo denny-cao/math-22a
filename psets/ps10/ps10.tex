@@ -1,0 +1,1113 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\usetikzlibrary{matrix,decorations.pathreplacing, calc, positioning,fit, bending}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{.}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{axiom}{Axiom}
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\newtheorem{sol}{Solution}[section]
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+\newcommand{\xor}{\oplus}
+\newcommand{\powset}{\mathcal{P}}
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Linear Algebra
+\newcommand{\nul}{\text{Nul}}
+\newcommand{\col}{\text{Col}}
+\newcommand{\row}{\text{Row}}
+\newcommand{\adj}{\text{adj}}
+\newcommand{\spa}[1]{\text{Span}\set*{#1}}
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\poly}{\mathbb{P}}
+\newcommand{\basis}{\mathcal{B}}
+\newcommand{\tr}{\text{tr}}
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\hypersetup{
+	linkcolor=magenta
+}
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 10
+		\endgroup \vskip 0.3cm
+		Due: Wednesday, November 15, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\section{Computational Problems}
+\begin{sol}
+	As $A = PDP^{-1}$, it follows that $A^k = (PDP^{-1})^{k} = PD^kP^{-1}$. Thus:
+	\begin{align*}
+		A^k &= 
+		\begin{bmatrix}
+			3 & 4 \\
+			1 & 1
+		\end{bmatrix}
+		\begin{bmatrix}[cc]
+			2^k & 0 \\
+			0 & 1^k
+		\end{bmatrix}
+		\begin{bmatrix}
+			-1 & 4 \\
+			1 & -3
+		\end{bmatrix} \\
+			&= 
+			\begin{bmatrix}[cc]
+				3(2^k) & 4 \\
+				2^k & 1
+			\end{bmatrix}
+			\begin{bmatrix}
+				-1 & 4 \\
+				1 & -3
+			\end{bmatrix} \\
+			&= 
+			\begin{bmatrix}[cc]
+				-3(2^k) + 4 & 12(2^k - 1) \\
+				-2^k + 1 & 2^{k+2} - 3
+			\end{bmatrix}
+	\end{align*}
+\end{sol}
+\begin{sol}
+	We first find the eigenvalues of the matrix by finding the values of $\lambda$ such that $\det(A-\lambda I) = 0$:
+	 \begin{align*}
+		 \begin{vmatrix}[ccc]
+			 4 - \lambda & 2 & 2 \\
+			 2 & 4 - \lambda & 2 \\
+			 2 & 2 & 4 - \lambda
+		 \end{vmatrix} &= 
+		(4-\lambda)((4-\lambda)^2 - 4) - 2(2(4-\lambda) - 4) + 2(4 - 2(4-\lambda)) \\
+		&= (4-\lambda)^3 - 4(4 - \lambda) - 4(4 - \lambda) + 8 + 8 - 4(4-\lambda) \\
+		&= -\lambda^3 + 12\lambda^2 - 36\lambda + 32 \\
+	0	&= -(\lambda - 2)(\lambda - 2)(\lambda - 8)
+	\end{align*}
+	Thus, $\lambda = 2, 8$. We now find the eigenvectors associated with the eigenvalues by solving the homogeneous system $(A- \lambda I)\bm{x} = \bm{0}$.
+	\begin{align*}
+		\begin{bmatrix}
+			2 & 2 & 2 \\
+			2 & 2 & 2 \\
+			2 & 2 & 2
+		\end{bmatrix} 
+		\begin{array}{c}
+			R_2 - R_1 \to R_2, R_3 - R_1 \to R_3 \\
+			\sim
+		\end{array}
+		\begin{bmatrix}
+			2 & 2 & 2 \\
+			0 & 0 & 0\\
+			0 & 0 &0 
+		\end{bmatrix}
+		\begin{array}{c}
+			\frac{1}{2}R_1 \to R_1 \\
+			\sim
+		\end{array}
+		\begin{bmatrix}[ccc|c]
+			1 & 1 & 1 & 0\\
+			0 & 0 & 0 & 0\\
+			0 & 0 & 0 & 0
+		\end{bmatrix}
+	\end{align*}
+	The general solution will thus be:
+	\[
+		\bm{x} = x_2
+		\begin{bmatrix}
+			-1 \\
+			1 \\
+			0
+		\end{bmatrix} + x_3
+		\begin{bmatrix}
+			-1 \\
+			0 \\
+			1
+		\end{bmatrix}
+	\] 
+	The eigenvectors for $\lambda = 2$ are the basis vectors:
+	\[
+	\begin{bmatrix}
+		-1 \\
+		1 \\
+		0
+	\end{bmatrix}, 
+	\begin{bmatrix}
+		-1 \\
+		0 \\
+		1
+	\end{bmatrix}
+	\] 
+	As the remaining eigenvalue is $\lambda = 8$, and we are given that there is an eigenvector $
+	\begin{bmatrix}
+		1 \\
+		1 \\
+		1
+	\end{bmatrix}$, it follows that $P$, the matrix where the columns are the linearly independent eigenvectors of $A$ is:
+	\[
+	P = 
+	\begin{bmatrix}
+		-1 & -1 & 1 \\
+		1 & 0 & 1 \\
+		0 & 1 & 1
+	\end{bmatrix}
+	\] 
+	The diagonal entry in each column of $D$ is the eigenvalue corresponding to the eigenvector for the corresponding column in $P$:
+	\[
+	D = 
+	\begin{bmatrix}
+		2 & 0 & 0 \\
+		0 & 2 & 0 \\
+		0 & 0 & 8
+	\end{bmatrix}
+	\] 
+	The basis for the eigenvectors is $\set*{
+\begin{bmatrix}
+	-1 \\
+	1 \\
+	0
+\end{bmatrix},
+\begin{bmatrix}
+	-1 \\
+	0 \\
+	1
+\end{bmatrix},
+\begin{bmatrix}
+	1 \\
+	1 \\
+	1
+\end{bmatrix}
+	}$.
+\end{sol}
+\begin{sol}
+	\begin{proof}
+		Assume $A$ is diagonalizable. Then, there exists an invertible matrix $G$ such that $S = G^{-1}AG$, where $S$ is a diagonal matrix. We take the transpose of both sides and obtain $S^T = (G^{-1}AG)^T = G^T A^T {G^{-1}}^T$. As  the transpose of a diagonal matrix is a diagonal matrix, $S^T = D$, where $D$ is a diagonal matrix. As $G^T {G^{-1}}^T = (G^{-1}G)^T = I^T = I$, it follows that  $G^{T}$ is an invertible matrix. Let $G^T = P$. Then, $D = PA^TP^{-1}$,and thus $A^{T}$ is diagonalizable, and the proof is complete.
+	\end{proof}
+\	\\
+	The eigenvalues of $A$ are the diagonal entries of $S$. As $S^T = D$ preserves the diagonal, it follows that $A^T$ has the same eigenvalues as $A$.
+\end{sol}
+\begin{sol}
+	We first find the eigenvalues of the matrix by finding the values of $\lambda$ such that $\det(A - \lambda I) = 0$:
+	\begin{align*}
+		\begin{vmatrix}[cc]
+			5 - \lambda & -2 \\
+			1 & 3 - \lambda
+		\end{vmatrix} &= (5-\lambda)(3-\lambda) + 2 \\
+		0 &= \lambda^2 - 8\lambda + 17 \\
+		\lambda &= 
+		\frac{8 \pm \sqrt{64 - 68}}{2} \\
+				&= 4 \pm i
+	\end{align*}
+	With $\lambda = 4 - i$, the system
+	\begin{align*}
+		(1 + i)x_1 -2 &= 0 \\
+		x_1  + (-1 +i)x_2 &= 0
+	\end{align*}
+	has a nontrivial solution. Thus, both equations determine the same relationship between $x_1$ and $x_2$, and either equation can be used to express one variable in terms of the other. We use the second equation to obtain
+	\[
+	x_1 = (1-i)x_2
+	\] 
+	We can choose $x_2 = 1$ to obtain $x_1 = 1-i$ and thus a basis for the eigenspace corresponding to $\lambda = 4 - i$ is
+	\[
+		\bm{v_1} = 
+		\begin{bmatrix}[c]
+			1 - i \\
+			1
+		\end{bmatrix}
+	\] 
+	With $\lambda = 4 + i$, we obtain the system
+	\begin{align*}
+		(1 - i)x_1 - 2 &= 0 \\
+		x_1 + (-1 - i)x_2 &= 0 
+	\end{align*}
+	From the second equation, $x_1 = (1+i)x_2$. We can thus choose $x_2 = 1$ to obtain $x_1 = 1 + i$ and thus a basis for the eigenspace corresponding to $\lambda = 4 + i$ is
+	\[
+		\bm{v_2} = 
+		\begin{bmatrix}[c]
+		1 + i \\
+		1
+		\end{bmatrix}
+	\] 
+\end{sol}
+\begin{sol}
+	We find the eigenvalues by finding the values of $\lambda$ such that $\det(A - \lambda I) = 0$:
+	\begin{align*}
+		\begin{vmatrix}[cc]
+			5 - \lambda & -5 \\
+			1 & 1 - \lambda
+		\end{vmatrix} &= (5-\lambda)(1- \lambda) + 5 \\
+		0 & = \lambda^2 - 6 \lambda + 10\\
+		\lambda &= 
+		\frac{6 \pm \sqrt{36 - 40}}{2} \\
+				&= 3 \pm i
+	\end{align*}
+	With $\lambda = 3 - i$, we obtain the system
+	\begin{align*}
+		(2+i)x_1 -5x_2 &= 0 \\
+		x_1 + (-2+i)x_2 &= 0
+	\end{align*}
+	From the second equation, we obtain $x_1 = (2-i)x_2$. We choose  $x_2 = 1$ to obtain $x_1 = 2 - i$, and thus an eigenvector corresponding to $\lambda = 3 - i$ is
+	$	\begin{bmatrix}[c]
+		2 - i \\
+		1
+	\end{bmatrix}$.
+
+	With $\lambda = 3 + i$, we obtain the system
+	\begin{align*}
+		(3 - i)x_1 - 5x_2 &= 0 \\
+		x_1 + (-2 -i)x_2 &= 0
+	\end{align*}
+	From the second equation, we obtain $x_1 = (2 + i)x_2$. We choose $x_2 = 1$ to obtain $x_1 = 2 + i$, and thus an eigenvector corresponding to $\lambda = 3 + i$ is  $
+	\begin{bmatrix}[c]
+	2 + i \\
+	1
+\end{bmatrix}
+	$.
+	\\
+
+	By Theorem 9, $P = 
+\begin{bmatrix}
+	\text{Re} \ \bm{v} & \text{Im}\ \bm{v}	
+\end{bmatrix}
+$, where $\bm{v}$ is the eigenvector associated with the eigenvalue $a - bi$. Thus, $P =
+\begin{bmatrix}
+	2 & -1 \\
+	1 & 0
+\end{bmatrix}$.
+\end{sol}
+\begin{sol}
+	\begin{proof}
+		As $\bm{v}$ is the eigenvector associated with the complex eigenvalue $\lambda = a + ib$, it follows that $A\bm{v} = \lambda \bm{v}$. Let $\bm{v} = \text{Re } \bm{v} + i\text{Im } \bm{v}$. Then:
+		\begin{align*}
+			A(\text{Re } \bm{v} + i\text{Im } \bm{v}) &= (a+ib)(\text{Re } \bm{v} + i\text{Im } \bm{v}) \\
+			A(\text{Re } \bm{v}) + iA(\text{Im } \bm{v}) &= a\text{Re }\bm{v} + ia\text{Im }\bm{v} + ib\text{Re }\bm{v} - b\text{Im }\bm{v}
+		\end{align*}
+		We can separate the equation into real and imaginary parts. 
+		\begin{align*}
+			A(\text{Re } \bm{v}) &= a \text{Re }\bm{v} - b \text{Im }\bm{v } &\quad iA(\text{Im }\bm{v}) &= ia\text{Im }\bm{v} + ib\text{Re }\bm{v} \\
+								 & &\quad A(\text{Im }\bm{v}) &= a\text{Im }\bm{v} + b\text{Re }\bm{v}
+		\end{align*}
+		and thus the proof is complete.
+	\end{proof}
+\end{sol}
+\begin{sol}
+	Let $\bm{x}_0 = c_1\bm{v}_1 + c_2\bm{v}_2 + c_3\bm{v}_3$. Then, $\bm{x}_{k} = c_1\lambda_1^{k}\bm{v}_1 + c_2\lambda_2^{k}\bm{v}_2 + c_3\lambda_3^{k}\bm{v}_3$. We will solve for the weights $c_1, c_2, c_3$:
+	\[
+	\begin{bmatrix}
+		-2 \\
+		-5 \\
+		3
+	\end{bmatrix} =c_1
+	\begin{bmatrix}
+		1 \\
+		0 \\
+		-3
+	\end{bmatrix} +
+	c_2
+	\begin{bmatrix}
+		2 \\
+		1 \\
+		-5
+	\end{bmatrix} +
+	c_3
+	\begin{bmatrix}
+		-3 \\
+		-3 \\
+		7
+	\end{bmatrix}
+	\] 
+	We form an augmented matrix and solve for the weights by obtaining an echelon form and then back substituting:
+	\begin{align*}
+		\begin{bmatrix}[rrr|r]
+			1 & 2 & -3 & -2 \\
+			0 & 1 & -3 & -5 \\
+			-3 & -5 & 7 & 3
+		\end{bmatrix} 
+		\begin{array}{c}
+			R_3 + 3R_1 \to R_3 \\
+			\sim
+		\end{array}
+		\begin{bmatrix}[rrr|r]
+			1 & 2 & -3 & -2 \\
+			0 & 1 & -3 & -5 \\
+			0 & 1 & -2 & -3
+		\end{bmatrix} \\
+		\begin{array}{c}
+			R_3 - R_2 \to R_3 \\
+			\sim
+		\end{array}
+\begin{bmatrix}[rrr|r]
+			1 & 2 & -3 & -2 \\
+			0 & 1 & -3 & -5 \\
+			0 & 0 & 1 & 2
+		\end{bmatrix}
+	\end{align*}
+	\begin{align*}
+		c_3 &= 2 \\
+		c_2 &= -5 + 3c_3 = -5 + 3(2) = 1 \\
+		c_1 &= -2 +3c_3 - 2c_2 = -2 + 3(2) - 2(1) = 2
+	\end{align*}
+	Thus, the solution set is given by 
+	\[
+		\bm{x}_{k} = 2(3)^k
+		\begin{bmatrix}
+			1 \\
+			0 \\
+			-3
+		\end{bmatrix} +
+		\paren*{
+			\frac{4}{5}
+		}^k
+		\begin{bmatrix}
+			2 \\
+			1 \\
+			-5
+		\end{bmatrix} +
+		2
+		\paren*{
+			\frac{3}{5}
+		}^k
+		\begin{bmatrix}
+			-3 \\
+			-3 \\
+			7
+		\end{bmatrix}
+	\] 
+	As $k \to \infty$, $\paren*{\displaystyle\frac{4}{5}}^k
+\begin{bmatrix}
+	2 \\
+	1 \\
+	-5
+\end{bmatrix} \to 0
+	$, and $
+	2\paren*{
+	\displaystyle	\frac{3}{5}
+	}^k
+	\begin{bmatrix}
+		-3 \\
+		-3 \\
+		7
+	\end{bmatrix} \to 0
+	$. Thus, $k \to \infty$,  $
+	\bm{x}_k \approx 2(3)^k
+	\begin{bmatrix}
+		1 \\
+		0 \\
+		-3
+	\end{bmatrix}
+	$.
+\end{sol}
+\begin{sol}
+	When $p = 0.5$, the predator-pray matrix is
+	\[
+		\begin{bmatrix}
+		.4 & .3 \\
+		-.5 & 1.2
+		\end{bmatrix}
+	\] 
+	We solve for the eigenvalues by solving for $\lambda$ where $\det(A - \lambda I) = 0$:
+	\begin{align*}
+		\begin{vmatrix}[cc]
+			.4 - \lambda & .3 \\
+			-.5 & 1.2 - \lambda
+		\end{vmatrix} &=
+		(.4-\lambda)(1.2-\lambda) + .5(.3) \\
+		0 &= \lambda^2 -1.6\lambda + .63 \\
+		  &= (\lambda - .9)(\lambda - .7)
+	\end{align*}
+	Thus, $\lambda = 0.9, 0.7$. We will find the corresponding eigenvectors:
+	\begin{align*}
+		\begin{bmatrix}
+		-.5 & .3 \\
+		-.5 & .3
+		\end{bmatrix}
+		\begin{array}{c}
+			R_2 - R_1 \to R_2 \\
+			\sim
+		\end{array}
+		\begin{bmatrix}[rr|r]
+			-.5 & .3 & 0\\
+			0 & 0 & 0
+		\end{bmatrix}
+	\end{align*}
+	The general solution will thus be:
+	\[
+		\bm{x} = x_2
+		\begin{bmatrix}
+			.6 \\
+			1
+		\end{bmatrix}
+	\] 
+	Thus, the eigenvector that corresponds to $\lambda = 0.9$ is $\bm{v}_1 =
+\begin{bmatrix}
+	.6 \\
+	1
+\end{bmatrix}
+	$.
+\begin{align*}
+	\begin{bmatrix}
+		-.3 & .3 \\
+		-.5 & .5
+	\end{bmatrix}	
+	\begin{array}{c}
+		R_2 - \frac{5}{3}R_1 \to R_2 \\
+		\sim
+	\end{array}
+	\begin{bmatrix}
+		-.3 & .3 \\
+		0 & 0 
+	\end{bmatrix}	
+\end{align*}
+The general solution will thus be:
+\[
+	\bm{x} = x_2
+	\begin{bmatrix}
+		1 \\
+		1
+	\end{bmatrix}
+\] 
+Thus, the eigenvector that corresponds to $\lambda = 0.7$ is 
+$\bm{v}_2 = 
+\begin{bmatrix}
+	1 \\
+	1
+\end{bmatrix}
+$.
+If $\bm{x}_0 = c_1 \bm{v_1} + c_2 \bm{v_2}$, then
+\[
+	\bm{x}_k = c_1(0.9)^k\bm{v_1} + c_2(0.7)^k\bm{v_2}
+\] 
+As $0.9^k\bm{v}_1 \to 0$ as $k \to \infty$ and $0.7^k\bm{v}_2 \to 0$ as $k \to \infty$, it follows that $\bm{x}_k \to 0$ as $k \to \infty$, and thus both owls and squirrels will eventually perish. 
+\\
+
+If $p = .4$, then the eigenvalues can be obtained by the following:
+\begin{align*}
+	\begin{vmatrix}[cc]
+	.4 - \lambda & .3 \\
+	-.4 & 1.2 - \lambda
+\end{vmatrix} &= (.4 -\lambda)(1.2 - \lambda) + .3(.4) \\
+	0 &= \lambda - 1.6\lambda + .6 \\
+	  &= (\lambda - .6)(\lambda - 1)
+\end{align*}
+Thus, the eigenvalues will be $\lambda = 0.6, 1$. Let  $\bm{v}_1, \bm{v}_2$ be the eigenvectors of each eigenvalue respectively. Then, $0.6^k\bm{v}_1 \to 0$ as $k \to \infty$, and thus $\bm{x}_k = 1^k\bm{v_2} = \bm{v_2}$, and thus both populations will tend towards a constant non-zero level. We can find the relative sizes of the asymptotic populations by finding the eigenvector for $\lambda = 1$.
+\begin{align*}
+	\begin{bmatrix}
+		-.6 & .3 \\
+		-.4 & .2
+	\end{bmatrix}
+	\begin{array}{c}
+	R_2 - \frac{2}{3}R_1 \to R_2 \\
+	\sim
+	\end{array}
+	\begin{bmatrix}
+		-.6 & .3 \\
+		0 & 0
+	\end{bmatrix}
+\end{align*}
+Thus, we obtain the general solution:
+\[
+	\bm{x} = x_2
+	\begin{bmatrix}
+		\frac{1}{2} \\
+		1
+	\end{bmatrix}
+\] 
+Thus, the eigenvector corresponding to $\lambda = 1$ is $
+\begin{bmatrix}
+	\frac{1}{2} \\
+	1
+\end{bmatrix}
+$. This means that the ratio of spotted owls to flying squirrels will be 2:1.
+\end{sol}
+\begin{sol}
+	\[
+		\bm{x}(t) = c_1\bm{v}_1e^{\lambda_1t}+c_2\bm{v}_2^{\lambda_2 t} = c_1
+		\begin{bmatrix}
+			-1 \\
+			1
+		\end{bmatrix}e^{-3t} + 
+		c_2
+		\begin{bmatrix}
+			1 \\
+			1
+		\end{bmatrix}e^{-t}
+	\] 
+	We want $c_1, c_2$ to satisfy $\bm{x}(0) = 
+\begin{bmatrix}
+	2 \\
+	3
+\end{bmatrix}
+	$. 
+	\begin{align*}
+		\begin{bmatrix}[rr|r]
+			-1 & 1  & 2 \\
+			1 & 1 & 3
+		\end{bmatrix}
+		\begin{array}{c}
+			R_2 + R_1 \to R_2 \\
+			\sim
+		\end{array}
+		\begin{bmatrix}[rr|r]
+			-1 & 1  & 2 \\
+			0 & 2 & 5
+		\end{bmatrix}
+	\end{align*}
+	Thus, with back substitution, we obtain:
+	\begin{align*}
+		c_2 &= \frac{5}{2} \\
+		c_1 &= -2 + c_2 = -2 + \frac{5}{2} = \frac{1}{2}
+	\end{align*}
+	Thus:
+	\[
+		\bm{x}(t) = \frac{1}{2}
+		\begin{bmatrix}
+			-1 \\
+			1
+		\end{bmatrix}e^{-3t} + 
+		\frac{5}{2}
+		\begin{bmatrix}
+			1 \\
+			1
+		\end{bmatrix}e^{-t} =
+		\begin{bmatrix}
+			-\frac{1}{2e^{3t}} + \frac{5}{2e^t} \\
+			\frac{1}{2e^{3t}} + \frac{5}{2e^t}
+		\end{bmatrix}
+	\] 
+\end{sol}
+\begin{sol}
+	\[
+	\bm{x} = c_1\bm{v}_1e^{\lambda_1 t} + c_2\bm{v}_2e^{\lambda_2 t}
+	\] 
+	We find the eigenvalues by finding $\lambda$ such that $\det(A - \lambda I) = 0$:
+	\begin{align*}
+		\begin{vmatrix}[cc]
+			-2-\lambda & 1 \\
+			-8 & 2-\lambda
+		\end{vmatrix}  &= 
+		(-2-\lambda)(2-\lambda) + 8 \\
+		0 &= \lambda^2 + 4 \\
+		\lambda &= \pm 2i
+	\end{align*}
+	We find the eigenvectors with the following equations:
+	\begin{align*}
+		(-2 + 2i)x_1 + x_2 &= 0 \\
+		-8x_1 + (2 + 2i)x_2 &= 0
+	\end{align*}
+	$x_2 = (2 - 2i)x_1$. Let $x_1 = 1$. Then, $x_2 = 2-2i$. Thus, an eigenvector corresponding to $\lambda_1 = -2i$ is 
+	$\bm{v}_1 = \begin{bmatrix}[c]
+		1 \\
+		2 - 2i
+	\end{bmatrix}$. Similarly, an eigenvector corresponding to  $\lambda_2 = 2i$ is 
+	$\bm{v}_2 = \begin{bmatrix}[c]
+	1 \\
+	2 + 2i
+	\end{bmatrix}$. Thus, the general solution is
+	\[
+		\bm{x} = c_1 
+		\begin{bmatrix}[c]
+			1 \\
+			2 - 2i
+		\end{bmatrix}e^{-2it} + c_2
+		\begin{bmatrix}[c]
+			1 \\
+			2 + 2i
+		\end{bmatrix} e^{2it}
+	\] 
+\end{sol}
+\section{Proof Problems}
+\begin{sol}
+	\
+	\begin{enumerate}[(a)]
+		\item For $n \geq 1$,
+			\begin{align*}
+				\begin{bmatrix}
+					1 & 1 \\
+					1 & 0
+				\end{bmatrix}
+				\begin{bmatrix}[c]
+					f_n \\
+					f_{n-1}
+				\end{bmatrix} &= 
+				\begin{bmatrix}[c]
+					f_n + f_{n-1} \\
+					f_n
+				\end{bmatrix} \\
+				&= 
+				\begin{bmatrix}[c]
+					f_{n+1}	\\
+					f_n
+				\end{bmatrix}
+			\end{align*}
+		\item \
+			\begin{claim*}
+				$A^n
+				\begin{bmatrix}
+					1 \\
+					0
+				\end{bmatrix} = 
+				\begin{bmatrix}[c]
+					f_{n+1} \\
+					f_n
+				\end{bmatrix}$ for every $n \geq 0$.
+			\end{claim*}
+			\begin{proof}
+				[Proof by induction]
+				Let the claim be the proposition $P(n)$.
+
+				\textit{Base Case:} $n = 0$. As $A^0 = I$, it follows that  $
+I
+\begin{bmatrix}
+	1 \\
+	0
+\end{bmatrix} = 
+\begin{bmatrix}
+	1 \\
+	0
+\end{bmatrix} = 
+\begin{bmatrix}
+	f_{1} \\
+	f_0
+\end{bmatrix}
+				$, from the recursive formula of the Fibonnaci numbers, and thus $P(0)$ holds.
+
+			\textit{Inductive Hypothesis}: Assume for purposes of induction that $P(k)$ is true, $k > 0$. We will show that $P(k) \implies P(k+1)$.
+
+			\textit{Inductive Step}: From our inductive hypothesis, $A^k 
+\begin{bmatrix}
+	1 \\
+	0
+\end{bmatrix} = 
+\begin{bmatrix}[c]
+	f_{k+1} \\
+	f_k
+\end{bmatrix}
+			$. We left-multiply both sides by $A$ to obtain
+			\[
+			AA^k 
+			\begin{bmatrix}
+				1 \\
+				0
+			\end{bmatrix} = 
+			A
+			\begin{bmatrix}[c]
+				f_{k+1} \\
+				f_k
+			\end{bmatrix}
+			\] 
+			$AA^k = A^{k+1}$, and from Part (a), we have shown that $
+A
+\begin{bmatrix}[c]
+	f_{k+1} \\
+	f_k
+\end{bmatrix} = 
+\begin{bmatrix}[c]
+	f_{k+2} \\
+	f_{k+1}
+\end{bmatrix}
+			$. Thus, we can simplify:
+			\[
+				A^{k+1}
+				\begin{bmatrix}
+					1 \\
+					0
+				\end{bmatrix} = 
+				\begin{bmatrix}[c]
+					f_{k+2} \\
+					f_{k+1}
+				\end{bmatrix}
+			\] 
+			As we have shown that $P(k) \implies P(k+1)$, by the principle of mathematical induction, we have shown that $P(n)$ is true, $n \geq 0$.
+			\end{proof}
+		\item The eigenvalues for $A$ can be found by finding $\lambda$ such that $\det(A - \lambda I) = 0$.
+			\begin{align*}
+				\begin{vmatrix}[cc]
+					1 - \lambda & 1 \\
+					1 & -\lambda
+				\end{vmatrix} &= -\lambda(1-\lambda) - 1\\
+				&= \lambda^2 - \lambda - 1 \\
+				\lambda &= 
+				\frac{1 \pm \sqrt{5}}{2}
+			\end{align*}
+			Thus, the positive eigenvalue is $\phi = \frac{1+\sqrt{5}}{2}$. We will verify that the negative eigenvalue is equal to $-1/\phi$ by setting the two equal and seeing if we reach a contradiction.
+			\begin{align*}
+				-\frac{2}{1 + \sqrt{5}} &= \frac{1-\sqrt{5}}{2} \\
+				-4 &= (1+\sqrt{5})(1-\sqrt{5}) \\
+				-4 &= -4
+			\end{align*}
+			Thus, we have shown that the negative eigenvalue is equal to $-1/\phi$.
+		\item 
+We will find the eigenvectors for the eigenvalues by solving the homogeneous system $(A-\lambda I)\bm{x} = \bm{0}$.
+			\begin{align*}
+				\begin{bmatrix}[cc|c]
+				1 - \phi & 1 & 0 \\
+				1 & -\phi & 0
+				\end{bmatrix}
+				\begin{array}{c}
+					R_1 \lra R_2 \\
+					\sim
+				\end{array}
+				\begin{bmatrix}[cc|c]
+				1 & -\phi & 0\\
+				1 - \phi & 1 & 0 
+				\end{bmatrix} \\
+								\begin{array}{c}
+					R_2 - (1-\phi)R_1 \to R_2 \\
+					\sim
+				\end{array}
+				\begin{bmatrix}[cc|c]
+				1 & -\phi & 0\\
+				0 & -\phi^2 + \phi + 1 & 0
+			\end{bmatrix}
+			\end{align*}
+			As $\phi = \frac{1 + \sqrt{5}}{2}$, we substitute to get
+			\[
+				\begin{bmatrix}[cc|c]
+					1 & -\frac{1 + \sqrt{5}}{2} &0 \\
+					0 & 0 & 0
+			\end{bmatrix}
+			\] 
+			Thus, we have the general solution
+			\[
+				\bm{x} = x_2 
+				\begin{bmatrix}[c]
+				\frac{1 + \sqrt{5}}{2} \\
+				1
+			\end{bmatrix}		
+			\] 
+			and thus the eigenvector corresponding to $\phi$ is $
+			\begin{bmatrix}[c]
+	\frac{1 + \sqrt{5}}{2} \\
+	1
+\end{bmatrix} =
+\begin{bmatrix}
+	\phi \\
+	1
+\end{bmatrix}
+			$.
+
+			We do the same for $\lambda = -\frac{1}{\phi}$.
+			\begin{align*}
+				\begin{bmatrix}[cc|c]
+					1 + \frac{1}{\phi} & 1 & 0 \\
+					1 & \frac{1}{\phi} & 0
+				\end{bmatrix}
+				\begin{array}{c}
+					R_1 \lra R_2 \\
+					\sim
+				\end{array}
+				\begin{bmatrix}[cc|c]
+					1 & \frac{1}{\phi} & 0 \\
+					1 + \frac{1}{\phi} & 1 & 0 
+				\end{bmatrix} \\
+				\begin{array}{c}
+					R_2 - (1 + \frac{1}{\phi})R_1 \to R_2
+					\sim
+				\end{array}
+				\begin{bmatrix}[cc|c]
+					1 & \frac{1}{\phi} & 0 \\
+					0 & 1 - \frac{1}{\phi} - \frac{1}{\phi^2} & 0 
+				\end{bmatrix} \\
+			\end{align*}
+			As $-\frac{1}{\phi} = \frac{1-\sqrt{5}}{2}$, it follows that $\frac{1}{\phi} = \frac{\sqrt{5} - 1}{2}$, so we substitute to get
+						\[
+				\begin{bmatrix}[cc|c]
+					1 & \frac{\sqrt{5} -1}{2} &0 \\
+					0 & 0 & 0
+			\end{bmatrix}
+			\] 
+						Thus, we have the general solution
+			\[
+				\bm{x} = x_2 
+				\begin{bmatrix}[c]
+				\frac{1 -\sqrt{5}}{2} \\
+				1
+			\end{bmatrix}		
+			\] 
+			and thus the eigenvector corresponding to $-1/\phi$ is $
+			\begin{bmatrix}[c]
+	\frac{1 - \sqrt{5}}{2} \\
+	1
+\end{bmatrix} = 
+\begin{bmatrix}
+	-\frac{1}{phi} \\
+	1
+\end{bmatrix}
+$
+.
+		\item The invertible matrix $P$ such that $A = PDP^{-1}$ where $D$ is a diagonal matrix is a matrix where the columns are linearly independent eigenvectors. Thus
+			\[
+			P = 
+			\begin{bmatrix}[cc]
+				\phi &	-\frac{1}{\phi} \\
+						1 & 1
+			\end{bmatrix} \quad
+			D = 
+			\begin{bmatrix}
+				\phi & 0 \\
+				0 & -\frac{1}{\phi}
+			\end{bmatrix}
+			\] 
+		\item $D = 
+			\begin{bmatrix}[cc]
+	\phi & 0 \\
+	0 & -\frac{1}{\phi}
+\end{bmatrix}
+			$, and thus $D^n = 
+			\begin{bmatrix}[cc]
+	\phi^n & 0 \\
+	0 & \paren*{-\frac{1}{\phi}}^n
+\end{bmatrix}
+$. As $A = PDP^{-1}$, $A^n = (PDP^{-1})^n = PD^nP^{-1}$.
+
+We first calculate $P^{-1}$.
+\begin{align*}
+	\frac{1}{\det P}
+	\begin{bmatrix}
+		1 & \frac{1}{\phi} \\
+		-1 & \phi
+	\end{bmatrix} = 
+	\frac{\phi}{\phi^2 + 1}
+	\begin{bmatrix}
+		1 & \frac{1}{\phi} \\
+		-1 & \phi
+	\end{bmatrix}  
+\end{align*}
+\begin{align*}
+	A^n &= 
+\begin{bmatrix}
+	\phi & -\frac{1}{\phi} \\
+	1 & 1
+\end{bmatrix}
+\begin{bmatrix}[cc]
+	\phi^n & 0 \\
+0 & \paren*{-\frac{1}{\phi}}^n
+\end{bmatrix}
+\paren*{\frac{\phi}{\phi^2 + 1}
+	\begin{bmatrix}
+		1 & \frac{1}{\phi} \\
+		-1 & \phi
+\end{bmatrix}} \\
+		&= 
+		\frac{\phi}{\phi^2 + 1}
+		\begin{bmatrix}[cc]
+			\phi^{n+1} - \paren*{-\frac{1}{\phi}}^{n+1} & \phi^n - \paren*{-\frac{1}{\phi}}^n \\
+			\phi^n - \paren*{-\frac{1}{\phi}}^n & \phi^{n-1} - \paren*{\frac{1}{\phi}}^{n-1}
+		\end{bmatrix}
+\end{align*}
+\item From parts (a) and (f), we obtain
+	\begin{align*}
+		\begin{bmatrix}[c]
+			f_{n+1} \\
+			f_n
+		\end{bmatrix} &= 
+		A^n 
+		\begin{bmatrix}
+			1 \\
+			0
+		\end{bmatrix} \\
+		&= 
+		\frac{\phi}{\phi^2 + 1}
+		\begin{bmatrix}[cc]
+			\phi^{n+1} - \paren*{-\frac{1}{\phi}}^{n+1} & \phi^n - \paren*{-\frac{1}{\phi}}^n \\
+			\phi^n - \paren*{-\frac{1}{\phi}}^n & \phi^{n-1} - \paren*{\frac{1}{\phi}}^{n-1}
+		\end{bmatrix}
+\begin{bmatrix}
+	1 \\
+	0
+\end{bmatrix} \\
+		&= 
+		\frac{\phi}{\phi^2 + 1}
+		\begin{bmatrix}[cc]
+			\phi^{n+1} - \paren*{-\frac{1}{\phi}}^{n+1} \\
+\phi^n - \paren*{-\frac{1}{\phi}}^n 
+		\end{bmatrix} \\
+		&= 
+		\begin{bmatrix}[cc]
+			\phi^{n} - \paren*{-
+				\frac{1}{\phi}
+			}^{n} \\
+			\phi^{n-1} - \paren*{-
+				\frac{1}{\phi}
+			}^{n-1}
+		\end{bmatrix}
+	\end{align*}
+	Thus, 
+	\[
+		f_n = \phi^{n-1} - \paren*{
+			-\frac{1}{\phi}
+		}^{n-1}
+	\] 
+		\end{enumerate}
+	\end{sol}
+	\begin{sol}
+		\
+		\begin{enumerate}[(a)]
+			\item
+\begin{proof}
+				Let the geometric multiplicity of the eigenvector $\lambda_k = m$. Let $P_1$ be the matrix where the columns are of the linearly independent eigenvectors of the eigenspace $V_k$. As $\set*{v_1, \dots, v_m}$ is the basis for $V_k$, it follows that all vectors in the set are linearly independent and are eigenvectors. Thus, $P_1 = 
+\begin{bmatrix}
+	v_1 & \dots & v_m
+\end{bmatrix}
+				$. Let $P_2$ be the matrix where the columns are of the linearly independent vectors that are used to extend to a basis $\basis$; $P_2 =
+\begin{bmatrix}
+	u_{m+1} & \dots & u_n
+\end{bmatrix}
+				$. We can then join $P_1$ and $P_2$ to form $P$, a matrix of linearly independent vectors:
+				\[
+				P = 
+				\begin{bmatrix}
+					v_1 & \dots & v_m & u_{m+1} & \dots & u_n
+				\end{bmatrix}
+				\] 
+We left-multiply by $A$:
+\[
+AP = 
+\begin{bmatrix}
+	Av_1 & \dots Av_m & Au_{m+1} & \dots & Au_n	
+\end{bmatrix} = 
+\begin{bmatrix}
+	AP_1 & AP_2
+\end{bmatrix}
+\] 
+As $P_1$ are eigenvectors of $A$, by definition, $Ax = \lambda x$ for all vectors $x \in P_1$. Thus:
+\[
+AP = 
+\begin{bmatrix}
+	\lambda_k v_1 & \dots \lambda_k v_m & u_{m+1} & \dots & u_n
+\end{bmatrix} =
+\begin{bmatrix}
+	\lambda_k P_1 & AP_2	
+\end{bmatrix} 
+\]
+We can find a similar matrix $D$ with $PD = AP$. Thus:
+ \[
+\begin{bmatrix}
+	P_1 & P_2
+\end{bmatrix}B
+ =
+\begin{bmatrix}
+	\lambda_k P_1 & AP_2	
+\end{bmatrix} 
+\]
+The result of the matrix multiplication of $PD$ will result in the first $m$ columns being $\lambda_k P_1$. Since we take the dot product between the rows of $P_1$ and the columns of $D$, there must be $\lambda_k$ along the diagonal of the first $m \times m$ block and 0's for every other entry. Thus, the first $m \times m$ block is $\lambda I_m$. The next $m \times (n-m)$. The $(n-m)\times m$ matrix below the $m \times m$ block will be a zero matrix, as we extend to a larger basis, and the resulting $\lambda_k P_1$ matrix will have 0's in those entries. The other blocks will be matrices that, when $P_2$ multiplies it, it will result in $AP_2$.
+\end{proof}
+\item 
+	\begin{proof}
+		As $B$ is a similar matrix to $A$, by Theorem 4 in Section 5.2, they have the same characteristic polynomial, and thus $\det(A-\lambda I_n) = \det(A_\basis - \lambda I_n)$.
+	\end{proof}
+\item 
+	\begin{proof}
+		\begin{align*}
+			\det(A_\basis - \lambda I_n) &=
+		\det\paren*{
+			\begin{bmatrix}[cc]
+	\lambda_k I_m & B \\
+	0_{n,m} & C
+\end{bmatrix} - 
+\begin{bmatrix}[cc]
+	\lambda I_m & 0 \\
+	0 & \lambda I_m
+\end{bmatrix}
+		} \\
+		&=
+		\det \paren*{
+			\begin{bmatrix}[cc]
+	(\lambda_k - \lambda)I_m & B \\
+	0 & C - \lambda I_m
+\end{bmatrix}
+		}
+		\end{align*}
+		As this is block triangular, can simplify:
+		\[
+		\det((\lambda_k - \lambda)I_m) \cdot \det (C - \lambda I_m) 
+		\] 
+		The determinant of $(\lambda_k - \lambda)I_m$ is the product of the diagonal, and thus $\det((\lambda_k - \lambda)I_m) = (\lambda_k - \lambda)^m$. We obtain
+		 \[
+			 (\lambda_k - \lambda)^m \det(C - \lambda_m)
+		\] 
+		as desired, and the proof is complete.
+	\end{proof}
+		\end{enumerate}
+	\end{sol}
+\end{document}

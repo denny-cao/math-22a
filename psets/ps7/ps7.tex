@@ -1,0 +1,794 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations,calligraphy}
+\usetikzlibrary{matrix,decorations.pathreplacing, calc, positioning,fit, bending}
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{.}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{axiom}{Axiom}
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+\newcommand{\lra}{\leftrightarrow}
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+\newcommand{\xor}{\oplus}
+\newcommand{\powset}{\mathcal{P}}
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Linear Algebra
+\newcommand{\nul}{\text{Nul}}
+\newcommand{\col}{\text{Col}}
+\newcommand{\adj}{\text{adj}}
+\newcommand{\spa}[1]{\text{Span}\set*{#1}}
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\poly}{\mathbb{P}}
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\hypersetup{
+	linkcolor=magenta
+}
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\subtitle{PSet 1}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 7
+		\endgroup \vskip 0.3cm
+		Due: Wednesday, October 25, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm 
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\section{Computational Questions}
+\begin{ques}
+	Indicate which of the following are vector spaces; and justify your conclusions.
+	\begin{enumerate}[a)]
+		\item All polynomials of the form $a + t^2$ with $a \in \reals$.
+		\item All polynomials with integer coefficients.
+		\item All polynomials of degree $n \geq 1$ with $\mathbf{p}(0) = 0$.
+		\item All functions of the form $a \cos(3t) + b \sin(t)$ with $a, b \in \reals$.
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[a)]
+	\item This set is not a vector space because it does not satisfy the closure under scalar multiplication property. When multiplying a polynomial in the form of $a + t^2$ by a scalar $c$, the result will be $c(a + t^2) = ca + ct^2$, which is not in the form $a + t^2$.
+	\item This set is a vector space, as it satisfies all 10 axioms of vector spaces. Let $\mathbf{u}(t) = u_0 + u_1t + u_2t^2 + \dots + u_n t^n$. Let $\mathbf{v}(t) = v_0 + v_1t + v_2t^2 + \dots + v_m t^m$. Then the sum of $\mathbf{u} + \mathbf{v}$ is defined by
+		\begin{align*}
+			(\mathbf{u}+\mathbf{v})(t) &= \mathbf{u}(t) + \mathbf{v}(t) \\
+					 &= (u_0 + v_0) + (u_1 + v_1)t + \dots 
+		\end{align*}
+		The scalar multiple $c\mathbf{u}$ is the polynomial defined by
+		\[
+		(c\mathbf{u})(t) = c\mathbf{u}(t) = cu_0 + (cu_1)t + \dots + (cu_n)t^n
+		\] 
+		These definitions satisfy Axioms 1 and 6, as $\mathbf{u} + \mathbf{v}$ and $c\mathbf{u}$ are polynomials with integer coefficients. Axioms 2,3, and 7-10 follow from properties of the real numbers. The zero polynomial acts like the zero vector in Axiom 4. $(-1)\mathbf{u}$ acts as the negative of $\mathbf{u}$, so Axiom 5 is satisfied. Thus, the set of all polynomials with integer coefficients is a vector space.
+	\item This set is not a vector space because it does not satisfy the closure under vector addition property. Let $\mathbf{u}(t) = u_1t + u_2t^2 + \dots + u_n t^n$. Let $\mathbf{v}(t) = v_1t + v_2t^2 + \dots + v_n t^n$. Let $u_n = -v_n$. Then, as  $\mathbf{u}$ and $\mathbf{v}$ are polynomials of degree $n$, they are in the set. We will show that the sum $\mathbf{u} + \mathbf{v}$ is not in the set. The sum of $\mathbf{u} + \mathbf{v}$ is defined by
+		\begin{align*}
+			(\mathbf{u}+\mathbf{v})(t) &= \mathbf{u}(t) + \mathbf{v}(t) \\
+									   &= (u_1 + v_1)t + \dots + (u_{n-1} + v_{n-1})t^{n-1} (u_n + v_n)t^n \\
+									   &= (u_1 + v_1)t + \dots + (u_{n-1} + v_{n-1})t^{n-1} (- v_n + v_n)t^n \\
+									   &= (u_1 + v_1)t + \dots + (u_{n-1} + v_{n-1})t^{n-1} (0)t^n \\
+									   &=  (u_1 + v_1)t + \dots + (u_{n-1} + v_{n-1})t^{n-1}
+		\end{align*}
+		As the sum is a polynomial of degree $n-1$, it is not in the set of polynomials of degree $n$. Thus, the closure under vector addition property does not hold and thus the set is not a vector space.
+	\item This set is a vector space, as it satisfies all 10 axioms of vector spaces. Let $\mathbf{u}(t) = u_1 \cos(3t) + u_2 \sin(t)$. Let $\mathbf{v}(t) = v_1 \cos(3t) + v_2 \sin(t)$. Then the sum of $\mathbf{u} + \mathbf{v}$ is defined by
+		\begin{align*}
+			(\mathbf{u}+\mathbf{v})(t) &= \mathbf{u}(t) + \mathbf{v}(t) \\
+									   &= (u_1 + v_1)\cos(3t) + (u_2 + v_2)\sin(t)
+		\end{align*}
+		The scalar multiple $c\mathbf{u}$ is the polynomial defined by
+		\[
+		(c\mathbf{u})(t) = c\mathbf{u}(t) = (cu_1) \cos(3t) + (cu_2) \sin(t)
+		\] 
+		These definitions satisfy Axioms 1 and 6, as $\mathbf{u} + \mathbf{v}$ and $c\mathbf{u}$ are functions of the form $a \cos(3t) + b\sin(t)$ with $a,b \in \reals$. Axioms 2,3, and 7-10 follow from properties of the real numbers. The function where $a = b = 0$ acts like the zero vector in Axiom 4. $(-1)\mathbf{u}$ acts as the negative of $\mathbf{u}$, so Axiom 5 is satisfied. Thus, the set of all functions of the form $a\cos(3t) + b\sin(t)$ is a vector space.
+\end{enumerate}
+\begin{ques}
+	Let $W$ denote the set of all vectors in $\reals^4$ having the form below for $s, t \in \reals$. Show that $W$ is a subspace and a linear independent set of vectors that span $W$.
+	\[
+		\begin{bmatrix}[c]
+		s + 3t \\
+		s - t \\
+		2s - t\\
+		4t
+	\end{bmatrix}
+	\] 
+\end{ques}
+	\textbf{Solution}
+\begin{proof}
+	If $W$ is a subspace, then by the definition of subspace, the following three properties must hold:
+	\begin{enumerate}[a.]
+		\item The zero vector of $\reals^4 \in W$: The vector where $s = t = 0 \in W$. This vector is $
+\begin{bmatrix}
+	0 \\
+	0 \\
+	0 \\
+	0
+\end{bmatrix}
+			$, which is the zero vector of $\reals^4$, and thus this property holds.
+		\item $W$ is closed under vector addition: Let $\vec{u} = 
+			\begin{bmatrix}[c]
+	s_1 + 3t_1 \\
+	s_1 - t_1 \\
+	2s_1 - t_1 \\
+	4t_1
+\end{bmatrix}
+$ and $\vec{v} = 
+\begin{bmatrix}[c]
+	s_2 + 3t_2 \\
+	s_2 - t_2 \\
+	2s_2 - t_2 \\
+	4t_2
+\end{bmatrix}
+$. Then, $\vec{u} + \vec{v} =
+\begin{bmatrix}[c]
+	(s_1 + s_2) + 3(t_1 + t_2) \\
+	(s_1 + s_2) - (t_1 + t_2) \\
+	2(s_1 + s_2) - (t_1 + t_2) \\
+	4(t_1 + t_2)
+\end{bmatrix}
+$. As $s_1 + s_2, t_1 + t_2 \in \reals$, it follows that $\vec{u} + \vec{v} \in W$, and thus this property holds.
+\item $W$ is closed under multiplication by scalars. Let $\vec{u} = 
+	\begin{bmatrix}[c]
+	s + 3t \\
+	s - t \\
+	2s - t \\
+	4t
+\end{bmatrix}
+$. Then, for all scalars $c$, $c\vec{u} = 
+c
+\begin{bmatrix}[c]
+	s + 3t \\
+	s - t \\
+	2s - t \\
+	4t
+\end{bmatrix} = 
+\begin{bmatrix}[c]
+	(cs) + 3(ct) \\
+	(cs) - (ct) \\
+	2(cs) - (ct) \\
+4(ct) 
+\end{bmatrix}
+$. As $cs, ct \in \reals$, it follows that $c\vec{u} \in W$, and thus this property holds.
+	\end{enumerate}
+	As all three properties hold, $W$ is a subspace.
+\end{proof}
+To find a linear independent set of vectors that span $W$, we first express $W$ in the form:
+\[
+	\begin{bmatrix}[c]
+	s + 3t \\
+	s - t \\
+	2s - t \\
+	4t
+\end{bmatrix} = 
+s 
+\begin{bmatrix}
+	1 \\
+	1 \\
+	2 \\
+	0
+\end{bmatrix} +
+t
+\begin{bmatrix}
+	3 \\
+	-1 \\
+	-1 \\
+	4
+\end{bmatrix}
+\] 
+This calculation shows that $W = \text{Span}\set*{\vec{v_1}, \vec{v_2}}$, where $\vec{v_1} = \begin{bmatrix}
+	1 \\
+	1 \\
+	2 \\
+	0
+\end{bmatrix}$ and $\vec{v_2} = 
+\begin{bmatrix}
+	3 \\
+	-1 \\
+	-1 \\
+	4
+\end{bmatrix}
+$.
+\begin{ques}
+	The set of all continuous, real valued function defined on a closed interval $[a,b]$ in $\reals$ is denoted by $C[a,b]$. Show that this is a vector space and that the subset in $C[a,b]$ of functions $f$ with $f(a) = f(b)$ is a subspace.
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	To show that $C[a,b]$ is a vector space, we must prove that for $C[a,b]$, all 10 axioms of vector spaces are satisfied. Let $f,g$ be functions in $C[a,b]$. The sum of two continuous, real valued functions is a continuous, real valued function, and thus $f + g \in C[a,b]$. 
+	\\
+
+	The scalar multiple  $cf$ is a continuous, real valued function as $f$ is a continuous, real valued function.
+\\
+
+	These definitions satisfy Axioms 1 and 6, as $f + g$ and $cf$ are continuous, real valued functions. Axioms 2,3, and 7-10 follow from properties of the real numbers. The function where $f(t) = 0$ acts like the zero vector in Axiom 4. $(-1)f$ acts as the negative of $f$, so Axiom 5 is satisfied. Thus, $C[a,b]$ is a vector space and the proof is complete.
+\end{proof}
+\begin{proof}
+	To show that the subset $W = \set{f \in C[a,b] \mid f(a) = f(b)}$ is a subspace, we must show that the following three properties hold:
+	\begin{enumerate}[a.]
+		\item The zero vector of $C[a,b] \in W$ : The zero vector of $C[a,b]$ is the function $f(x) = 0$. Thus, $f(a) = 0 \land f(b) = 0$, meaning $f(x) = 0 \in W$, and thus this property holds.
+		\item $W$ is closed under vector addition: If  $f, g \in W$ then $f(a) = f(b) \land g(a) = g(b)$. Thus, $(f+g)(a) = f(a) + g(a) = f(b) + g(b) = (f+g)(b)$, and it follows that $f + g \in W$, and thus the property holds.
+		\item $W$ is closed under scalar multiplication: If $f \in W$, then $f(a) = f(b)$. Thus, $cf(a) = cf(b)$, and it follows that $cf \in W$, and thus the property holds.
+	\end{enumerate}
+	As all three properties hold, $W$ is a subspace, and the proof is complete.
+\end{proof}
+\begin{ques}
+	Let $H$ and $K$ be subspaces of a vector space $V$. The \textit{intersection} of $H$ and $K$ (written $H \inter K$) is the set of all vectors $\vec{v}$ that are in both $H$ and $K$. Show that $H \inter K$ is a subspace of $V$. Give an example in $\reals^2$ to show why the union of $H$ and $K$ is not in general a subspace.
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	To show that the subset $H \inter K$ is a subspace, we must show that the following three properties hold:
+	\begin{enumerate}[a.]
+		\item The zero vector of $V \in H \inter K$: As $H$ and $K$ are subspaces of $V$, the zero vector of $V$, $\vec{0}$, are in both $H$ and $K$, and thus $\vec{0} \in H \inter K$.
+		\item $H \inter K$ is closed under vector addition: Let $\vec{u}, vec{v} \in H \inter K$. By definition of intersection, $\vec{u},\vec{v} \in H \land \vec{u},\vec{v} \in K$. As $H$ and $K$ are both subspaces, they are closed under vector addition and $\vec{u} + \vec{v} \in H \land \vec{u} + \vec{v} \in K$. By definition of intersection, as $\vec{u} + \vec{v}$ is in both sets, $\vec{u} + \vec{v} \in H \inter K$, and thus the property holds.
+		\item $H \inter K$ is closed under scalar multiplication: Let $\vec{u} \in H \inter K$. By definition of intersection, $\vec{u} \in H \land \vec{u} \in K$. As $H$ and $K$ are both subspaces, they are closed under scalar multiplication, and thus for all scalar multiples  $c$, $c\vec{u} \in H \land c\vec{v} \in K$. By definition of intersection, as $c\vec{u}$ is in both sets,  $c\vec{u} \in H \inter K$, and thus the property holds.
+	\end{enumerate}
+	As all three properties hold, $H \inter K$ is a subspace of $V$.
+\end{proof}
+An example in $\reals^2$ to show why $H \unite K$ is not in general a subspace, consider the case where $H = \set*{(x,y) \mid x = 0, y \in \reals}$ and $K = \set*{(x,y) \mid x \in \reals, y = 0}$. Thus,  $H \unite K = \set*{(x,y) \mid (x = 0, y \in \reals) \lor (x \in \reals, y = 0)}$. This is not a subspace because it is not closed under vector addition. For instance, $(0,1) \in H \unite K \land (1,0) \in H \unite K$, but $(0,1) + (1,0) = (1,1) \not\in H \unite K$.
+\begin{ques}
+	Find a matrix $A$ such that the given set is $\col (A)$
+	\[
+		\set*{
+			\begin{bmatrix}[c]
+	b - c \\
+	2b + c + d \\
+	5c - 4d \\
+	d
+\end{bmatrix} \mid
+b,c,d \in \reals
+		}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+We write the set as a set of linear combinations:
+\[
+	\set*{
+b 
+\begin{bmatrix}
+	1 \\
+	2 \\
+	0 \\
+	0
+\end{bmatrix} + 
+c 
+\begin{bmatrix}
+	-1 \\
+	1 \\
+	5 \\
+	0
+\end{bmatrix} + 
+d
+\begin{bmatrix}
+	0 \\
+	1 \\
+	-4 \\
+	1
+\end{bmatrix}
+\mid 
+b,c,d \in \reals
+} = \spa{
+\begin{bmatrix}
+	1 \\
+	2 \\
+	0 \\
+	0
+\end{bmatrix}, 
+\begin{bmatrix}
+	-1 \\
+	1 \\
+	5 \\
+	0
+\end{bmatrix},
+\begin{bmatrix}
+	0 \\
+	1 \\
+	-4 \\
+	1
+\end{bmatrix}
+}
+\] 
+We use the vectors in the spanning set as the columns of $A$. Thus
+ \[
+A = 
+\begin{bmatrix}
+	1 & -1 & 0 \\
+	2 & 1 & 1 \\
+	0 & 5 & -4 \\
+	0 & 0 & 1
+\end{bmatrix}
+\] 
+\begin{ques}
+	Define a linear transformation $T: \mathbb{P}_2 \to \reals^2$ by $T(\mb{p}) = (\mb{p}(0), \mb{p}'(0))$ where $\mb{p}'(0)$ is the derivative of  $\mb{p}$. Find polynomials that span the kernel of $T$ and find a set of spanning vectors for  $T$'s image.
+\end{ques}
+\textbf{Solution}
+
+$\mb{p}(0)$ is a constant, and thus $\mb{p}'(0) = 0$. Thus, it follows that the kernel of $T$ is the set of all polynomials where the 0-th degree coefficient is 0.  As the polynomials are of degree 2, the polynomials that span the kernel of $T$ are $t, t^2$.
+\\
+
+A set of spanning vectors for $T$'s image is $\set*{(1,0)
+}$.
+\begin{ques}
+	Find a basis for the space spanned by the five vectors depicted below
+	\[
+	\begin{bmatrix}
+	1 \\
+	0 \\
+	0 \\
+	1
+	\end{bmatrix},
+	\begin{bmatrix}
+		-2 \\
+		1 \\
+		-1 \\
+		1
+	\end{bmatrix}, 
+	\begin{bmatrix}
+		6 \\
+		-1 \\
+		2 \\
+		-1
+	\end{bmatrix},
+	\begin{bmatrix}
+		5 \\
+		-3 \\
+		3 \\
+		-4
+	\end{bmatrix},
+	\begin{bmatrix}
+		0 \\
+		3 \\
+		-1 \\
+		1
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+Let $A$ be the matrix whose column vectors are the vectors above:
+\begin{align*}
+	A &= 
+	\begin{bmatrix}
+		1 & -2 & 6 & 5 & 0 \\
+		0 & 1 & -1 & -3 & 3 \\
+		0 & -1 & 2 & 3 & -1 \\
+		1 & 1 & -1 & -4 & 1
+	\end{bmatrix}
+	\intertext{We obtain the reduced row echelon form of $A$ by applying elementary row operations to $A$. $\sim R_4 - R_1 \to R_4$.}
+	 &= 
+	\begin{bmatrix}
+		1 & -2 & 6 & 5 & 0 \\
+		0 & 1 & -1 & -3 & 3 \\
+		0 & -1 & 2 & 3 & -1 \\
+		0 & 3 & -7 & -9 & 1
+	\end{bmatrix}
+	\intertext{$\sim R_1 + 2R_2 \to R_1, R_3 + R_2 \to R_3, R_4 - 3R_2 \to R_4$.}
+	 &= 
+	\begin{bmatrix}
+		1 & 0 & 4 & -1 & 6 \\
+		0 & 1 & -1 & -3 & 3 \\
+		0 & 0 & 1 & 0 & 2 \\
+		0 & 0 & -4 & 0 & -8
+	\end{bmatrix}
+	\intertext{$\sim R_1 - 4R_3 \to R_1, R_2 + R_3 \to R_2, R_4 + 4R_3 \to R_4$.} 
+	 &=		\begin{bmatrix}
+		 1 & 0 & 0 & -1 & -2 \\
+		 0 & 1 & 0 & -3 & 5 \\
+		 0 & 0 & 1 & 0 & 2 \\
+		 0 & 0 & 0 & 0 & 0
+	\end{bmatrix}
+\end{align*}
+As the first, second, and third columns are the pivot columns, the first second and third column vectors of $A$ form a basis of the span of the vectors.
+\[
+	\set*{
+	\begin{bmatrix}
+		1 \\
+		0 \\
+		0 \\
+		1
+	\end{bmatrix},
+\begin{bmatrix}
+	-2 \\
+	1 \\
+	-1 \\
+	1
+\end{bmatrix},
+\begin{bmatrix}
+	6 \\
+	-1 \\
+	2 \\
+	-1
+\end{bmatrix}
+}
+\] 
+\begin{ques}
+	Label each of the following statements as true or false; then justify your conclusions.
+	\begin{enumerate}[a.]
+		\item A linearly independent set in a subspace $H$ is a basis for $H$.
+		\item If a finite set $S$ of nonzero vectors spans a vector space $V$, then some subset of $S$ is a basis for $V$.
+		\item A basis is a linearly independent set that is as large as possible.
+		\item The standard method for producing a spanning set for  $\nul \ A$, described in Section 4.2, sometimes fails to produce a basis for $\nul \ A$.
+		\item If $B$ is an echelon form of a matrix $A$, then the pivot columns of $B$ form a basis for $\col \ A$.
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[a.]
+	\item False; by definition of a basis for a vector space $V$, a basis is linearly independent and spans $V$.
+	\item True; by Theorem 5(The Spanning Set Theorem), some subset of $S$ is a basis for the vector space spanned by $S$, $V$.
+	\item True; a basis must span the sapce as well as be linearly independent. If a linearly independent set can be expanded, then there are vectors that are not in the span of the original set in order to span the space, and thus a basis is a linearly independent set that is as large as possible.
+	\item False; it will always produce a linearly independent set.
+	\item False; the pivot columns correspond to columns in $A$ which form the basis.
+\end{enumerate}
+\begin{ques}
+	Prove that a 1-1 linear transformation $T$ from a vector space $V$ to a vector space $W$ maps a linearly independent set of vectors in  $V$ to a linear independent set of vectors in $W$.
+\end{ques}
+\textbf{Solution}
+	\begin{proof}
+		Suppose $T$ is injective and $S$ is a linearly independent subset of $V$. Let the vectors in $S$ be $\vec{s_1}, \vec{s_2}, \dots, \vec{s_n}$. As $S$ is linearly independent, then the only scalars such that $c_1\vec{s_1} + c_2 \vec{s_2} + \dots + c_n \vec{s_n} = \vec{0}$ is if $c_1 = c_2 = \dots = c_n = 0$. We apply a linear transformation, $T(c_1\vec{v_1} + c_2 \vec{s_2} + \dots + c_n \vec{s_n}) = T(c_1 \vec{s_1}) + T(c_2 \vec{s_2}) + \dots + T(c_n \vec{s_n}) = c_1T(\vec{s_1}) + c_2T(\vec{s_2}) + \dots c_nT(\vec{s_n})$. As $T$ is 1-1, $c_1 = c_2 = \dots = c_n$ is the only combination of scalars to produce a linear combination that results in the zero vector, as otherwise, there will be multiple inputs that map to the same value. Thus, the set $\set*{T(\vec{s_1}), T(\vec{s_2}), \dots , T(\vec{s_n})}$ is linearly independent, and the proof is complete.
+	\end{proof}
+	\begin{ques}
+		Explain what is wrong in the following discussion: Consider polynomials $f(t) = 3 + t$ and let $g(t) = 3t + t^2$. Since $g(t)$ is $tf(t)$ which is a multiple of $f(t)$, the pair $\set*{f,g}$ in $\poly_2$ are linearly dependent.
+	\end{ques}
+	\textbf{Solution}
+
+	As $g(t) = tf(t)$, $\set*{f,g}$ is linearly independent as $g$ is not a constant multiple of $f$; it is incorrect to say that $g(t)$ is a multiple of $f(t)$, as $t$ is not a scalar.
+\section{Proof Problems}
+\begin{ques}
+	[Properties of Determinants]	
+	A matrix $A$ is called \textbf{skew-symmetric} if it satisfies $A^T = -A$. Prove that for any odd number $n$, an $n \times n$ skew-symmetric matrix cannot be invertible.
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	We first take the determinant of both sides:
+	\begin{align*}
+		\det A^T &= \det -A 
+		\intertext{By Theorem 5 in Section 3.2 of Lay's, if $A$ is an $n \times n$ matrix, then $\det A^T = \det A$.}
+		\det A &= \det - A
+		\intertext{By Theorem 3 in Section 3.2 of Lay's, if a row of $A$ is multiplied by $k$ to produce $B$, then $\det B = k \cdot A$. As $-A$ multiplies all rows of $A$ by $-1$, $\det -A = (-1)^n \det A$.}
+		\det A &= (-1)^n \det A	
+		\intertext{When $n$ is odd, $(-1)^n = -1$.}
+		\det A &= -\det A
+	\end{align*}
+	This is only true when $\det A = -\det A = 0$.
+	\\
+
+	By Theorem 4 in Secttion 3.2 of Lay's, a square matrix $A$ is invertible if and only if $\det A \neq 0$. As $\det A = 0$, it follows that $A$ is not invertible. We have shown that for any odd number $n$, an $n \times n$ skew-symmetric matrix cannot be invertible and the proof is complete.
+\end{proof}
+\begin{ques}
+	Consider the following vector space that arises in computer logic. Let  $U$ be a fixed non-empty set, and let $V$ be the power set of $U$; namely the set of all subsets of $U$. For this vector space, the scalars are 1 and 0 and scalar addition is defined $\bmod{2}$ (recall that means you take the remainder after dividing by 2). Thus, we get $0 + 0 = 0, 0 + 1 = 1,$ and $1 + 1 = 0 \bmod 2$. Multiplication works in the usual way:
+	\[
+	0 \cdot 0 = 0, 0 \cdot 1 = 0, 1 \cdot 1 = 1.
+	\] 
+	Prove that $V$ is a vector space where vector addition is defined by
+	\[
+	A + B = (A \unite B) \setminus (A \inter B),
+	\] 
+	and scalar multiplication is defined by
+	\[
+	0A = \emptyset, 1 A = A.
+	\] 
+	In order to prove $V$ is a vector space you need to check the 10 axioms of a vector space given on page 192 of the book. \textbf{You do not need to check the associativity axiom}.
+\end{ques}
+\textbf{Solution}
+\begin{proof}
+	We will prove $V$ is a vector space by proving that all 10 axioms for all vectors $\vec{u}, \vec{v},$ and $\vec{w}$ in $V$ and for all scalars $c$ and $d$ hold. Let $\vec{u}, \vec{v}$, and $\vec{w}$ be  the sets $A,B,C$ respectively, where $A,B,C \in V$. Let $c,d \in \set*{0,1}$.
+		\begin{axiom}
+			The sum of $\vec{u}$ and $\vec{v}$, denoted by $\vec{u} + \vec{v}$, is in $V$.
+		\end{axiom}
+		\begin{subproof}
+			[Subproof]
+			Let $\powset(U)$ denote the power set of $U$. As vector addition in  $V$ is defined by $A + B = (A \unite B) \setminus (A \inter B)$ and $V = \mathcal{P}(U)$, we must show that $\forall A, B \in V ((A \unite B) \setminus (A \inter B) \in \mathcal{P}(U))$. Without loss of generality, if an element $x$ is in the set $(A \unite B) \setminus (A \inter B)$, then $x \in A \xor x \in B$, as $x$ is in either $A$ or $B$, but not both. By definition of power set, as $A$ and $B$ are in $\powset(U)$, $A$ and $B$ are subsets of $U$. Thus, all elements of $A$ are in $U$ and all elements of $B$ are in $U$. Thus, $x \in U$. It follows that all elements of the set $(A \unite B) \setminus (A \inter B)$ are in $U$, and thus are a subset of $U$, meaning it is in $\powset(U)$. As $V = \powset(U)$ and $A + B = (A \unite B) \setminus (A \inter B)$,  we can restate this as $A + B \in V$.
+		\end{subproof}
+		\begin{axiom}
+			$\vec{u} + \vec{v} = \vec{v} + \vec{u}$.
+			\label{axiom:2}
+		\end{axiom}
+		\begin{subproof}
+			[Subproof]
+			As vector addition in $V$ is defined by $A + B = (A \unite B) \setminus (A \inter B)$, we will prove that $A + B = B + A$, or $(A \unite B) \setminus (A \inter B) = (B \unite A) \setminus (B \inter A)$. As $A \unite B = B \unite A$ and $A \inter B = B \inter A$, it follows that the subtraction of the later from the former will result in the same set, and the proof is complete.
+		\end{subproof}
+		\begin{axiom}
+			$(\vec{u} + \vec{v}) + \vec{w} = \vec{u} + (\vec{v} + \vec{w})$.
+		\end{axiom}
+		\begin{subproof}
+			[Subproof]
+			The problem states that the associativity axiom does not need to be checked.
+		\end{subproof}
+		\begin{axiom}
+			There is a \textbf{zero} vector $\vec{0}$ in $V$ such that $\vec{u} + \vec{0} = \vec{u}$.
+			\label{axiom:4}
+		\end{axiom}
+		\begin{subproof}
+			[Subproof]
+			Let $\emptyset = \vec{0}$. By definition of power set, $\emptyset \in \powset(U)$, as $\emptyset$ is a subset of $U$, and thus $\emptyset \in V$. We will show that $A + \emptyset = A$, or that  $(A \unite \emptyset) \setminus (A \inter \emptyset) = A$. As the empty set does not contain any elements, $A \unite \emptyset = A$. For the same reason, $A \inter \emptyset = \emptyset$, as there does not exist elements that are in both  $A$ and $\emptyset$. Thus,  $(A \unite \emptyset) \setminus (A \inter \emptyset) = A \setminus \emptyset$. Subtraction of  $\emptyset$ from $A$ will result in the set $A$ without the elements in both $A$ and $\emptyset$. As there are no elements in $\emptyset$, the resulting set will be $A$. Thus, $(A \unite \emptyset) \setminus (A \inter \emptyset) = A$. We have shown that there exists a zero vector in $V$, $\emptyset$, such that $\vec{u} + \vec{0} = \vec{u}$, and the proof is complete.
+		\end{subproof}
+		\begin{axiom}
+			For each $\vec{u}$ in $V$, there is a vector $-\vec{u}$ such that $\vec{u} + (-\vec{u}) = \vec{0}$.
+			\label{axiom:5}
+		\end{axiom}
+		\begin{subproof}
+			$A + A = (A \unite A) \setminus (A \inter A) = A \setminus A$. As $A = A$, $A \setminus A = \emptyset$. We have shown that there exists a vector  $-\vec{u}$ in $V$ such that $\vec{u} + -\vec{u} = \vec{0}$, and the proof is complete.
+		\end{subproof}
+		\begin{axiom}
+			The scalar multiple of $\vec{u}$ by $c$, denoted by $c\vec{u}$, is in $V$.
+		\end{axiom}
+		\begin{subproof}
+			[Subproof]
+			As scalar multiplication in $V$ is defined by $0A = \emptyset$ and $1A = A$, and $\emptyset, A \in V$, it follows that all scalar multiples of $A$ are in $V$ and the proof is complete.
+		\end{subproof}
+		\begin{axiom}
+			$c(\vec{u} + \vec{v}) = c\vec{u} + c\vec{v}$.
+			\label{axiom:7}
+		\end{axiom}
+		\begin{subproof}
+			[Subproof]
+			As scalar multiplication in $V$ is defined by $0A = \emptyset$ and $1A = A$, we will consider two cases:
+			\begin{itemize}
+				\item \textit{Case i.} $c = 0$. Then, $0(A+B) = \emptyset$. We will show that  $0A + 0B = \emptyset$. As $0A = \emptyset$ and $0B = \emptyset$:
+					\begin{align*}
+						(A \unite B) \setminus (A \inter B) &= (\emptyset \unite \emptyset) \setminus (\emptyset \inter \emptyset) \\
+															&= \emptyset \setminus \emptyset \\
+															&= \emptyset
+					\end{align*}
+					Thus, we have shown that for the case $c=0$, $c(\vec{u} + \vec{v}) = c\vec{u} + c\vec{v}$.
+				\item \textit{Case ii.} $c = 1$. Then, $1(A + B) = A + B$. We will show that  $1A + 1B = A + B$. As $1A = A$ and $1B = B$, it follows that $1A + 1B = A + B$. Thus, we have shown that for the case $c = 1$, $c(\vec{u} + \vec{v}) = c\vec{u} + c\vec{v}$.
+			\end{itemize}
+			As we have shown that for all scalars $c$ in $V$, $c(\vec{u} + \vec{v}) = c\vec{u} + c\vec{v}$, the proof is complete.
+		\end{subproof}
+		\begin{axiom}
+			$(c + d)\vec{u} = c\vec{u} + d\vec{u}$.
+		\end{axiom}
+		\begin{subproof}
+			[Subproof]
+				We will consider 2 cases for the scalar $c$, each of which we will consider 2 cases for the scalar $d$ in order to cover all possible cases of $c + d$:
+				\begin{itemize}
+					\item \textit{Case i.} $c = 0$.
+						\begin{itemize}
+							\item \textit{Case i.a.} $d = 0$. As scalar addition is defined by $\bmod 2$,  $c + d = 0 + 0 \bmod 2 = 0$. We will show that  $(0)A = 0A + 0A$.  By definition of $V$, $0A = \emptyset$. Thus, we must show that $\emptyset = \emptyset + \emptyset$. From the \hyperref[axiom:7]{proof of Axiom 7}, in \textit{Case i}, we show that $\emptyset + \emptyset = \emptyset$, and thus for the case that  $c = 0 \land d = 0$, the axiom holds.
+							\item \textit{Case i.b.} $d = 1$. As scalar addition is defined by $\bmod 2$, $c + d = 0 + 1 \bmod 2 = 1$. We will show that $(1)A = 0A + 1A$. By definition of $V$, $0A = \emptyset$ and $1A = A$. Thus, we must show that $A = \emptyset + A$. From \hyperref[axiom:2]{Axiom 2}, $\emptyset + A = A + \emptyset$. From \hyperref[axiom:4]{Axiom 4}, $A + \emptyset = A$, and thus it follows that $\emptyset + A = A$, and we have shown that for the case that $c = 0 \land d = 1$, the axiom holds.
+						\end{itemize}
+					\item \textit{Case ii.} $c = 1$.
+						\begin{itemize}
+							\item $\textit{Case ii.a.}$  $d = 0$. As scalar multiplication is defined by $\bmod 2$,  $c + d = 1 + 0 \bmod 2 = 1$. We will show that $(1)A = 1A + 0A$. By definition of $V$, $0A = \emptyset$ and $1A = A$. Thus, we must show that $A = A + \emptyset$. From Case i.b., we have shown that this is true. Thus, for this case, the axiom holds.
+							\item \textit{Case ii.b.} $d = 1$. As scalar multiplication is defined by $\bmod 2$, $c + d = 1 + 1 \bmod 2 = 0$. We will show that $(0)A = 1A + 1A$. By definition of $V$, $0A = \emptyset$ and $1A = A$. Thus, we must show that $\emptyset = A + A$. From \hyperref[axiom:5]{Axiom 5}, we know that $A + A = \emptyset$, and thus for this case, the axiom holds.
+						\end{itemize}
+				\end{itemize}
+				As we have shown that the axiom holds for all cases of $c$ and $d$, the proof is complete.
+		\end{subproof}
+		\begin{axiom}
+			$c(d\vec{u}) = (cd)\vec{u}$.
+		\end{axiom}
+		\begin{subproof}
+			[Subproof]
+			We will consider 2 cases for the scalar $c$, each of which we will consider 2 cases for the scalar $d$ in order to cover all possible cases of $c + d$:
+				\begin{itemize}
+					\item \textit{Case i.} $c = 0$.
+						\begin{itemize}
+							\item \textit{Case i.a.} $d = 0$. $0(0A) = 0(\emptyset) = \emptyset$. As $0 \cdot 0 = 0$, $(0 \cdot 0)A = (0)A = \emptyset$. Thus, for this case, the axiom holds.
+							\item \textit{Case i.b.} $d = 1$. $0(1A) = 0(A) = \emptyset$. As $0 \cdot 1 = 0$, $(0 \cdot 1)A = (0)A = \emptyset$. Thus, for this case, the axiom holds.
+						\end{itemize}
+					\item \textit{Case ii.} $c = 1$.
+						\begin{itemize}
+							\item \textit{Case ii.a.} $d = 0$. $1(0A) = 1(\emptyset) = \emptyset$. As $1 \cdot 0 = 0$, $(1 \cdot 0)A = (0)A = \emptyset$. Thus, for this case, the axiom holds.
+							\item \textit{Case ii.b.} $d = 1$. $1(1A) = 1(A) = A$. As $1 \cdot 1 = 1$, $(1 \cdot 1)A = (1)A = A$. Thus, for this case, the axiom holds.
+						\end{itemize}
+				\end{itemize}
+				As we have shown that the axiom holds for all cases of $c$ and $d$, the proof is complete.
+		\end{subproof}
+		\begin{axiom}
+			$1\vec{u} = \vec{u}$.
+		\end{axiom}
+		\begin{subproof}
+			[Subproof]
+			As scalar multiplication for $V$ is defined as $1A = A$, the axiom holds and the proof is complete.
+		\end{subproof}
+		As all axioms of vector spaces hold for all vectors $\vec{u}, \vec{v}, \vec{w}$ in $V$ and for all scalars $c$ and $d$, it follows that $V$ is a vector space.	
+\end{proof}
+\begin{ques}
+	Let $H$ be a subspace of a vector space $V$. For every $\vec{v} \in V$, let
+	\[
+		\vec{v} + H = \set*{\vec{v} + \vec{w} \mid \vec{w} \in H}.
+	\] 
+	For a given $\vec{v} \in V$, the set $\vec{v} +  H$ is called \textit{the coset of $H$ containing $\vec{v}$}. Prove the following claims:
+	\begin{enumerate}[(a)]
+		\item $\vec{v} + H$ is a subspace of $V$ if an only if $\vec{v} \in H$.
+		\item $\vec{v_1} + H = \vec{v_2} + H$ if and only if $\vec{v_1} - \vec{v_2} \in H$.
+		\item Suppose  $V = \reals^2$ and $H = \set*{(x, 3x) \mid x \in \reals}$. For a vector  $\vec{v} = (v_1,v_2) \in V$, give a geometric description of the coset $\vec{v} + H$.
+	\end{enumerate} 
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[(a)]
+	\item 
+	\begin{proof}
+		We will prove the biconditional statement by proving both directions.
+		\begin{claim*}
+			$\vec{v} + H$ is a subspace of $V$ $\implies$ $\vec{v} \in H$.
+		\end{claim*}
+		\begin{subproof}
+			[Subproof]
+			Suppose $\vec{v} + H$ is a subspace of $V$. Then, by definition of subspace, the zero vector of $V$ must be in $\vec{v} + H$. By definition of coset of $H$ containing $\vec{v}$, $\exists \vec{w} \in H \mid \vec{0} = \vec{v} + \vec{w}$, and thus $H$ contains $-\vec{v}$. As $H$ is a subspace of $V$, $v \in H$, as desired.
+		\end{subproof}
+		\begin{claim*}
+			$\vec{v} \in H \implies \vec{v} + H$ is a subspace of $V$.
+		\end{claim*}
+		\begin{subproof}
+			[Subproof]
+			Suppose $\vec{v} \in H$. Then, the set $\set*{\vec{v} + \vec{w} \mid \vec{w} \in H} = H$, as $H$ is a subspace and is thus closed under vector addition. Thus, $\vec{v} + H = H$, and as $H$ is a subspace of $V$, it follows that $\vec{v} + H$ is a subspace of $V$, as desired.
+		\end{subproof}
+		As we have proved both directions of the biconditional statement, the proof is complete.
+	\end{proof}
+\item 
+\begin{proof}
+	We will prove the biconditional statement by proving both directions.
+	\begin{claim*}
+		$\vec{v_1} + H = \vec{v_2} + H \implies \vec{v_1} - \vec{v_2} \in H$.
+	\end{claim*}
+	\begin{subproof}
+		[Subproof]
+		Suppose that $\vec{v_1} + H = \vec{v_2} + H$. As $\vec{v_1} \in \vec{v_1} + H$, it follows that $\vec{v_1} \in \vec{v_2} + H$. By definition of coset of $H$ containing $\vec{v_2}$, there exists a $w \in H$ such that $\vec{v_1} = \vec{v_2} + w$. Thus, $\vec{v_1} - \vec{v_2} = w$ and as $w \in H$, it follows that $\vec{v_1} - \vec{v_2} \in H$, as desired.
+	\end{subproof}
+	\begin{claim*}
+		$\vec{v_1} - \vec{v_2} \in H \implies \vec{v_1} + H = \vec{v_2} + H$.
+	\end{claim*}
+	\begin{subproof}
+		[Subproof]
+		Suppose $\vec{v_1} - \vec{v_2} \in H$. From the previous proof, it is sufficient to prove that $\vec{v_1} \in \vec{v_2} + H$ to show that $\vec{v_1} + H = \vec{v_2} + H$. Let $\vec{v_1} - \vec{v_2} = w \in H$. Then $\vec{v_1} = \vec{v_2} + w$, $w \in H$. Thus, $\vec{v_1} \in \vec{v_2} + H$, as desired.
+	\end{subproof}
+	As we have proved both directions of the biconditional statement, the proof is complete.
+\end{proof}
+\item The coset $\vec{v} + H$ is defined as $\set*{(v_1, v_2) + (x, 3x) \mid x \in \reals} = \set*{(v_1 + x, v_2 + 3x) \mid x \in \reals}$. Geometrically, this can be described as the line with a slope of 3 that passes through the point $(v_1, v_2)$.
+\end{enumerate}
+\section{Science Problems}
+\begin{ques}
+	To get a sense of the error in your estimate of the period, measure the time of the \underline{same} cycle five times and see what the variation is amongst your five measurements (rerun the video five times so that you are measuring the same cycle each time). To get full credit, list your five measured values and their average, and then the maximum deviation from this average amongst your five measurements.
+\end{ques}
+\begin{figure}[H]
+	\centering
+	\begin{tabular}{c|c}
+		Trial & Recorded Time w/Stopwatch (Seconds) \\
+		\hline
+		1 & 3.78 \\
+		2 & 3.68 \\
+		3 & 3.90 \\
+		4 & 3.68 \\
+		5 & 3.73
+	\end{tabular}
+\end{figure}
+\begin{align*}
+	\text{Average Period} &= \frac{3.78 + 3.68 + 3.90 + 3.68 + 3.73}{5} \\
+								 &= 3.754 \text{ sec/cycle}
+\end{align*}
+The maximum deviation from the average amongst my five measurements is with Trial 3, with a deviation of $3.90 - 3.754 = 0.146$ seconds.
+\begin{ques}
+Time how long it takes for five consecutive cycles starting around 2:57 in the video. Do this five times for the same consecutive five cycles. List these five measurements. Then divide each by five to get five estimates for the period of one cycle. List the average of these five period estimates for one cycle and the maximum deviation from this average amongst your five period estimates for one cycle. Compare your average and maximum deviation with those in PART (a) above.
+\end{ques}
+\begin{figure}[H]
+	\centering
+	\begin{tabular}{c|c|c}
+		Trial & Recorded Time w/Stopwatch (Seconds) & Period Estimate (Seconds/Cycle) \\
+		\hline
+		1 & 16.35 & 3.27 \\
+		2 & 16.68 & 3.336 \\
+		3 & 16.55 & 3.31 \\
+		4 & 16.58 & 3.316 \\
+		5 & 16.40 & 3.28
+	\end{tabular}
+\end{figure}
+\begin{align*}
+	\text{Average Period} &= \frac{3.27 + 3.336 + 3.31 + 3.316 + 3.28}{5} \\
+						  &= 3.3024 \text{ sec/cycle}
+\end{align*}
+The maximum deviation from the average amongst my five period estimates is with Trial 2, with a deviation of $3.336 - 3.3024 = 0.0336$ seconds.
+\\
+
+The percent difference of the average obtained from Part (a) and the average obtained from Part (b) is 
+\[
+	\frac{3.754 - 3.3024}{\frac{3.754 + 3.3024}{2}} \cdot 100\% \approx 12.80\%
+\] 
+The perecent difference of the maximum deviation from Part (a) and Part (b) is
+\[
+	\frac{0.146 - 0.0336}{\frac{0.146 + 0.0336}{2}} \cdot 100\% \approx 125.17\%
+\] 
+\begin{ques}
+	Measure the period of one cycle in this other video from time 6:13 to 6:30.
+\end{ques}
+\begin{figure}[H]
+	\centering
+	\begin{tabular}{c|c|c}
+		Trial & Recorded Time w/Stopwatch (Seconds) & Period Estimate (Seconds/Cycle) \\
+		\hline
+		1 & 15.42 & 5.14 \\
+		2 & 15.54 & 5.18 \\
+		3 & 15.51 & 5.17 \\
+		4 & 15.49 & 5.163 \\
+		5 & 15.45 & 5.15
+	\end{tabular}
+\end{figure}
+\begin{align*}
+	\text{Average Period} &= \frac{5.14 + 5.18 + 5.17 + 5.163 + 5.15}{5} \\
+						  &= 5.1606 \text{ sec/cycle}
+\end{align*}
+\begin{ques}
+After reading the Physics Today article, say which of the two videos most likely has the correct cycle data, as the average period I obtained is closer to the real world 5 seconds per cycle period.
+\end{ques}
+Most likely, the second video has the correct cycle data.
+\begin{ques}
+	Write a short sentence to summarize what you learned with regards to knowing the provenance of a data set.	
+\end{ques}
+Provenance is extremely important, as without knowing the context of a data set, you cannot come to concrete and definite conclusions as seen in the first video.
+\end{document}

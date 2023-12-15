@@ -1,0 +1,752 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{../../../evan}
+\usepackage{graphicx}
+
+\definecolor{dg}{RGB}{2,101,15}
+\newtheoremstyle{dotlessP}{}{}{}{}{\color{dg}\bfseries}{}{ }{}
+\theoremstyle{dotlessP}
+\newtheorem{property}[theorem]{Property}
+
+\newtheoremstyle{dotlessN}{}{}{}{}{\color{teal}\bfseries}{}{ }{}
+\theoremstyle{dotlessN}
+\newtheorem{notation}[theorem]{Notation}
+% Shortcuts
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil} % ceil function
+
+\DeclarePairedDelimiter\paren{(}{)} % parenthesis
+
+\newcommand{\df}{\displaystyle\frac} % displaystyle fraction
+\newcommand{\qeq}{\overset{?}{=}} % questionable equality
+
+\newcommand{\Mod}[1]{\;\mathrm{mod}\; #1} % modulo operator
+
+\newcommand{\comp}{\circ} % composition
+
+% Text Modifiers
+\newcommand{\tbf}{\textbf}
+\newcommand{\tit}{\textit}
+
+% Sets
+\DeclarePairedDelimiter\set{\{}{\}}
+\newcommand{\unite}{\cup}
+\newcommand{\inter}{\cap}
+
+\newcommand{\reals}{\mathbb{R}} % real numbers: textbook is Z^+ and 0
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tots}{\mathbb{Q}}
+\newcommand{\smin}{\setminus}
+\newcommand{\degree}{^\circ}
+
+% Counting
+\newcommand\perm[2][^n]{\prescript{#1\mkern-2.5mu}{}P_{#2}}
+\newcommand\comb[2][^n]{\prescript{#1\mkern-0.5mu}{}C_{#2}}
+
+% Relations
+\newcommand{\rel}{\mathcal{R}} % relation
+
+\setlength\parindent{0pt}
+
+% Directed Graphs
+\usetikzlibrary{arrows}
+\tikzset{vertex/.style = {shape=circle,draw,minimum size=2em}}
+\tikzset{svertex/.style = {shape=circle,draw,minimum size=.05em,font=\tiny}}
+\tikzset{edge/.style = {->,> = latex'}}
+\tikzset{dedge/.style = {-> = latex'}}
+\tikzset{dot/.style={inner sep=1.5pt,circle,draw,fill}}
+
+% Contradiction
+\newcommand{\contradiction}{{\hbox{%
+    \setbox0=\hbox{$\mkern-3mu\times\mkern-3mu$}%
+    \setbox1=\hbox to0pt{\hss$\times$\hss}%
+    \copy0\raisebox{0.5\wd0}{\copy1}\raisebox{-0.5\wd0}{\box1}\box0
+}}}
+\newcommand{\xxhash}[2]{\rotatebox[origin=c]{#2}{$#1\parallel$}}
+
+\title{MATH 22A: Vector Calculus and Linear Algebra}
+\subtitle{PSet 1}
+\author{Denny Cao}
+\date{\today}
+%++++++++++++++++++++++++++++++++++++++++
+% Heading and Footer
+%++++++++++++++++++++++++++++++++++++++++
+% title stuff
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols r]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+	\begin{flushleft}
+		\large\textbf{MATH 22A: Vector Calculus and Linear Algebra} \\ \vskip 0.2cm
+		\begingroup
+		\fontsize{14pt}{12pt}\selectfont
+		\title
+		\\
+		Problem Set 2
+		\endgroup \vskip 0.3cm
+		Due: Wednesday, September 20, 2023 12pm \hfill\rlap{}\textbf{Denny Cao} \\ \vskip 0.1cm 
+		\hrulefill
+	\end{flushleft}\egroup
+}
+
+\begin{document}
+\maketitle
+\pagestyle{plain}
+\section*{Collaborators}
+\begin{itemize}
+	\item May Ng
+	\item Nina Khera
+\end{itemize}
+\section{Computational Problems}
+\begin{ques}
+	Reduce the following matrix into reduced row echelon form. Then circle the pivot positions in the final matrix and the matrix below, and also list the pivot columns.
+	\[
+	\begin{bmatrix}
+		1 & 3 & 5 & 7 \\
+		3 & 5 & 7 & 9 \\
+		5 & 7 & 9 & 1
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+\begin{gather*}
+	\intertext{$\sim 3R_1 - R_2 \to R_2$.}
+	\begin{bmatrix}
+		1 & 3 & 5 & 7 \\
+		0 & 4 & 8 & 21 \\
+		5 & 7 & 9 & 1
+	\end{bmatrix}
+	\intertext{$\sim 5R_1 - R_3 \to R_3$.}
+	\begin{bmatrix}
+		1 & 3 & 5 & 7 \\
+		0 & 4 & 8 & 21 \\
+		0 & 8 & 16 & 34
+	\end{bmatrix}
+	\intertext{$\sim 2R_2 - R_3 \to R_3$}
+	\begin{bmatrix}
+		1 & 3 & 5 & 7 \\
+		0 & 4 & 8 & 21 \\
+		0 & 0 & 0 & 8  
+	\end{bmatrix}
+	\intertext{$\sim 1/8 R_3 \to R_3$.}
+	\begin{bmatrix}
+		1 & 3 & 5 & 7 \\
+		0 & 4 & 8 & 21 \\
+		0 & 0 & 0 & 1  
+	\end{bmatrix}
+	\intertext{$\sim R_1 - 7R_3 \to R_1, R_2 - 21R_3 \to R_2$.}
+	\begin{bmatrix}
+		1 & 3 & 5 & 0 \\
+		0 & 4 & 8 & 0 \\
+		0 & 0 & 0 & 1  
+	\end{bmatrix}
+	\intertext{$\sim 1/4 R_2 \to R_2$.}
+	\begin{bmatrix}
+		1 & 3 & 5 & 0 \\
+		0 & 1 & 2 & 0 \\
+		0 & 0 & 0 & 1  
+	\end{bmatrix}
+	\intertext{$\sim R_1 - 3R_2 \to R_2$.}
+	\begin{bmatrix}
+		1 & 0 & -1 & 0 \\
+		0 & 1 & 2 & 0 \\
+		0 & 0 & 0 & 1  
+	\end{bmatrix}
+\end{gather*}
+\textbf{The pivot columns are $C_1, C_2, C_4$, where $C_i$ denotes the  $i-$th column.}
+\begin{ques}
+	Find the general solution to the system whose augmented matrix is given below.
+\[
+	\begin{bmatrix}[rrrr|r]
+	1 & -7 & 0 & 6 & 5 \\
+	0 & 0 & 1 & -2 & -3 \\
+	-1 & 7 & -4 & 2 & 7 
+\end{bmatrix}
+\] 
+\end{ques}
+\textbf{Solution}
+\begin{gather*}
+	\intertext{$\sim R_1 + R_3 \to R_3$.}
+	\begin{bmatrix}[rrrr|r]
+		1 & -7 & 0 & 6 & 5 \\
+		0 & 0 & 1 & -2 & -3 \\
+		0 & 0 & -4 & 8 & 12 
+	\end{bmatrix}
+	\intertext{$\sim 4R_2 + R_3 \to R_3$.}
+	\begin{bmatrix}[rrrr|r]
+		1 & -7 & 0 & 6 & 5 \\
+		0 & 0 & 1 & -2 & -3 \\
+		0 & 0 & 0 & 0 & 0
+	\end{bmatrix}
+	\intertext{$\sim R_1 + 3R_2 \to R_1$}
+\end{gather*}
+\textbf{The general solution is $\displaystyle 
+	\begin{pmatrix}[c]
+	5 + 7x_2 - 6x_4 \\
+	x_2 \\
+	-3 +2x_4 \\
+	x_4
+\end{pmatrix}$, where $x_2$ and $x_4$ are free.}
+\begin{ques}
+	Choose $h$ and $k$ such that the system below has (a) no solution, (b) a unique solution, and (c) many solutions. Give separate answers for each.
+	\begin{align*}
+		x_1 + 3x_2 &= 2 \\
+		3x_1 + hx_2 &= k
+	\end{align*}
+\end{ques}
+\textbf{Solution}
+
+In augmented matrix form, the system can be expressed as the following:
+\[
+	\begin{bmatrix}[cc|c]
+	1 & 3 & 2 \\
+	3 & h & k
+\end{bmatrix} \stackrel{R_2 - 3R_1 \to R_2}{\sim} 
+\begin{bmatrix}[cc|c]
+	1 & 3 & 2 \\
+	0 & h-9 & k-6
+\end{bmatrix}
+\] 
+\begin{enumerate}[a)]
+	\item \textit{No Solution:} $h = 9, k \neq 6$. This results in the rightmost column in the augmented matrix being a pivot column, and thus, by Theorem 2 (Existence and Uniqueness Theorem) in Section 1.2 of Linear Algebra and Its Applications, there is is no solution.
+	\item \textit{A unique solution}: If $h \neq 9$. This results in the solution $x_2 = \frac{k-6}{h-9}$ and $x_1 = 2 - \frac{3(k-6)}{h-9}$.
+	\item \textit{Many Solutions:} $h = 9, k=6$. This results in the values along $x_1 + 3x_2 = 2$ being solutions to the system.
+\end{enumerate}
+\begin{ques}
+	Experimental data is sometimes presented as a set of points in the plane. An interpolating polynomial for the data is a polynomial whose graph goes through every point. (Such a polynomial can be used to estimate values between the observed data points. It can also be used to create curves for graphical images of the data on a computer screen.) One method for finding an interpolating polynomial is to solve a system of linear equations. Find an intepolating polynomial $p(t) = a_0 + a_1t + a_2t^2 + a_3t^3$ for the following data from wind tunnel measurements on a projectile (thus, find $a_0,a_1,a_2,a_3$ such that the polynomial passes through the points below.)
+	\begin{center}
+		\begin{tabular}{l|cccc}
+			\hline
+			Velocity (100 ft/sec) & 0 & 2 & 4 & 6 \\
+			Force (100 lb) & 0 & 2.90 & 14.8 & 39.6 \\
+			\hline
+		\end{tabular}
+	\end{center}
+(You can round off the force numbers to the nearest integer.) Is there a quadratic interpolating polynomial?
+\end{ques}
+\textbf{Solution}
+
+We can set up an augmented matrix as follows:
+\begin{gather*}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		1 & 2 & 4 & 8 & 3 \\
+		1 & 4 & 16 & 64 & 15 \\
+		1 & 6 & 36 & 216 & 40
+	\end{bmatrix}
+	\intertext{$\sim R_2 - R_1 \to R_2, R_3 - R_1 \to R_3, R_4 - R_1 \to R_4$.}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		0 & 2 & 4 & 8 & 3 \\
+		0 & 4 & 16 & 64 & 15 \\
+		0 & 6 & 36 & 216 & 40
+	\end{bmatrix}
+	\intertext{$\sim 2R_2 - R_1 \to R_2$.}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		0 & 2 & 4 & 8 & 3 \\
+		0 & 0 & 8 & 48 & 9 \\
+		0 & 6 & 36 & 216 & 40
+	\end{bmatrix}
+	\intertext{$\sim R_4 - 3R_2 \to R_3$.}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		0 & 2 & 4 & 8 & 3 \\
+		0 & 0 & 8 & 48 & 9 \\
+		0 & 0 & 24 & 192 & 31 
+	\end{bmatrix}
+	\intertext{$\sim R_4 - 3R_3 \to R_4$.}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		0 & 2 & 4 & 8 & 3 \\
+		0 & 0 & 8 & 48 & 9 \\
+		0 & 0 & 0 & 48 & 4  
+	\end{bmatrix}
+\intertext{$\sim R_3 - R_4 \to R_3$.}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		0 & 2 & 4 & 8 & 3 \\
+		0 & 0 & 8 & 0 & 5 \\
+		0 & 0 & 0 & 48 & 4  
+	\end{bmatrix}
+	\intertext{$\sim R_2 - 1/6 R_4 \to R_2$.}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		0 & 2 & 4 & 0 & 7/3 \\
+		0 & 0 & 8 & 0 & 5 \\
+		0 & 0 & 0 & 48 & 4  
+	\end{bmatrix}
+	\intertext{$\sim 1/8R_3 \to R_3, 1/48 R_4 \to R_4$.}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		0 & 2 & 4 & 0 & 7/3 \\
+		0 & 0 & 1 & 0 & 5/8 \\
+		0 & 0 & 0 & 1 & 1/12  
+	\end{bmatrix}
+	\intertext{$\sim R_2 - 4R_3 \to R_2$.}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		0 & 2 & 0 & 0 & -1/6 \\
+		0 & 0 & 1 & 0 & 5/8 \\
+		0 & 0 & 0 & 1 & 1/12  
+	\end{bmatrix}
+	\intertext{$\sim 1/2 R_2 \to R_2$.}
+	\begin{bmatrix}[cccc|c]
+		1 & 0 & 0 & 0 & 0  \\
+		0 & 1 & 0 & 0 & -1/12 \\
+		0 & 0 & 1 & 0 & 5/8 \\
+		0 & 0 & 0 & 1 & 1/12  
+	\end{bmatrix}
+\end{gather*}
+\textbf{Thus, we can create the following cubic interpolating polynomial:}
+\[
+	p(t) = -\frac{1}{12}t + \frac{5}{8}t^2 + \frac{1}{12}t^3
+\] 
+The coefficients of a quadratic interpolating polynomial can be found by removing the fourth column of the augmented matrix. We obtain:
+\begin{gather*}
+		\begin{bmatrix}[ccc|c]
+		1 & 0 & 0 & 0  \\
+		0 & 1 & 0 & -1/12 \\
+		0 & 0 & 1 & 5/8 \\
+		0 & 0 & 0 & 1/12  
+	\end{bmatrix}
+\end{gather*}
+As we obtain an augmented matrix in an echelon form that has a pivot column in the right most column, by Theorem 2 (Existence and Uniqueness Theorem) in Section 1.2 of Linear Algebra and Its Applications, there is no solution. 
+\\
+
+\textbf{Thus, there does not exist a quadratic interpolating polynomial.}
+\begin{ques}
+	Write a system of equations that is equivalent to the vector equation below.
+	\[
+	x_1 
+	\begin{bmatrix}
+		-2  \\
+		3
+	\end{bmatrix} + x_2
+	\begin{bmatrix}
+		8 \\
+		5
+	\end{bmatrix} + x_3
+	\begin{bmatrix}
+		1 \\
+		-6
+	\end{bmatrix} = 
+	\begin{bmatrix}
+		0 \\
+		0
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+\begin{align*}
+	-2x_1 + 8x_2 + x_3 &= 0 \\
+	3x_1 + 5x_2 - 6x_3 &= 0
+\end{align*}
+\begin{ques}
+	Determine if the vector \textbf{b} below is a linear combination of $\textbf{a}_1, \textbf{a}_2, \textbf{a}_3$ below.
+	\begin{align*}
+		\textbf{a}_1 = 
+		\begin{bmatrix}
+			1 \\
+			-2 \\
+			2
+		\end{bmatrix}, \textbf{a}_2 = 
+		\begin{bmatrix}
+			0 \\
+			5 \\
+			5
+		\end{bmatrix}, \textbf{a}_3 = 
+		\begin{bmatrix}
+			2 \\
+			0 \\
+			8
+		\end{bmatrix}, \textbf{b} = 
+		\begin{bmatrix}
+			-5 \\
+			11 \\
+			-7
+		\end{bmatrix}
+	\end{align*}
+\end{ques}
+\textbf{Solution}
+
+We can represent the potential linear combination as an augmented matrix:
+\begin{gather*}
+	\begin{bmatrix}[rrr|r]
+		1 & 0 & 2 & -5 \\
+		-2 & 5 & 0 & 11 \\
+		2 & 5 & 8 & -7 
+	\end{bmatrix}
+	\intertext{$\sim 2R_1 + R_2 \to R_2, R_3 - 2R_2 \to R_3$}
+	\begin{bmatrix}[rrr|r]
+		1 & 0 & 2 & -5 \\
+		0 & 5 & 4 & 1 \\
+		0 & 5 & 4 & 3
+	\end{bmatrix}
+	\intertext{$\sim R_3 - R_2 \to R_3$}
+	\begin{bmatrix}[rrr|r]
+		1 & 0 & 2 & -5 \\
+		0 & 5 & 4 & 1 \\
+		0 & 0 & 0 & -2
+	\end{bmatrix}
+\end{gather*}
+This results in the rightmost column in the augmented matrix being a pivot column, and thus, by Theorem 2 (Existence and Uniqueness Theorem) in Section 1.2 of Linear Algebra and Its Applications, there does not exist a nontrivial linear combination of $\textbf{a}_1, \textbf{a}_2, \textbf{a}_3$.
+\begin{ques}
+	Determine if the vector \textbf{b} below is a linear combination of the columns of the matrix $A$ below.
+	\begin{align*}
+		A = 
+		\begin{bmatrix}
+			1 & -2 & -6 \\
+			0 & 3 & 7 \\
+			1 & -2 & 5
+		\end{bmatrix},
+		\textbf{b} =
+		\begin{bmatrix}
+			11 \\
+			-5 \\
+			9
+		\end{bmatrix}
+	\end{align*}
+\end{ques}
+\textbf{Solution}
+
+We can represent the potential linear combination as an augmented matrix:
+\begin{gather*}
+	\begin{bmatrix}[rrr|r]
+		1 & -2 & -6 & 11 \\
+		0 & 3 & 7 & -5 \\
+		1 & -2 & 5 & 9
+	\end{bmatrix}
+	\intertext{$\sim R_3 - R_1 \to R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & -2 & -6 & 11 \\
+		0 & 3 & 7 & -5 \\
+		0 & 0 & 11 & -2
+	\end{bmatrix}
+	\intertext{$1/11 R_3 \to R_3$}
+	\begin{bmatrix}[rrr|r]
+		1 & -2 & -6 & 11 \\
+		0 & 3 & 7 & -5 \\
+		0 & 0 & 1 & -2/11 
+	\end{bmatrix}
+	\intertext{$R_2 - 7R_3 \to R_2, R_1 + 6R_3 \to R_1$.}
+	\begin{bmatrix}[rrr|r]
+		1 & -2 & 0 & 109/11 \\
+		0 & 3 & 0 & -41/11 \\
+		0 & 0 & 1 & -2/11 
+	\end{bmatrix}
+	\intertext{$1/3 R_2 \to R_2$.}
+	\begin{bmatrix}[rrr|r]
+		1 & -2 & 0 & 109/11 \\
+		0 & 1 & 0 & -41/33 \\
+		0 & 0 & 1 & -2/11 
+	\end{bmatrix}
+	\intertext{$R_1 + 2R_2 \to R_1$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 0 & 0 & 245/33 \\
+		0 & 1 & 0 & -41/33 \\
+		0 & 0 & 1 & -2/11 
+	\end{bmatrix}
+\end{gather*}h
+As the rightmost column of the augmented matrix is not a pivot column, by Theorem 2 (Existence and Uniqueness Theorem) in Section 1.2 of Linear Algebra and Its Applications, the system is consistent and thus there exists a solution, meaning \textbf{b} is a linear combination of the columns of $A$.
+\begin{ques}
+	Consider the vector $\textbf{v}_1, \textbf{v}_2, \textbf{v}_3$, and \textbf{b} in $\reals^3$ that are depicted below ($\textbf{v}_1$ and $\textbf{v}_2$ lie in a plane and $\textbf{v}_3$ points out of that plane). Does the equation $x_1 \textbf{v}_1 + x_2 \textbf{v}_2 + x_3\textbf{v}_3 = \textbf{b}$ have a solution? If so, is that solution unique? Make sure to explain your reasoning.
+\end{ques}
+\textbf{Solution}
+
+The equation does have a solution. As $\textbf{v}_1$ and  $\textbf{v}_2$ span a plane in $\reals^3$, they are linearly independent (they are not multiples of each other). Since  $\textbf{v}_3$ points out of that plane, it is not coplanar. Thus, $\textbf{v}_3$ is not a linear combination of  $\textbf{v}_1$ and  $\textbf{v}_2$ and thus the three vectors are linearly independent by Theorem 7 (Characterization of Linearly Dependent Sets) in Section 1.7 of Linear Algebra and Its Applications. Thus, the three vectors span  $\reals^3$. By Theorem 4 in Section 1.4 of Linear Algebra and Its Applications, $A\textbf{x} = \textbf{b}$ where for the matrix $A$, each column represents each of the three vectors, $\textbf{b}$ is a linear combination of the columns of $A$, as it is the case that all vectors in $A$ span $\reals^3$.
+\\
+
+The solution is unique because the columns of $A$ (i.e., $\textbf{v}_1$, $\textbf{v}_2$, and $\textbf{v}_3$) are linearly independent. This means there is only one combination of $x_1$, $x_2$, and $x_3$ that satisfies $A\textbf{x} = \textbf{b}$, ensuring the uniqueness of the solution.
+\begin{ques}
+	Compute the product of a matrix and a vector depicted below.
+	\[
+	\begin{bmatrix}
+		8 & 3 & -4 \\
+		5 & 1 & 2 
+	\end{bmatrix} 
+	\begin{bmatrix}
+		1 \\
+		1 \\
+		1
+	\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+\begin{align*}
+	\begin{bmatrix}
+		8 & 3 & -4 \\
+		5 & 1 & 2 
+	\end{bmatrix} 
+	\begin{bmatrix}
+		1 \\
+		1 \\
+		1
+	\end{bmatrix} &= 
+	1 \begin{bmatrix}
+		8 \\
+		5 
+	\end{bmatrix} + 1 
+	\begin{bmatrix}
+		3 \\
+		1
+	\end{bmatrix} + 1
+	\begin{bmatrix}
+		-4 \\
+		2
+	\end{bmatrix} \\
+	&= 
+	\begin{bmatrix}
+		8 + 3 - 4 \\
+		5 + 1 + 2 
+	\end{bmatrix} \\
+	&= 
+	\begin{bmatrix}
+		7 \\
+		8
+	\end{bmatrix}
+\end{align*}
+\begin{ques}
+	Is the vector \textbf{u} depicted below in the plane spanned by the columns of the matrix $A$ that is depicted below Explain your reasoning.
+	\[
+		\textbf{u} = 
+		\begin{bmatrix}
+			2 \\
+			-3 \\
+			2
+		\end{bmatrix} \quad
+		A = 
+		\begin{bmatrix}
+			5 & 8 & 7 \\
+			0 & 1 & -1 \\
+			1 & 3 & 0
+		\end{bmatrix}
+	\] 
+\end{ques}
+\textbf{Solution}
+
+If a vector $\textbf{u}$ is spanned by a matrix $A$, then there exists a linear combination $Ax = \textbf{u}$.
+\begin{gather*}
+	\begin{bmatrix}[rrr|r]
+		5 & 8 & 7 & 2 \\
+		0 & 1 & -1 & -3 \\^3
+		1 & 3 & 0 & 2
+	\end{bmatrix} 
+	\intertext{$\sim R_1 \leftrightarrow R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & 0 & 2 \\
+		0 & 1 & -1 & -3 \\
+		5 & 8 & 7 & 2 
+	\end{bmatrix} 
+	\intertext{$\sim R_3 - 5R_1 \to R_3$.}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & 0 & 2 \\
+		0 & 1 & -1 & -3 \\
+		0 & -7 & 7 & -8 
+	\end{bmatrix} 
+	\intertext{$\sim R_3 + 7R_2 \to R_3$}
+	\begin{bmatrix}[rrr|r]
+		1 & 3 & 0 & 2 \\
+		0 & 1 & -1 & -3 \\
+		0 & 0 & 0 & -29 
+	\end{bmatrix} 
+\end{gather*}
+\textbf{As we reach an augmented matrix in an echelon form where the rightmost column is a pivot column, by Theorem 2 (Existence and Uniqueness Theorem) in Section 1.2 of Linear Algebra and Its Applications, there does not exist a nontrivial solution to the system, and thus u is not a linear combination of the matrix columns. Therefore, it is not spanned by the columns of $A$.}
+\section{Proof Problems}
+\begin{ques}
+	Prove the following statements.
+	\begin{enumerate}[(a)]
+		\item Suppose $x$ is an integer. Then $x$ is odd if and only if $x^3$ is odd.
+		\item \textbf{Chessboard problem.} Two opposite corner squares are deleted from an 8 by 8 checkerboard. Prove that the remaining squares cannot be covered exactly by dominoes (rectangles consisting of two adjacent squares).
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[a)]
+	\item 
+		\begin{proof}
+			To prove the biconditional statement that $x$ is odd $\leftrightarrow$  $x^3$ is odd, we must show that $x$ is odd $\to$ $x^3$ is odd and that $x^3$ is odd $\to$ $x$ is odd.
+			\\
+			
+			We will show that $x$ is odd $\to$ $x^3$ is odd. By definition of odd number, there exists an integer $k$ such that $x = 2k+1$. Thus:
+			 \begin{align*}
+				 x^3 &= (2k+1)^3 \\
+				&= 8k^3 + 12k^2 + 6k + 1 \\
+				&= 2(4k^3 + 6k^2 + 3k) + 1
+				\intertext{Let $c = 4k^3 + 6k^2 + 3k$.}
+				x^3 &= 2c + 1
+			\end{align*}
+			As $x^3$ can be expressed in the form $2c+1$, where $c$ is an integer, by definition of odd number, $x^3$ is odd. 
+			\\
+
+			We will show that $x^3$ is odd $\to$ $x$ is odd by the contrapositive. The contrapositive of the statement is that, if  $x$ is even, then $x^3$ is even. By definition of even number, there exists an integer $k$ such that $x = 2k$. Thus:
+			\begin{align*}
+				x^3 &= (2k)^3 \\
+				    &= 8k^3 \\
+					&= 2(4k^3)
+				\intertext{Let $c=4k^3$.}
+			   x^3 &= 2c
+			\end{align*}
+			As $x^3$ can be expressed in the form $2c$, where $c$ is an integer, by definition of even number, $x^3$ is even. As the statement that $x$ is even $\to$ $x^3$ is even is equivalent to the original statement, we have shown that $x^3$ is odd $\to$ $x$ is odd.
+			\\
+
+			As we have shown that $x$ is odd $\to$ $x^3$ is odd and that $x^3$ is odd $\to$ $x$ is odd, the biconditional statement that, if $x$ is an integer, then $x$ is odd if and only if $x^3$ is odd is true.
+		\end{proof}
+	\item 
+		\begin{proof}
+			An $8 \times 8$ chessboard has 32 black tiles and 32 white tiles. Removing the two corners, which are both white, will result in a chessboard with 32 black tiles and 30 white tiles. It cannot be the case that dominoes can fully cover the chessboard, as dominoes have 1 black tile and 1 white tile---they have a 1:1 black to white ratio---whereas the board has a 16:15 black to white ratio.
+		\end{proof}
+\end{enumerate}
+\begin{ques}
+	If $a,b,$ and $c$ are odd integers, then $ax^2 + bx + c = 0$ has no solution in the set of rational numbers.
+\end{ques}
+\textbf{Solution}
+
+\begin{proof}
+	[Proof by contradiction]
+	Assume for purposes of contradiction that, if $a,b$ and $c$ are odd integers, then $ax^2 + bx + c = 0$ has a solution in the set of rational numbers. Then, $ax^2 + bx + c$ can be factored into the form $(mx + n)(tx + w)=0$, where possible rational solutions, by Definition 6.1 in Book of Proofs, are expressed as $-\frac{n}{m}$ and $-\frac{w}{t}$. Then:
+ \begin{align*}
+	 a &= mt \\
+	 c &= nw \\
+	 b &= mw + nt 
+\end{align*}
+As $a$ is odd, neither $m$ or $t$ has 2 as a factor (both are odd), as then $mn$ would have 2 as a factor and would mean $a$ is even. As $c$ is odd, neither $n$ or $w$ has 2 as a factor (both are odd) as then $nw$ would have 2 as a factor and would mean $c$ is even. \\
+\\
+
+Thus, $b$ is the sum of two odd integers: $mw$ and $nt$, as $mw$ does not have a factor of 2 (both $m$ and $w$ are odd) and $nt$ does not have a factor of 2 (both $n$ and $t$ are odd). By definition of odd number, there exists integers $k,u$ such that $mw = 2k+1, nt = 2u+1$. Thus: 
+\begin{align*}
+	b &= 2k + 1 + 2u + 1 \\
+	  &= 2k + 2u + 2 \\
+	  &= 2(k+u+1)
+\end{align*}
+ Let $r = k+u+1$. Thus,  $b = 2r$. $\contradiction$
+\\
+
+We reach a contradiction, as, if $b = 2r$, then by definition of even number,  $b$ is even. Thus, it is impossible for integers $a,b,$ and $c$ to be odd if $ax^2 + bx + c = 0$ has a solution in the set of rational numbers. The opposite must be true; that there does not exist a solution in the set of rational numbers.
+\end{proof}
+\begin{ques}
+	Prove the following statements about the sets $A,B,$ and $C$. Within your arguments, you may find it useful to argue directly and/or to use the contrapositive form. Remember that to show that two sets are equal, we show that each one is a subset of the other; also remember that to show that $S$ is a subset of $T$, we argue ``let $x \in S$... argue, argue,...Aha! Therefore $x \in T$.''
+	\begin{enumerate}[(a)]
+		\item $A \inter (B \setminus C) = (A \inter B) \setminus (A \inter C)$
+		\item $(A \unite B) \setminus (A \inter B) = (A \setminus B) \unite (B \smin A)$
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+
+\begin{enumerate}[a)]
+	\item 
+		\begin{proof}
+			We will prove the equality by proving both directions:
+			\begin{itemize}
+				\item  $A \inter (B \setminus C) \subseteq (A \inter B) \setminus (A \inter C)$
+				\item $A \inter (B \setminus C) \supseteq (A \inter B) \setminus (A \inter C)$
+			\end{itemize}
+
+			We will prove the first direction: $A \inter (B \setminus C) \subseteq (A \inter B) \setminus (A \inter C)$.
+
+			Let $x \in A \cap (B \setminus C)$. This means that $x \in A$ and $x \in B \setminus C$. By the definition of set difference, this implies that $x$ is in $A$ and $x$ is in $B$ but $x$ is not in $C$.
+
+Therefore, $x \in A$ and $x \in B$, and since $x$ is not in $C$, $x \notin A \cap C$. Thus, $x$ belongs to $(A \cap B)$ (because it's in both $A$ and $B$) and is not in $(A \cap C)$. Therefore, $x$ belongs to the set difference $(A \cap B) \setminus (A \cap C)$. Thus, without loss of generality, $A \inter (B \smin C) \subseteq (A \inter B) \smin (A \inter C)$.
+\\
+
+We will prove the second direction: $A \inter (B \setminus C) \supseteq (A \inter B) \setminus (A \inter C)$.
+
+Let $x \in (A \cap B) \setminus (A \cap C)$. This means that $x \in A \cap B$ but $x \not\in A \cap C$. By the definition of set intersection, $x$ is in both $A$ and $B$.
+
+As $x \not\in A \inter C$, $x$ is not in $C$, as if $x$ was in $C$, then $x \in A \inter C$ which is not the case. 
+
+Therefore, $x \in A$ and $x \in B$, but $x \not\in C$, which means $x \in B \setminus C$. Thus, we have shown that $x \in A \cap (B \setminus C)$. Without loss of generality, $(A \inter B) \smin (A \inter C) \subseteq A \inter (B \smin C)$.
+\\
+
+As we have shown that $A \inter (B \setminus C) \subseteq (A \inter B) \setminus (A \inter C)$ and $A \inter (B \setminus C) \supseteq (A \inter B) \setminus (A \inter C)$, it follows that $A \inter (B \setminus C) = (A \inter B) \setminus (A \inter C)$.
+\end{proof}
+\item 
+	\begin{proof}
+		We will the equality by proving both directions:	
+		\begin{itemize}
+			\item $(A \unite B) \smin (A \inter B) \subseteq (A \smin B) \unite (B \smin A)$
+			\item $(A \unite B) \smin (A \inter B) \supseteq (A \smin B) \unite (B \smin A)$
+		\end{itemize}
+
+		We will prove the first direction: $(A \unite B) \smin (A \inter B) \subseteq (A \smin B) \unite (B \smin A)$. 
+
+		If $x \in (A \unite B) \smin (A \inter B)$, then $x$ is in either $A$ or $B$ but not both. Thus, we consider two cases:
+		\begin{itemize}
+			\item Case 1: $x \in A \land x \not\in B$: Then, $x \in A \smin B$ and thus $x \in (A \smin B) \unite (B \smin A)$.
+			\item Case 2: $x \in B \land x \not\in A$: Then,  $x \in B \smin A$ and thus  $x \in (A \smin B) \unite (B \smin A)$.
+		\end{itemize}
+	As it is true for both cases that $x \in (A \smin B) \unite (B \smin A)$, without loss of generality,  $(A \unite B) \smin (A \inter B) \subseteq (A \smin B) \unite (B \smin A)$. 
+	\\
+
+	We will prove the second direction: $(A \unite B) \smin (A \inter B) \supseteq (A \smin B) \unite (B \smin A)$.
+
+	By the definition of intersection and set difference, if  $x \in (A \smin B) \unite (B \smin A)$, then $x \in A \land x \not\in B$ or $x \in B \land x \not\in A$. Thus, $x$ is either in $A$ or $B$ but not both, which is equivalent to the expression: $(A \unite B) \smin (A \inter B)$, meaning $x \in (A \unite B) \smin (A \inter B)$. Thus, without loss of generality, $(A \smin B) \unite (B \smin A) \subseteq (A \unite B) \smin (A \inter B)$.
+	\\
+
+	As we have shown that $(A \unite B) \smin (A \inter B) \subseteq (A \smin B) \unite (B \smin A)$ and $(A \unite B) \smin (A \inter B) \supseteq (A \smin B) \unite (B \smin A)$, it follows that $(A \unite B) \smin (A \inter B) = (A \smin B) \unite (B \smin A)$.
+	\end{proof}
+\end{enumerate}
+\begin{ques}
+	\textbf{The empty set.} The empty set $\emptyset$ is the set that contains no elements. That is, it satisfies the property that for all  $x$, we have $x \not\in \emptyset$. We sometimes denote it also be $\{\}$. 
+	\begin{enumerate}[(a)]
+		\item Let $S$ be any set. What if the ``if... then...'' statement that you need to prove in order to show that $\emptyset \subseteq S$?
+		\item Show that for any set $S$ we have  $\emptyset \subseteq S$ by proving the ``if... then...'' statement you came up with.
+		\item We say that two sets, $A$ and $B$ are \textit{disjoint} if $A \inter B = \emptyset$. Show that for any sets $A,B,$ and $C$ the sets $A \smin (B \unite C)$ and $(A \inter B) \unite C$ are disjoint.
+	\end{enumerate}
+\end{ques}
+\textbf{Solution}
+\begin{enumerate}[a)]	
+	\item We must show that, if $x \in \emptyset$, then  $x \in S$. 
+	\item 
+		\begin{proof}
+			[Proof by contrapositive]
+			The contrapositive of the statement is that, if $x \not\in S$, then $x \not\in \emptyset$. As the empty set has a cardinality of 0---contains no elements---the statement is true, as for all values $k$ in the universe $U$, $k \not\in \emptyset$. As the contrapositive is equivalent to the original statement, the statement that if $x \in \emptyset$ then  $x \in S$ is true.
+		\end{proof}
+	\item 
+		\begin{proof}
+			If $x \in A \smin (B \unite C)$, then $x \in A$ but not in $B$ or $C$, and thus is not in $A \inter B$. Therefore, $x \not\in (A \inter B) \unite C$. Thus, without loss of generality, $(A \smin (B \unite C)) \inter ((A \inter B) \unite C) = \emptyset$.
+		\end{proof}
+\end{enumerate}
+\begin{ques}
+	\textbf{Critiquing a Proof} One of your classmates has given you the following claim and proof to check for errors. Your job is to write your colleague a small note (that is, in English sentences!). There are few options for your note, depending on what you think of your classmate's proof:
+	\begin{enumerate}[(a)]
+		\item if the claim they are proving is true, and they have given a correct proof, your job is give congratulations and \textit{make at least one suggestion about a very concrete way to make the argument more clear}.
+		\item if the claim they are proving is true, and they have given an incorrect proof, your job is to write a polite note explaining (a) what is the error in the proof and (b) what is a correct proof.
+		\item if the claim they are proving is false, your job is to write a polite note explaining (a) what is the error in the proof and (b) giving a counter-example to show that the statement is false.
+	\end{enumerate}
+	\begin{claim*}
+		Let $A, B,$ and  $C$ be set. If $A \inter B = A \inter C$ then  $B = C$.
+	\end{claim*}
+	\begin{proof}
+		We're proving an if-then statement, so we'll assume the ``if'' part and argue to get the ``then'' part. Assume that $A \inter B = A \inter C$. We will show that  $B=C$ by first showing $B \subseteq C$ and then showing $C \subset B$. Let $x \in B$. There are two cases:
+		\begin{itemize}
+			\item If $x \in A$, then we have $x \in A \inter B$, and thus $x \in A \inter C$ since $A \inter B = A \inter C$. So  $x \in C$.
+			\item If $x \not\in A$, then we have  $x \not\in A \inter B$ and thus $x \not\in A \inter C$. But $x \not\in A$, so we must have $x \in C$.
+		\end{itemize}
+		Notice that in both cases we get $x \in C$, so we have shown that $x \in B \to x \in C$ ; that is, $B \subseteq C$. We can argue that  $C \subseteq B$ in exactly the same way so we've shown $B \subset C$ and $C \subseteq B$. Therefore $B = C$.
+	\end{proof}
+\end{ques}
+\textbf{Solution}
+
+Hey classmate,
+\\
+
+Thank you for letting me check your proof! While reading through your proof, I caught this error: 
+\begin{itemize}
+	\item For the case when $x \not\in A$, the conclusion that $x \in C$ cannot be made, as when $x \not\in A \inter B \land x \not\in A \inter C$, it is still possible for $x \not\in C$. The same is true for when $x \in C \land x \not\in A$. For instance, let $A = \set*{1,2,3}, B = \set*{2,3, 5}, C = \set*{2,3,4}$. Then,  $A \inter B = \set*{2,3}$, $A \inter C = \set*{2,3}$ and thus $A \inter B = A \inter C$. If  $x \in B \land x \not\in A$, then $x$ can be 5. However, 5 is not in $C$. This also is a counterexample for the claim.
+\end{itemize}
+To improve your proof and arrive at a correct argument, investigate the case when $x \in B \land x \not\in A \land x \not\in C$ and the case when  $x \in C \land x \not\in A \land x \not\in B$.
+\\
+
+Let me know if you have any other questions!
+\\
+
+Cordially,
+
+Denny Cao
+
+\end{document}
+
